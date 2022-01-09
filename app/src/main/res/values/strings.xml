@@ -2,5 +2,8 @@
     <string name="app_name">Go4Lunch</string>
     <string name="facebook_application_id">619220875950309</string>
     <string name="fb_login_protocol_scheme">fb619220875950309</string>
-    <string name="disconnect">Disconnect</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="map_view">Map View</string>
+    <string name="list_view">List View</string>
+    <string name="workmates">Workmates</string>
 </resources>

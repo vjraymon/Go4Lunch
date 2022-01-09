@@ -1,30 +1,33 @@
 package com.openclassrooms.go4lunch.ui;
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 import com.openclassrooms.go4lunch.R;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-
-    private void onClick(View view) {
-
-    }
+    private ArrayList<String> data = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        data.add(getApplicationContext().getString(R.string.map_view));
+        data.add(getApplicationContext().getString(R.string.list_view));
+        data.add(getApplicationContext().getString(R.string.workmates));
         setContentView(R.layout.activity_main);
         startSignInActivity();
     }
@@ -56,18 +59,28 @@ public class MainActivity extends AppCompatActivity {
 //      IdpResponse response = result.getIdpResponse();
         if (result.getResultCode() == RESULT_OK) {
 //          FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            Button mDisconnectButton = findViewById(R.id.main_disconnect_button);
-
-            extracted(mDisconnectButton);
+            //3 - Configure ViewPager
+            this.configureViewPager();
         } else {
             finish();
         }
 
     }
 
-    private void extracted(Button mDisconnectButton) {
-        mDisconnectButton.setOnClickListener(v -> {
-
-        });
+    private void configureViewPager(){
+        // 1 - Get ViewPager from layout
+        ViewPager2 page = findViewById(R.id.activity_main_viewpager);
+        page.setAdapter(
+                new PageAdapter(this)
+        );
+        TabLayout blankTabLayout = findViewById(R.id.blank_tabLayout);
+        new TabLayoutMediator(
+                blankTabLayout,
+                page,
+                (tab, position) -> {
+                    tab.setText(data.get(position));
+//                    tab.setIcon(R.drawable.ic_launcher_foreground);
+                }
+        ).attach();
     }
 }
