@@ -7,7 +7,7 @@ android {
 
     defaultConfig {
         applicationId "com.openclassrooms.go4lunch"
-        minSdk 30
+        minSdk 21
         targetSdk 31
         versionCode 1
         versionName "1.0"
@@ -34,6 +34,7 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0'
+    implementation 'com.google.android.gms:play-services-location:19.0.1'
     def fragment_version = "1.4.0"
     implementation "androidx.fragment:fragment:$fragment_version"
     implementation "androidx.viewpager2:viewpager2:1.0.0"

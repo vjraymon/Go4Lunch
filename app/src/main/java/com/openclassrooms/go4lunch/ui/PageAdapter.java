@@ -32,10 +32,11 @@ public class PageAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
- //       if (position == 0) {
- //           return new MapsFragment();
- //       } else {
-            return new BlankFragment(data[position]);
- //       }
+/*
+        if (position == 0) {
+            return new MapsFragment();
+        }
+*/
+        return new BlankFragment(data[position]);
     }
 }
