@@ -7,6 +7,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
         data.add(getApplicationContext().getString(R.string.list_view));
         data.add(getApplicationContext().getString(R.string.workmates));
         setContentView(R.layout.activity_main);
+        Log.i("TestPlace", "startSignInActivity()");
         startSignInActivity();
     }
 

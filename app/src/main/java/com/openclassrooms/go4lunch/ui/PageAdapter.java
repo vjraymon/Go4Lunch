@@ -1,6 +1,8 @@
 package com.openclassrooms.go4lunch.ui;
 
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -32,11 +34,13 @@ public class PageAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-/*
+        Log.i("TestPlace", "createFragment" + position);
+
         if (position == 0) {
+            Log.i("TestPlace", "return MapsFragment");
             return new MapsFragment();
         }
-*/
+
         return new BlankFragment(data[position]);
     }
 }
