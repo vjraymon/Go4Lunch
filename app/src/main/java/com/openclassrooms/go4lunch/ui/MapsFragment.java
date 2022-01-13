@@ -127,18 +127,17 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     private ActivityResultLauncher<String> permissionResult = registerForActivityResult(
             new ActivityResultContracts.RequestPermission(),
             result -> {
+//                Log.i("TestPlace", "ActivityResult " + result);
                 locationPermissionGranted = result;
-                updateLocationUI();
+//                updateLocationUI();
             });
 
     private void getLocationPermission() {
-        Log.i("TestPlace", "ActivityCompat.checkSelfPermission");
         if (ContextCompat.checkSelfPermission(Objects.requireNonNull(getContext()), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             locationPermissionGranted = true;
         } else {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
-            Log.i("TestPlace", "ActivityCompat.requestPermissions");
 //            ActivityCompat.requestPermissions(Objects.requireNonNull(getActivity()),
 //                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
 //                    PERMISSION_REQUEST_ACCESS_FINE_LOCATION);
@@ -165,9 +164,14 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     }
 */
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(@NonNull GoogleMap googleMap) {
         map = googleMap;
+        Log.i("TestPlace", "first getLocationPermission()");
         getLocationPermission();
+        while (!locationPermissionGranted) {
+            updateLocationUI();
+        }
+        Log.i("TestPlace", "last updateLocationUI()");
         updateLocationUI();
         LatLng sydney = new LatLng(-34, 151);
         googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
@@ -210,7 +214,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         Places.initialize(Objects.requireNonNull(getContext()), getString(R.string.google_maps_key));
         Log.i("TestPlace", "Places.createClient");
         placesClient = Places.createClient(Objects.requireNonNull(getActivity()));
-        Log.i("TestPlace", "getDeviceLocation");
+        Log.i("TestPlace", "getFusedLocationProviderClient");
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
 
         Log.i("TestPlace", "add fragment");
