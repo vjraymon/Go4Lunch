@@ -2,6 +2,10 @@ package com.openclassrooms.go4lunch.ui;
 
 import static com.google.android.libraries.places.api.model.Place.Field.NAME;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContract;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -56,15 +60,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     private GoogleMap map;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private PlacesClient placesClient;
-    private List<AutocompletePrediction> predictionList;
 
     private Location lastKnownLocation;
-    private LocationCallback locationCallback;
 
     private static final int DEFAULT_ZOOM = 15;
-    private CameraPosition cameraPosition;
-
-    private View mapView;
 
     private boolean locationPermissionGranted = false;
     private static final int PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1;
@@ -77,26 +76,23 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                 Log.i("TestPlace", "locationPermissionGranted");
                 Task<Location> locationResult = fusedLocationProviderClient.getLastLocation();
                 Log.i("TestPlace", "addOnCompleteListener call");
-                locationResult.addOnCompleteListener(getActivity(), new OnCompleteListener<Location>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Location> location) {
-                        Log.i("TestPlace", "onComplete");
-                        if (locationResult.isSuccessful()) {
-                            Log.i("TestPlace", "task.isSuccessful()");
-                            lastKnownLocation = location.getResult();
-                            if (lastKnownLocation != null) {
-                                Log.i("TestPlace", "map.moveCamera");
-                                map.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                                        new LatLng(lastKnownLocation.getLatitude(),
-                                                lastKnownLocation.getLongitude()),
-                                        DEFAULT_ZOOM
-                                        )
-                                );
-                                showCurrentPlace();
-                            } else {
-                                Log.i("TestPlace", "Current location is null");
-                                map.getUiSettings().setMyLocationButtonEnabled(false);
-                            }
+                locationResult.addOnCompleteListener(Objects.requireNonNull(getActivity()), location -> {
+                    Log.i("TestPlace", "onComplete");
+                    if (locationResult.isSuccessful()) {
+                        Log.i("TestPlace", "task.isSuccessful()");
+                        lastKnownLocation = location.getResult();
+                        if (lastKnownLocation != null) {
+                            Log.i("TestPlace", "map.moveCamera");
+                            map.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                                    new LatLng(lastKnownLocation.getLatitude(),
+                                            lastKnownLocation.getLongitude()),
+                                    DEFAULT_ZOOM
+                                    )
+                            );
+                            showCurrentPlace();
+                        } else {
+                            Log.i("TestPlace", "Current location is null");
+                            map.getUiSettings().setMyLocationButtonEnabled(false);
                         }
                     }
                 });
@@ -127,17 +123,26 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 */
+
+    private ActivityResultLauncher<String> permissionResult = registerForActivityResult(
+            new ActivityResultContracts.RequestPermission(),
+            result -> {
+                locationPermissionGranted = result;
+                updateLocationUI();
+            });
+
     private void getLocationPermission() {
         Log.i("TestPlace", "ActivityCompat.checkSelfPermission");
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(Objects.requireNonNull(getContext()), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             locationPermissionGranted = true;
         } else {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             Log.i("TestPlace", "ActivityCompat.requestPermissions");
-            ActivityCompat.requestPermissions(getActivity(),
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    PERMISSION_REQUEST_ACCESS_FINE_LOCATION);
+//            ActivityCompat.requestPermissions(Objects.requireNonNull(getActivity()),
+//                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+//                    PERMISSION_REQUEST_ACCESS_FINE_LOCATION);
+            permissionResult.launch(Manifest.permission.ACCESS_FINE_LOCATION);
             // here to request the missing permissions, and then overriding
             //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
             //                                          int[] grantResults)
@@ -145,22 +150,20 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
             // for ActivityCompat#requestPermissions for more details.
         }
     }
-
+/*
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         locationPermissionGranted = false;
-        switch (requestCode) {
-            case PERMISSION_REQUEST_ACCESS_FINE_LOCATION: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    locationPermissionGranted = true;
-                }
+        if (requestCode == PERMISSION_REQUEST_ACCESS_FINE_LOCATION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                locationPermissionGranted = true;
             }
         }
         updateLocationUI();
     }
-
+*/
     @Override
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
@@ -197,17 +200,16 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View mapView = inflater.inflate(R.layout.fragment_maps, container, false);
-        return mapView;
+        return inflater.inflate(R.layout.fragment_maps, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.i("TestPlace", "Places.initialize");
-        Places.initialize(getContext(), getString(R.string.google_maps_key));
+        Places.initialize(Objects.requireNonNull(getContext()), getString(R.string.google_maps_key));
         Log.i("TestPlace", "Places.createClient");
-        placesClient = Places.createClient(getActivity());
+        placesClient = Places.createClient(Objects.requireNonNull(getActivity()));
         Log.i("TestPlace", "getDeviceLocation");
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
 
@@ -251,12 +253,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                     (response) -> {
                         if (response.isSuccessful() && response.getResult() != null) {
                             FindCurrentPlaceResponse likelyPlaces = response.getResult();
-                            int count;
-                            if (likelyPlaces.getPlaceLikelihoods().size() < M_MAX_ENTRIES) {
-                                count = likelyPlaces.getPlaceLikelihoods().size();
-                            } else {
-                                count = M_MAX_ENTRIES;
-                            }
+//                            int count = Math.min(likelyPlaces.getPlaceLikelihoods().size(), M_MAX_ENTRIES);
                             for (PlaceLikelihood placeLikelihood : likelyPlaces.getPlaceLikelihoods()) {
                                 Log.i("TestPlace", "location = " + placeLikelihood.getPlace().getName());
                             }

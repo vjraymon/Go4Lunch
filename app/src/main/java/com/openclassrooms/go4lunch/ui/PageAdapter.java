@@ -10,20 +10,13 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-public class PageAdapter extends FragmentStateAdapter {
+public class
+PageAdapter extends FragmentStateAdapter {
 
     private String [] data = {"A", "B", "C"};
 
     public PageAdapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);
-    }
-
-    public PageAdapter(@NonNull Fragment fragment) {
-        super(fragment);
-    }
-
-    public PageAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle) {
-        super(fragmentManager, lifecycle);
     }
 
     @Override
