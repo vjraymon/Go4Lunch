@@ -55,6 +55,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+// Adaptation from https://developers.google.com/maps/documentation/android-sdk/current-place-tutorial?hl=fr
 public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
     private GoogleMap map;
