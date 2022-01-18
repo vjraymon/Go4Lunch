@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
         page.setAdapter(
                 new PageAdapter(this)
         );
+        page.setUserInputEnabled(false);
         TabLayout blankTabLayout = findViewById(R.id.blank_tabLayout);
         new TabLayoutMediator(
                 blankTabLayout,

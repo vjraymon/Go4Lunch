@@ -28,12 +28,14 @@ PageAdapter extends FragmentStateAdapter {
     @Override
     public Fragment createFragment(int position) {
         Log.i("TestPlace", "createFragment" + position);
-/*
+
         if (position == 0) {
             Log.i("TestPlace", "return MapsFragment");
+
+
             return new MapsFragment();
         }
-*/
+
         if (position == 1) {
             Log.i("TestPlace", "return MapsFragment");
             return RestaurantFragment.newInstance(position);

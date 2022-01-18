@@ -1,6 +1,8 @@
 package com.openclassrooms.go4lunch.ui;
 
+import static android.content.Context.LOCATION_SERVICE;
 import static com.google.android.libraries.places.api.model.Place.Field.NAME;
+import static com.google.android.libraries.places.api.model.Place.Type.RESTAURANT;
 
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -18,6 +20,8 @@ import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.location.LocationRequest;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -49,7 +53,10 @@ import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest;
 import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.openclassrooms.go4lunch.R;
+import com.openclassrooms.go4lunch.model.Restaurant;
+import com.openclassrooms.go4lunch.repositoy.RestaurantRepository;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -59,7 +66,7 @@ import java.util.Objects;
 public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
     private GoogleMap map;
-    private FusedLocationProviderClient fusedLocationProviderClient;
+//    private FusedLocationProviderClient fusedLocationProviderClient;
     private PlacesClient placesClient;
 
     private Location lastKnownLocation;
@@ -68,12 +75,55 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
     private boolean locationPermissionGranted = false;
     private static final int PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1;
-    private static final int M_MAX_ENTRIES = 5;
 
-    // Gets the current location of the device
+    private RestaurantRepository restaurantRepository;
+
+    private LocationManager objgps;
+    private LocationListener objlistener;
+
+    /** Called when the activity is first created. */
+    private void initGps() {
+        //---utilisation  de la class LocationManager pour le gps---
+        objgps = (LocationManager) Objects.requireNonNull(getActivity()).getSystemService(LOCATION_SERVICE);
+        //*************ecouteur ou listener*********************
+        objlistener = new Myobjlistener();
+    }
+
+    private class Myobjlistener implements LocationListener {
+        public void onProviderDisabled(String provider) {
+            // TODO Auto-generated method stub
+        }
+        public void onProviderEnabled(String provider) {
+            // TODO Auto-generated method stub
+        }
+        public void onStatusChanged(String provider, int status,
+                                    Bundle extras) {
+            // TODO Auto-generated method stub
+        }
+        public void onLocationChanged(Location location) {
+
+            //affichage des valeurs dans la les zone de saisie
+            //           mTxtViewlat.setText(" "+location.getLatitude());
+            //           mTxtViewlong.setText(" "+location.getLongitude());
+            lastKnownLocation = location;
+            if (lastKnownLocation != null) {
+                Log.i("TestPlace", "map.moveCamera");
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                        new LatLng(lastKnownLocation.getLatitude(),
+                                lastKnownLocation.getLongitude()),
+                        DEFAULT_ZOOM
+                        )
+                );
+                showCurrentPlace();
+            }
+        }
+    }
+
+
     private void getDeviceLocation() {
         try {
-            if (locationPermissionGranted) {
+            if (locationPermissionGranted)  {
+ /*
                 Log.i("TestPlace", "locationPermissionGranted");
                 Task<Location> locationResult = fusedLocationProviderClient.getLastLocation();
                 Log.i("TestPlace", "addOnCompleteListener call");
@@ -97,7 +147,12 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                         }
                     }
                 });
-
+*/
+                objgps.requestLocationUpdates(
+                        LocationManager.GPS_PROVIDER,
+                        10*1000,
+                        5.0F,
+                        objlistener);
             }
         } catch (SecurityException e) {
             Log.i("TestPlace", "Exception");
@@ -167,6 +222,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         map = googleMap;
+        initGps();
         Log.i("TestPlace", "first getLocationPermission()");
         getLocationPermission();
         while (!locationPermissionGranted) {
@@ -187,6 +243,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         try {
             if (locationPermissionGranted) {
                 map.setMyLocationEnabled(true);
+                // button focus on the map
                 map.getUiSettings().setMyLocationButtonEnabled(true);
             } else {
                 map.setMyLocationEnabled(false);
@@ -211,12 +268,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Log.i("TestPlace", "Places.initialize");
-        Places.initialize(Objects.requireNonNull(getContext()), getString(R.string.google_maps_key));
-        Log.i("TestPlace", "Places.createClient");
-        placesClient = Places.createClient(Objects.requireNonNull(getActivity()));
-        Log.i("TestPlace", "getFusedLocationProviderClient");
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
+        restaurantRepository = new RestaurantRepository(getContext());
+        //       Log.i("TestPlace", "getFusedLocationProviderClient");
+        //       fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
 
         Log.i("TestPlace", "add fragment");
         SupportMapFragment mapFragment =
@@ -241,33 +295,22 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 */
+    List<Restaurant> restaurants = new ArrayList<>();
     private void showCurrentPlace() {
         if (map == null) {
             return;
         }
         if (locationPermissionGranted) {
-            List<Place.Field> placeFields = Arrays.asList(
-                    Place.Field.NAME,
-                    Place.Field.ADDRESS,
-                    Place.Field.LAT_LNG
-            );
-            FindCurrentPlaceRequest request = FindCurrentPlaceRequest.newInstance(placeFields);
-            Log.i("TestPlace", "placesClient.findCurrentPlace");
-            @SuppressLint("MissingPermission") final Task<FindCurrentPlaceResponse> placeResult = placesClient.findCurrentPlace(request);
-            placeResult.addOnCompleteListener(
-                    (response) -> {
-                        if (response.isSuccessful() && response.getResult() != null) {
-                            FindCurrentPlaceResponse likelyPlaces = response.getResult();
-//                            int count = Math.min(likelyPlaces.getPlaceLikelihoods().size(), M_MAX_ENTRIES);
-                            for (PlaceLikelihood placeLikelihood : likelyPlaces.getPlaceLikelihoods()) {
-                                Log.i("TestPlace", "location = " + placeLikelihood.getPlace().getName());
-                            }
-                        } else {
-                            Log.i("TestPlace", "incorrect response");
-                        }
-                    }
-            );
+            restaurantRepository.getRestaurants().observe(this, this::updateRestaurantsList);
         }
     }
+    private void updateRestaurantsList(List<Restaurant> restaurants) {
+        this.restaurants = restaurants;
+        for (Restaurant restaurant : restaurants) {
+            Log.i("TestPlace", "location retrieved = " + restaurant.getName());
+        }
+        Log.i("TestPlace", "end of location retrieved");
+    }
+
 
 }
