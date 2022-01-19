@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import android.view.ViewGroup;
 import com.openclassrooms.go4lunch.R;
 import com.openclassrooms.go4lunch.di.DiRestaurant;
 import com.openclassrooms.go4lunch.model.Restaurant;
+import com.openclassrooms.go4lunch.repositoy.RestaurantRepository;
 import com.openclassrooms.go4lunch.service.RestaurantApiService;
 
 import java.util.List;
@@ -24,7 +26,9 @@ import java.util.List;
  */
 public class RestaurantFragment extends Fragment {
 
-    private RestaurantApiService mApiService;
+    private RestaurantRepository restaurantRepository;
+
+//    private RestaurantApiService mApiService;
     private List<Restaurant> restaurants;
 
     // TODO: Customize parameter argument names
@@ -56,29 +60,38 @@ public class RestaurantFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mApiService = DiRestaurant.getRestaurantApiService();
+ //       mApiService = DiRestaurant.getRestaurantApiService();
+        restaurantRepository = RestaurantRepository.getRestaurantRepository(getContext());
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
     }
 
+    RecyclerView recyclerView;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_restaurant_list, container, false);
 
-        restaurants = mApiService.getRestaurants();
-        // Set the adapter
+//        restaurants = mApiService.getRestaurants();
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
+            recyclerView = (RecyclerView) view;
             if (mColumnCount <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyRestaurantRecyclerViewAdapter(restaurants));
+            restaurantRepository.getRestaurants().observe(this, this::updateRestaurantsList);
         }
         return view;
+    }
+    private void updateRestaurantsList(List<Restaurant> restaurants) {
+        this.restaurants = restaurants;
+        for (Restaurant restaurant : restaurants) {
+            Log.i("TestPlace", "location list retrieved = " + restaurant.getName());
+        }
+        Log.i("TestPlace", "end of location list retrieved");
+        recyclerView.setAdapter(new MyRestaurantRecyclerViewAdapter(restaurants));
     }
 }

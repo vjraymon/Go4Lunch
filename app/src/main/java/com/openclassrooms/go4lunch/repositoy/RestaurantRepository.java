@@ -18,6 +18,8 @@ import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.openclassrooms.go4lunch.R;
 import com.openclassrooms.go4lunch.model.Restaurant;
+import com.openclassrooms.go4lunch.service.DummyRestaurantApiService;
+import com.openclassrooms.go4lunch.service.RestaurantApiService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,6 +27,18 @@ import java.util.List;
 import java.util.Objects;
 
 public class RestaurantRepository {
+    private static RestaurantRepository service;
+
+    /**
+     * Get an instance on RestaurantRepository
+     */
+    public static RestaurantRepository getRestaurantRepository(Context context) {
+        if (service == null) {
+            service = new RestaurantRepository(context);
+        }
+        return service;
+    }
+
     private PlacesClient placesClient;
     private static final int M_MAX_ENTRIES = 5;
 
@@ -74,10 +88,10 @@ public class RestaurantRepository {
                                 restaurants.add(restaurant);
                             }
                         }
+                        select(restaurants);
                     } else {
                         Log.i("TestPlace", "incorrect response");
                     }
-                    select(restaurants);
                 }
         );
 

@@ -38,6 +38,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
@@ -268,7 +269,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        restaurantRepository = new RestaurantRepository(getContext());
+        restaurantRepository = RestaurantRepository.getRestaurantRepository(getContext());
         //       Log.i("TestPlace", "getFusedLocationProviderClient");
         //       fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
 
@@ -308,6 +309,11 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         this.restaurants = restaurants;
         for (Restaurant restaurant : restaurants) {
             Log.i("TestPlace", "location retrieved = " + restaurant.getName());
+            map.addMarker(new MarkerOptions()
+                    .position(restaurant.getLatLng())
+                    .title(restaurant.getName())
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+
         }
         Log.i("TestPlace", "end of location retrieved");
     }
