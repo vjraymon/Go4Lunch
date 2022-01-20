@@ -3,6 +3,7 @@ package com.openclassrooms.go4lunch.ui;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,12 +45,20 @@ public class MyRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<MyRest
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final TextView mIdView;
         public final TextView mContentView;
+        public final View mView;
         public Restaurant restaurant;
 
         public ViewHolder(@NonNull FragmentRestaurantBinding binding) {
             super(binding.getRoot());
             mIdView = binding.itemNumber;
             mContentView = binding.content;
+            mView = binding.getRoot();
+            mView.setOnClickListener(v -> {
+                Log.i("TestPlace", "click sur un element");
+//                    v.setEnabled(false);
+//                    EventBus.getDefault().post(new DisplayRestaurantEvent(restaurant));
+//                    DisplayRestaurantActivity.navigate(this, restaurant);
+            });
         }
 
         @NonNull
