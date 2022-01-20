@@ -14,10 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.openclassrooms.go4lunch.R;
-import com.openclassrooms.go4lunch.di.DiRestaurant;
 import com.openclassrooms.go4lunch.model.Restaurant;
-import com.openclassrooms.go4lunch.repositoy.RestaurantRepository;
-import com.openclassrooms.go4lunch.service.RestaurantApiService;
+import com.openclassrooms.go4lunch.repository.RestaurantRepository;
 
 import java.util.List;
 

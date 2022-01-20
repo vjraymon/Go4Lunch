@@ -3,6 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Jean-Raymond/Documents/OpenClassrooms/Go4Lunch/app/src/main/res/layout/fragment_restaurant.xml" value="0.37771739130434784" />
+        <entry key="..\:/Jean-Raymond/Documents/OpenClassrooms/Go4Lunch/app/src/main/res/layout/fragment_restaurant_list.xml" value="0.37771739130434784" />
+        <entry key="..\:/Jean-Raymond/Documents/OpenClassrooms/Go4Lunch/app/src/main/res/layout/fragment_workmate.xml" value="0.37771739130434784" />
+        <entry key="..\:/Jean-Raymond/Documents/OpenClassrooms/Go4Lunch/app/src/main/res/layout/fragment_workmate_list.xml" value="0.37771739130434784" />
         <entry key="..\:/Users/vjray/Documents/Open ClassRoom/Go4Lunch/app/src/main/res/layout/activity_main.xml" value="0.2" />
         <entry key="..\:/Users/vjray/Documents/Open ClassRoom/Go4Lunch/app/src/main/res/layout/activity_profile.xml" value="0.1" />
         <entry key="..\:/Users/vjray/Documents/Open ClassRoom/Go4Lunch/app/src/main/res/layout/blank_fragment.xml" value="0.4" />

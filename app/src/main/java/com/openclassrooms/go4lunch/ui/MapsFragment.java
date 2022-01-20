@@ -1,65 +1,38 @@
 package com.openclassrooms.go4lunch.ui;
 
 import static android.content.Context.LOCATION_SERVICE;
-import static com.google.android.libraries.places.api.model.Place.Field.NAME;
-import static com.google.android.libraries.places.api.model.Place.Type.RESTAURANT;
 
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContract;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.location.LocationRequest;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.AutocompletePrediction;
-import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.model.PlaceLikelihood;
-import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest;
-import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.openclassrooms.go4lunch.R;
 import com.openclassrooms.go4lunch.model.Restaurant;
-import com.openclassrooms.go4lunch.repositoy.RestaurantRepository;
+import com.openclassrooms.go4lunch.repository.RestaurantRepository;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -84,9 +57,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
     /** Called when the activity is first created. */
     private void initGps() {
-        //---utilisation  de la class LocationManager pour le gps---
         objgps = (LocationManager) Objects.requireNonNull(getActivity()).getSystemService(LOCATION_SERVICE);
-        //*************ecouteur ou listener*********************
         objlistener = new Myobjlistener();
     }
 
@@ -102,10 +73,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
             // TODO Auto-generated method stub
         }
         public void onLocationChanged(Location location) {
-
-            //affichage des valeurs dans la les zone de saisie
-            //           mTxtViewlat.setText(" "+location.getLatitude());
-            //           mTxtViewlong.setText(" "+location.getLongitude());
             lastKnownLocation = location;
             if (lastKnownLocation != null) {
                 Log.i("TestPlace", "map.moveCamera");
@@ -317,6 +284,4 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         }
         Log.i("TestPlace", "end of location retrieved");
     }
-
-
 }

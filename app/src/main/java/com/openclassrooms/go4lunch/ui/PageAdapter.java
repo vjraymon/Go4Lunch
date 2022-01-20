@@ -31,14 +31,17 @@ PageAdapter extends FragmentStateAdapter {
 
         if (position == 0) {
             Log.i("TestPlace", "return MapsFragment");
-
-
             return new MapsFragment();
         }
 
         if (position == 1) {
-            Log.i("TestPlace", "return MapsFragment");
+            Log.i("TestPlace", "return RestaurantFragment");
             return RestaurantFragment.newInstance(position);
+        }
+
+        if (position == 2) {
+            Log.i("TestPlace", "return WorkmateFragment");
+            return WorkmateFragment.newInstance(position);
         }
 
         return new BlankFragment(data[position]);

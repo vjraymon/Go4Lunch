@@ -1,4 +1,4 @@
-package com.openclassrooms.go4lunch.repositoy;
+package com.openclassrooms.go4lunch.repository;
 
 import static com.google.android.libraries.places.api.model.Place.Type.RESTAURANT;
 
@@ -18,8 +18,6 @@ import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.openclassrooms.go4lunch.R;
 import com.openclassrooms.go4lunch.model.Restaurant;
-import com.openclassrooms.go4lunch.service.DummyRestaurantApiService;
-import com.openclassrooms.go4lunch.service.RestaurantApiService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
