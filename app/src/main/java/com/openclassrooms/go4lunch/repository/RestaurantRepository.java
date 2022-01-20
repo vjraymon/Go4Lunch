@@ -9,6 +9,7 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
@@ -18,6 +19,7 @@ import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.openclassrooms.go4lunch.R;
 import com.openclassrooms.go4lunch.model.Restaurant;
+import com.openclassrooms.go4lunch.model.Workmate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -94,5 +96,19 @@ public class RestaurantRepository {
         );
 
         return this.restaurants;
+    }
+
+    public Restaurant getRestaurantByLatLng(LatLng id) {
+        List<Restaurant> restaurants = this.restaurants.getValue();
+        if (restaurants == null)
+        {
+            restaurants = new ArrayList<>();
+        }
+        for (Restaurant i: restaurants) {
+            if (id.equals(i.getLatLng())) {
+                return i;
+            }
+        }
+        return null;
     }
 }

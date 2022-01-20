@@ -1,5 +1,7 @@
 package com.openclassrooms.go4lunch.ui;
 
+import static org.greenrobot.eventbus.EventBus.getDefault;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -11,7 +13,11 @@ import android.widget.TextView;
 
 import com.openclassrooms.go4lunch.R;
 import com.openclassrooms.go4lunch.databinding.FragmentRestaurantBinding;
+import com.openclassrooms.go4lunch.events.DisplayRestaurantEvent;
 import com.openclassrooms.go4lunch.model.Restaurant;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
 
@@ -55,9 +61,10 @@ public class MyRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<MyRest
             mView = binding.getRoot();
             mView.setOnClickListener(v -> {
                 Log.i("TestPlace", "click sur un element");
-//                    v.setEnabled(false);
-//                    EventBus.getDefault().post(new DisplayRestaurantEvent(restaurant));
-//                    DisplayRestaurantActivity.navigate(this, restaurant);
+                    v.setEnabled(false);
+                    EventBus.getDefault().post(new DisplayRestaurantEvent(restaurant));
+                Log.i("TestPlace", "id = (" + restaurant.getLatLng().latitude + "," + restaurant.getLatLng().longitude + ")");
+ //               DisplayRestaurantActivity.navigate(v.getContext(), restaurant);
             });
         }
 

@@ -15,6 +15,10 @@ import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.openclassrooms.go4lunch.R;
+import com.openclassrooms.go4lunch.events.DisplayRestaurantEvent;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -85,5 +89,16 @@ public class MainActivity extends AppCompatActivity {
 //                    tab.setIcon(R.drawable.ic_launcher_foreground);
                 }
         ).attach();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+    @Subscribe
+    public void onDisplayRestaurant(DisplayRestaurantEvent event) {
+        Log.i("TestPlace", "id = (" + event.restaurant.getLatLng().latitude + "," + event.restaurant.getLatLng().longitude + ")");
+        DisplayRestaurantActivity.navigate(this, event.restaurant);
     }
 }
