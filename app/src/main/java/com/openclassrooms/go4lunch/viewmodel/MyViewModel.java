@@ -3,6 +3,7 @@ package com.openclassrooms.go4lunch.viewmodel;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -15,6 +16,7 @@ import com.openclassrooms.go4lunch.repository.WorkmateRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MyViewModel extends ViewModel {
 /*
@@ -41,25 +43,41 @@ public class MyViewModel extends ViewModel {
         workmateRepository.addWorkmate(myself);
     }
 
+    public void initForTest() {
+        Log.i("TestsJoin", "begin initForTest()");
+        workmateRepository.setRestaurant(
+                Objects.requireNonNull(workmateRepository.getWorkmates().getValue()).get(2),
+                Objects.requireNonNull(restaurantRepository.getRestaurants().getValue()).get(1));
+    }
+
     public Restaurant getRestaurantByLatLng(List<Restaurant> restaurants, LatLng id) {
-        if ((restaurants == null) || (id == null))
-        {
+//        List<Restaurant> restaurants = restaurantRepository.getRestaurants().getValue();
+        if ((restaurants == null) || (id == null)) {
+            if (restaurants == null)
+            {
+                Log.i("TestJoin","MyViewModel: getRestaurantByLatLng: restaurants null");
+            }
+            if (id == null) {
+                Log.i("TestJoin", "MyViewModel: getRestaurantByLatLng: id null");
+            }
             return null;
         }
         for (Restaurant i: restaurants) {
             if (i.getLatLng() == null) {
-                Log.i("TestPlace",i.getName() + " without LatLng");
+                Log.i("TestPlace","MyViewModel: getRestaurantByLatLng: " + i.getName() + " without LatLng");
             } else if (id.equals(i.getLatLng())) {
+                Log.i("TestJoin","MyViewModel: getRestaurantByLatLng: found restaurant");
                 return i;
             }
         }
+        Log.i("TestJoin","MyViewModel: getRestaurantByLatLng: restaurant not found");
         return null;
     }
 
     public void joinRestaurant(Restaurant restaurant) {
         // depending on the action, do necessary business logic calls and update the
         // userLiveData.
-        Log.i("TestPlace","click on join restaurant (MyViewModel)");
+        Log.i("TestJoin","click on join restaurant (MyViewModel)");
         workmateRepository.setRestaurant(myself, restaurant);
     }
 

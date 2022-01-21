@@ -90,6 +90,7 @@ public class RestaurantFragment extends Fragment {
         return view;
     }
     private void updateRestaurantsList(List<Restaurant> restaurants) {
+        Log.i("TestJoin", "RestaurantFragment: updateRestaurantsList");
         this.restaurants = restaurants;
         for (Restaurant restaurant : restaurants) {
             Log.i("TestPlace", "location list retrieved = " + restaurant.getName());

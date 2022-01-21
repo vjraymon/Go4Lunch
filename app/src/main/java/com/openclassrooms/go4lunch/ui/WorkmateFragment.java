@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.openclassrooms.go4lunch.R;
+import com.openclassrooms.go4lunch.model.Restaurant;
 import com.openclassrooms.go4lunch.model.Workmate;
 import com.openclassrooms.go4lunch.repository.WorkmateRepository;
 import com.openclassrooms.go4lunch.viewmodel.MyViewModel;
@@ -24,10 +25,11 @@ import java.util.List;
 
 public class WorkmateFragment extends Fragment {
 
-    private WorkmateRepository workmateRepository;
+//    private WorkmateRepository workmateRepository;
 
     //    private RestaurantApiService mApiService;
     private List<Workmate> workmates;
+    private List<Restaurant> restaurants;
 
     // TODO: Customize parameter argument names
     // As each 3 tabs are specific, these parameters might be irrelevant
@@ -54,15 +56,18 @@ public class WorkmateFragment extends Fragment {
         return fragment;
     }
 
+    MyViewModel myViewModel;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         //       mApiService = DiRestaurant.getRestaurantApiService();
 //        workmateRepository = getWorkmateRepository(getContext());
-        final MyViewModel myViewModel = new ViewModelProvider(this).get(MyViewModel.class);
+        myViewModel = new ViewModelProvider(this).get(MyViewModel.class);
         myViewModel.init(getContext());
         myViewModel.getWorkmates().observe(this, this::updateWorkmatesList);
+        myViewModel.getRestaurants().observe(this, this::updateRestaurantsList);
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
@@ -78,7 +83,7 @@ public class WorkmateFragment extends Fragment {
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
             recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
+            if (mColumnCount <= 2) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
@@ -88,11 +93,24 @@ public class WorkmateFragment extends Fragment {
         return view;
     }
     private void updateWorkmatesList(List<Workmate> workmates) {
+        Log.i("TestWork", "WorkmateFragment: updateWorkmatesList");
         this.workmates = workmates;
         for (Workmate workmate : workmates) {
             Log.i("TestPlace", "location list retrieved = " + workmate.getName());
         }
-        Log.i("TestPlace", "end of location list retrieved");
-        recyclerView.setAdapter(new MyWorkmateRecyclerViewAdapter(workmates));
+        Log.i("TestWork", "call recyclerView.setAdapter");
+        this.refresh();
     }
+    private void updateRestaurantsList(List<Restaurant> restaurants) {
+        Log.i("TestWork", "WorkmateFragment: updateRestaurantsList");
+        this.restaurants = restaurants;
+        this.refresh();
+    }
+    private void refresh() {
+        if ((workmates != null) && (restaurants != null) && (myViewModel != null)) {
+            Log.i("TestWork", "call recyclerView.setAdapter");
+            recyclerView.setAdapter(new MyWorkmateRecyclerViewAdapter(workmates, restaurants, myViewModel));
+        }
+    }
+
 }

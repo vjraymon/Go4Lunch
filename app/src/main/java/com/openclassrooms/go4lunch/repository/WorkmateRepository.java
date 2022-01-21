@@ -1,6 +1,7 @@
 package com.openclassrooms.go4lunch.repository;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -12,6 +13,7 @@ import com.openclassrooms.go4lunch.model.Workmate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class WorkmateRepository {
     private static WorkmateRepository service;
@@ -26,17 +28,19 @@ public class WorkmateRepository {
         return service;
     }
 
+    private List<Workmate> workmatesList = new ArrayList<>(
+            Arrays.asList(
+                    new Workmate("Caroline@gmail.com", "Caroline", null),
+                    new Workmate("Jack@gmail.com", "Jack", null),
+                    new Workmate("Emilie@gmail.com", "Emilie", null),
+                    new Workmate("Albert@gmail.com", "Albert", null)
+            )
+    );
+
     public WorkmateRepository(Context context) {
         // Default Workmate list for test
-        List<Workmate> workmates = new ArrayList<>(
-                Arrays.asList(
-                        new Workmate("Caroline@gmail.com", "Caroline", null),
-                        new Workmate("Jack@gmail.com", "Jack", null),
-                        new Workmate("Emilie@gmail.com", "Emilie", null)
-                )
-        );
 
-        select(workmates);
+        select(this.workmatesList);
     }
 
     private final MutableLiveData<List<Workmate>> workmates = new MutableLiveData<>();
@@ -66,19 +70,33 @@ public class WorkmateRepository {
     }
 
     public Boolean setRestaurant(Workmate workmate, Restaurant restaurant) {
-        List<Workmate> workmates = this.workmates.getValue();
-        if (workmates == null)
+ //       List<Workmate> workmates = this.workmates.getValue();
+        if (this.workmatesList == null)
         {
-            workmates = new ArrayList<>();
+            this.workmatesList = new ArrayList<>();
         }
-        for (Workmate i: workmates) {
+        for (Workmate i: this.workmatesList) {
             if (workmate.getEmail().equals(i.getEmail())) {
-                if (restaurant == null) {
-                    i.setRestaurant(null);
+                Log.i("TestJoin", "WorkmateRepository: setRestaurant: emails equals ");
+                if (i.getRestaurant() == null){
+                    if ((restaurant == null) || (restaurant.getLatLng() == null)) {
+                        Log.i("TestJoin", "WorkmateRepository: setRestaurant: target = source = null");
+                        return true;
+                    }
+                    Log.i("TestJoin", "WorkmateRepository: setRestaurant: target = null source = (" + restaurant.getLatLng().latitude + "," + restaurant.getLatLng().longitude + ")");
+                    i.setRestaurant(restaurant.getLatLng());
                 } else {
+                    if (restaurant == null) {
+                        Log.i("TestJoin", "WorkmateRepository: setRestaurant: target != source = null");
+                        i.setRestaurant(null);
+                    } else if (i.getRestaurant().equals(restaurant.getLatLng())) {
+                        Log.i("TestJoin", "WorkmateRepository: setRestaurant: null != target = source");
+                        return true;
+                    }
+                    Log.i("TestJoin", "WorkmateRepository: setRestaurant: null != target != source = (" + Objects.requireNonNull(restaurant).getLatLng().latitude + "," + restaurant.getLatLng().longitude + ")");
                     i.setRestaurant(restaurant.getLatLng());
                 }
-                select(workmates);
+                select(this.workmatesList);
                 return true;
             }
         }

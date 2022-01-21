@@ -47,7 +47,9 @@ public class RestaurantRepository {
         Places.initialize(Objects.requireNonNull(context), context.getString(R.string.google_maps_key));
         Log.i("TestPlace", "Places.createClient");
         placesClient = Places.createClient(Objects.requireNonNull(context));
+        getRestaurantsFromGooglePlace();
     }
+
     private final MutableLiveData<List<Restaurant>> restaurants = new MutableLiveData<>();
 
     public void select(List<Restaurant> item) {
@@ -55,6 +57,10 @@ public class RestaurantRepository {
     }
 
     public LiveData<List<Restaurant>> getRestaurants() {
+        return this.restaurants;
+    }
+
+    private void getRestaurantsFromGooglePlace() {
         List<Restaurant> restaurants = new ArrayList<>();
 
         List<Place.Field> placeFields = Arrays.asList(
@@ -94,7 +100,6 @@ public class RestaurantRepository {
                     }
                 }
         );
-
-        return this.restaurants;
     }
+
 }

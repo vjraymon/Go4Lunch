@@ -40,7 +40,7 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
     private List<Restaurant> restaurants;
     private boolean workmateInitialized = false;
     private boolean restaurantInitialized = false;
-
+    Button buttonRestaurantJoin;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,44 +55,57 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
         double mLongitude = getIntent().getDoubleExtra("keyLng", 0);
         currentId = new LatLng(mLatitude,mLongitude);
         Log.i("TestPlace", "id onCreate= (" + currentId.latitude + "," + currentId.longitude + ")");
+        buttonRestaurantJoin = findViewById(R.id.display_restaurant_join);
+
     }
 
     private void updateRestaurantsList(List<Restaurant> restaurants) {
+        Log.i("TestJoin", "DisplayRestaurantActivity: updateRestaurantsList");
         this.restaurants = restaurants;
         for (Restaurant restaurant : restaurants) {
             Log.i("TestPlace", "location list retrieved = " + restaurant.getName());
         }
         Log.i("TestPlace", "end of location list retrieved");
 
-        restaurant = myViewModel.getRestaurantByLatLng(restaurants, currentId);
-        if (restaurant == null) {
-            Log.i("TestPlace", "unknown restaurant ? (" + currentId.latitude + "," + currentId.longitude + ")");
+        this.restaurant = myViewModel.getRestaurantByLatLng(restaurants, this.currentId);
+        if (this.restaurant == null) {
+            Log.i("TestJoin", "unknown restaurant ? (" + this.currentId.latitude + "," + this.currentId.longitude + ")");
         } else {
-            Log.i("TestPlace", "restaurant " + restaurant.getName());
+            Log.i("TestJoin", "restaurant " + this.restaurant.getName());
         }
-        if (restaurant == null) {
+        if (this.restaurant == null) {
             return;
         }
+        Log.i("TestJoin", "call setDisplayJoin");
         restaurantInitialized = true;
-        setActivity();
+        setDisplayJoin();
     }
     private void updateWorkmatesList(List<Workmate> workmates) {
+        Log.i("TestJoin", "DisplayRestaurantActivity: updateWorkmatesList");
         this.workmates = workmates;
         for (Workmate workmate : workmates) {
             Log.i("TestPlace", "location list retrieved = " + workmate.getName());
         }
         Log.i("TestPlace", "end of location list retrieved");
+        Log.i("TestJoin", "call setDisplayJoin");
         workmateInitialized = true;
-        setActivity();
+        setDisplayJoin();
     }
 
-    private void setActivity() {
-        if (restaurantInitialized && workmateInitialized) {
+    private void setDisplayJoin() {
+        Log.i("TestJoin", "begin setDisplayJoin()");
+        if ((restaurantInitialized) && workmateInitialized) {
+            Log.i("TestsJoin", "enter setActivity()");
             Button buttonRestaurantJoin = findViewById(R.id.display_restaurant_join);
             buttonRestaurantJoin.setOnClickListener(v -> {
-                Log.i("TestPlace", "clicked on Add (");
-                myViewModel.joinRestaurant(restaurant);
+                Log.i("TestJoin", "clicked on Join (");
+                myViewModel.joinRestaurant(this.restaurant);
             });
+
+            //initialization for tests
+            myViewModel.initForTest();
+            restaurantInitialized = false;
+            workmateInitialized = false;
         }
     }
 }
