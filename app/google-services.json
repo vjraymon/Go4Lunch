@@ -51,6 +51,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "574432777793-bj7mkod71m8l8v3mjri1b24mopkoptcg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.openclassrooms.go4lunch",
+            "certificate_hash": "4d84bd9349c11c85cc607bc9df4f7639e7b750a6"
+          }
+        },
+        {
           "client_id": "574432777793-p8me9bg12ambio0iuvrvl0ugmkg5lavm.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

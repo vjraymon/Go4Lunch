@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -31,6 +32,7 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 import com.openclassrooms.go4lunch.R;
 import com.openclassrooms.go4lunch.model.Restaurant;
 import com.openclassrooms.go4lunch.repository.RestaurantRepository;
+import com.openclassrooms.go4lunch.viewmodel.MyViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +52,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     private boolean locationPermissionGranted = false;
     private static final int PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1;
 
-    private RestaurantRepository restaurantRepository;
+//    private RestaurantRepository restaurantRepository;
 
     private LocationManager objgps;
     private LocationListener objlistener;
@@ -233,10 +235,14 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         return inflater.inflate(R.layout.fragment_maps, container, false);
     }
 
+    MyViewModel myViewModel;
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        restaurantRepository = RestaurantRepository.getRestaurantRepository(getContext());
+//        restaurantRepository = RestaurantRepository.getRestaurantRepository(getContext());
+        myViewModel = new ViewModelProvider(this).get(MyViewModel.class);
+        myViewModel.init(getContext());
         //       Log.i("TestPlace", "getFusedLocationProviderClient");
         //       fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
 
@@ -269,7 +275,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
             return;
         }
         if (locationPermissionGranted) {
-            restaurantRepository.getRestaurants().observe(this, this::updateRestaurantsList);
+  //          restaurantRepository.getRestaurants().observe(this, this::updateRestaurantsList);
+            myViewModel.getRestaurants().observe(this, this::updateRestaurantsList);
         }
     }
     private void updateRestaurantsList(List<Restaurant> restaurants) {

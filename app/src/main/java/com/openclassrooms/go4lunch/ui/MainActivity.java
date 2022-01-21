@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
     }
     @Subscribe
     public void onDisplayRestaurant(DisplayRestaurantEvent event) {
-        Log.i("TestPlace", "id = (" + event.restaurant.getLatLng().latitude + "," + event.restaurant.getLatLng().longitude + ")");
+        Log.i("TestPlace", "id onDisplayRestaurant = (" + event.restaurant.getLatLng().latitude + "," + event.restaurant.getLatLng().longitude + ")");
         DisplayRestaurantActivity.navigate(this, event.restaurant);
     }
 }

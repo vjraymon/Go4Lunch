@@ -97,18 +97,4 @@ public class RestaurantRepository {
 
         return this.restaurants;
     }
-
-    public Restaurant getRestaurantByLatLng(LatLng id) {
-        List<Restaurant> restaurants = this.restaurants.getValue();
-        if (restaurants == null)
-        {
-            restaurants = new ArrayList<>();
-        }
-        for (Restaurant i: restaurants) {
-            if (id.equals(i.getLatLng())) {
-                return i;
-            }
-        }
-        return null;
-    }
 }

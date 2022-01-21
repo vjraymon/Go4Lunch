@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import com.openclassrooms.go4lunch.R;
 import com.openclassrooms.go4lunch.model.Restaurant;
 import com.openclassrooms.go4lunch.repository.RestaurantRepository;
+import com.openclassrooms.go4lunch.viewmodel.MyViewModel;
 
 import java.util.List;
 
@@ -24,7 +26,7 @@ import java.util.List;
  */
 public class RestaurantFragment extends Fragment {
 
-    private RestaurantRepository restaurantRepository;
+//    private RestaurantRepository restaurantRepository;
 
 //    private RestaurantApiService mApiService;
     private List<Restaurant> restaurants;
@@ -59,7 +61,10 @@ public class RestaurantFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
  //       mApiService = DiRestaurant.getRestaurantApiService();
-        restaurantRepository = RestaurantRepository.getRestaurantRepository(getContext());
+//        restaurantRepository = RestaurantRepository.getRestaurantRepository(getContext());
+        final MyViewModel myViewModel = new ViewModelProvider(this).get(MyViewModel.class);
+        myViewModel.init(getContext());
+        myViewModel.getRestaurants().observe(this, this::updateRestaurantsList);
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
@@ -80,7 +85,7 @@ public class RestaurantFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            restaurantRepository.getRestaurants().observe(this, this::updateRestaurantsList);
+ //           restaurantRepository.getRestaurants().observe(this, this::updateRestaurantsList);
         }
         return view;
     }

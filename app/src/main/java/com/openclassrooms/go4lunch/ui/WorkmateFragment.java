@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.openclassrooms.go4lunch.R;
 import com.openclassrooms.go4lunch.model.Workmate;
 import com.openclassrooms.go4lunch.repository.WorkmateRepository;
+import com.openclassrooms.go4lunch.viewmodel.MyViewModel;
 
 import java.util.List;
 
@@ -57,9 +59,10 @@ public class WorkmateFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         //       mApiService = DiRestaurant.getRestaurantApiService();
-        workmateRepository = getWorkmateRepository(getContext());
-        Workmate myself = new Workmate("vjraymon@gmail.com", "Myself", null);
-        workmateRepository.addWorkmate(myself);
+//        workmateRepository = getWorkmateRepository(getContext());
+        final MyViewModel myViewModel = new ViewModelProvider(this).get(MyViewModel.class);
+        myViewModel.init(getContext());
+        myViewModel.getWorkmates().observe(this, this::updateWorkmatesList);
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
@@ -80,7 +83,7 @@ public class WorkmateFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            workmateRepository.getWorkmates().observe(this, this::updateWorkmatesList);
+//            workmateRepository.getWorkmates().observe(this, this::updateWorkmatesList);
         }
         return view;
     }
