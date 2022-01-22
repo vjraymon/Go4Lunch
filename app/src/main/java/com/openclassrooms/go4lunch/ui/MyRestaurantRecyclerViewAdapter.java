@@ -60,11 +60,10 @@ public class MyRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<MyRest
             mContentView = binding.content;
             mView = binding.getRoot();
             mView.setOnClickListener(v -> {
-                Log.i("TestPlace", "click sur un element");
+                Log.i("TestPlace", "click on an element");
                     v.setEnabled(false);
                     EventBus.getDefault().post(new DisplayRestaurantEvent(restaurant));
                 Log.i("TestPlace", "id = (" + restaurant.getLatLng().latitude + "," + restaurant.getLatLng().longitude + ")");
- //               DisplayRestaurantActivity.navigate(v.getContext(), restaurant);
             });
         }
 

@@ -74,6 +74,31 @@ public class MyViewModel extends ViewModel {
         return null;
     }
 
+    List<Workmate> workmatesByLatLng;
+    public List<Workmate> getWorkmatesByLatLng(List<Workmate> workmates, LatLng id) {
+        workmatesByLatLng = new ArrayList<>();
+        if ((workmates == null) || (id == null)) {
+            if (workmates == null)
+            {
+                Log.i("TestJoin","MyViewModel: getRestaurantByLatLng: restaurants null");
+            }
+            if (id == null) {
+                Log.i("TestJoin", "MyViewModel: getRestaurantByLatLng: id null");
+            }
+            return null;
+        }
+        for (Workmate i: workmates) {
+            if (i.getRestaurant() == null) {
+                Log.i("TestPlace","MyViewModel: getRestaurantByLatLng: " + i.getName() + " without LatLng");
+            } else if (id.equals(i.getRestaurant())) {
+                Log.i("TestJoin","MyViewModel: getRestaurantByLatLng: found restaurant");
+                workmatesByLatLng.add(i);
+            }
+        }
+        Log.i("TestJoin","MyViewModel: getRestaurantByLatLng: restaurant not found");
+        return workmatesByLatLng;
+    }
+
     public void joinRestaurant(Restaurant restaurant) {
         // depending on the action, do necessary business logic calls and update the
         // userLiveData.

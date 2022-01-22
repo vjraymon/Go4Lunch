@@ -31,6 +31,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.openclassrooms.go4lunch.R;
 import com.openclassrooms.go4lunch.model.Restaurant;
+import com.openclassrooms.go4lunch.model.Workmate;
 import com.openclassrooms.go4lunch.repository.RestaurantRepository;
 import com.openclassrooms.go4lunch.viewmodel.MyViewModel;
 
@@ -42,7 +43,7 @@ import java.util.Objects;
 public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
     private GoogleMap map;
-//    private FusedLocationProviderClient fusedLocationProviderClient;
+    //    private FusedLocationProviderClient fusedLocationProviderClient;
     private PlacesClient placesClient;
 
     private Location lastKnownLocation;
@@ -57,7 +58,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     private LocationManager objgps;
     private LocationListener objlistener;
 
-    /** Called when the activity is first created. */
+    /**
+     * Called when the activity is first created.
+     */
     private void initGps() {
         objgps = (LocationManager) Objects.requireNonNull(getActivity()).getSystemService(LOCATION_SERVICE);
         objlistener = new Myobjlistener();
@@ -67,13 +70,16 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         public void onProviderDisabled(String provider) {
             // TODO Auto-generated method stub
         }
+
         public void onProviderEnabled(String provider) {
             // TODO Auto-generated method stub
         }
+
         public void onStatusChanged(String provider, int status,
                                     Bundle extras) {
             // TODO Auto-generated method stub
         }
+
         public void onLocationChanged(Location location) {
             lastKnownLocation = location;
             if (lastKnownLocation != null) {
@@ -92,7 +98,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
     private void getDeviceLocation() {
         try {
-            if (locationPermissionGranted)  {
+            if (locationPermissionGranted) {
  /*
                 Log.i("TestPlace", "locationPermissionGranted");
                 Task<Location> locationResult = fusedLocationProviderClient.getLastLocation();
@@ -120,7 +126,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 */
                 objgps.requestLocationUpdates(
                         LocationManager.GPS_PROVIDER,
-                        10*1000,
+                        10 * 1000,
                         5.0F,
                         objlistener);
             }
@@ -175,20 +181,21 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
             // for ActivityCompat#requestPermissions for more details.
         }
     }
-/*
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        locationPermissionGranted = false;
-        if (requestCode == PERMISSION_REQUEST_ACCESS_FINE_LOCATION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                locationPermissionGranted = true;
+
+    /*
+        @Override
+        public void onRequestPermissionsResult(int requestCode,
+                                               @NonNull String[] permissions,
+                                               @NonNull int[] grantResults) {
+            locationPermissionGranted = false;
+            if (requestCode == PERMISSION_REQUEST_ACCESS_FINE_LOCATION) {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    locationPermissionGranted = true;
+                }
             }
+            updateLocationUI();
         }
-        updateLocationUI();
-    }
-*/
+    */
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         map = googleMap;
@@ -253,42 +260,75 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
             mapFragment.getMapAsync(this);
         }
     }
-/*
-    private void setRestaurantStyle() {
-        Log.i("TestPlace", "setRestaurantStyle");
-        try {
-            boolean success = map.setMapStyle(
-                    MapStyleOptions.loadRawResourceStyle(getActivity(), R.raw.style_json)
-            );
-            if (!success) {
-                Log.e("TestPlace", "Style parsing failed");
+
+    /*
+        private void setRestaurantStyle() {
+            Log.i("TestPlace", "setRestaurantStyle");
+            try {
+                boolean success = map.setMapStyle(
+                        MapStyleOptions.loadRawResourceStyle(getActivity(), R.raw.style_json)
+                );
+                if (!success) {
+                    Log.e("TestPlace", "Style parsing failed");
+                }
+                Log.i("TestPlace", "end ok setRestaurantStyle");
+            } catch (Resources.NotFoundException e) {
+                Log.e("TestPlace", "Can't find style error : ", e);
             }
-            Log.i("TestPlace", "end ok setRestaurantStyle");
-        } catch (Resources.NotFoundException e) {
-            Log.e("TestPlace", "Can't find style error : ", e);
         }
-    }
-*/
+    */
     List<Restaurant> restaurants = new ArrayList<>();
+    List<Workmate> workmates = new ArrayList<>();
+    boolean isRestaurantsInitialized;
+    boolean isWorkmatesInitialized;
+
     private void showCurrentPlace() {
         if (map == null) {
             return;
         }
         if (locationPermissionGranted) {
-  //          restaurantRepository.getRestaurants().observe(this, this::updateRestaurantsList);
+            //          restaurantRepository.getRestaurants().observe(this, this::updateRestaurantsList);
+            isRestaurantsInitialized = false;
+            isWorkmatesInitialized = false;
             myViewModel.getRestaurants().observe(this, this::updateRestaurantsList);
+            myViewModel.getWorkmates().observe(this, this::updateWorkmatesList);
         }
     }
+
     private void updateRestaurantsList(List<Restaurant> restaurants) {
         this.restaurants = restaurants;
-        for (Restaurant restaurant : restaurants) {
-            Log.i("TestPlace", "location retrieved = " + restaurant.getName());
-            map.addMarker(new MarkerOptions()
-                    .position(restaurant.getLatLng())
-                    .title(restaurant.getName())
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+        isRestaurantsInitialized = true;
+        if (isWorkmatesInitialized) {
+            initializeMarkers();
+        }
+    }
+
+    private void updateWorkmatesList(List<Workmate> workmates) {
+        this.workmates = workmates;
+        isWorkmatesInitialized = true;
+        if (isRestaurantsInitialized) {
+            initializeMarkers();
+        }
+    }
+
+    private void initializeMarkers() {
+        for (Restaurant restaurant : this.restaurants) {
+            if ((restaurant != null) && (restaurant.getLatLng() != null)) {
+                Log.i("TestPlace", "location retrieved = " + restaurant.getName());
+                List<Workmate> currentWorkmateList = myViewModel.getWorkmatesByLatLng(this.workmates, restaurant.getLatLng());
+                float color;
+                if ((currentWorkmateList == null) || currentWorkmateList.isEmpty()) {
+                    color = BitmapDescriptorFactory.HUE_RED;
+                } else {
+                    color = BitmapDescriptorFactory.HUE_GREEN;
+                }
+                map.addMarker(new MarkerOptions()
+                        .position(restaurant.getLatLng())
+                        .title(restaurant.getName())
+                        .icon(BitmapDescriptorFactory.defaultMarker(color)));
+            }
 
         }
-        Log.i("TestPlace", "end of location retrieved");
+        Log.i("TestPlace","end of location retrieved");
     }
 }

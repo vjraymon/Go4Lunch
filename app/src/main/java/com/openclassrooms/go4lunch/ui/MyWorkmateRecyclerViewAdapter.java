@@ -83,7 +83,7 @@ public class MyWorkmateRecyclerViewAdapter extends RecyclerView.Adapter<MyWorkma
             mRestaurant = binding.workmateRestaurant;
             mView = binding.getRoot();
             mView.setOnClickListener(v -> {
-                Log.i("TestPlace", "click sur un element");
+                Log.i("TestPlace", "click on an element");
                 v.setEnabled(false);
                 EventBus.getDefault().post(new DisplayRestaurantEvent(restaurant));
             });
