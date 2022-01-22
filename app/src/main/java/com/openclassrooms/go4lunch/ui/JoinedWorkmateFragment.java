@@ -1,7 +1,5 @@
 package com.openclassrooms.go4lunch.ui;
 
-import static com.openclassrooms.go4lunch.repository.WorkmateRepository.getWorkmateRepository;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,19 +9,18 @@ import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.openclassrooms.go4lunch.R;
 import com.openclassrooms.go4lunch.model.Restaurant;
 import com.openclassrooms.go4lunch.model.Workmate;
-import com.openclassrooms.go4lunch.repository.WorkmateRepository;
 import com.openclassrooms.go4lunch.viewmodel.MyViewModel;
 
 import java.util.List;
 
-public class WorkmateFragment extends Fragment {
+public class JoinedWorkmateFragment extends Fragment {
 
 //    private WorkmateRepository workmateRepository;
 
@@ -31,27 +28,26 @@ public class WorkmateFragment extends Fragment {
     private List<Workmate> workmates;
     private List<Restaurant> restaurants;
 
-    // TODO: Customize parameter argument names
-    // As each 3 tabs are specific, these parameters might be irrelevant
-    private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
-    private int mColumnCount = 1;
+    private double mLatitude;
+    private double mLongitude;
+    private LatLng mLatLng;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public WorkmateFragment() {
+    public JoinedWorkmateFragment() {
     }
 
     // TODO: Customize parameter initialization
     // As each 3 tabs are specific, this parameter might be irrelevant
 
 
-    public static WorkmateFragment newInstance(int columnCount) {
-        WorkmateFragment fragment = new WorkmateFragment();
+    public static JoinedWorkmateFragment newInstance(LatLng latLng) {
+        JoinedWorkmateFragment fragment = new JoinedWorkmateFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
+        args.putDouble("keyLat", latLng.latitude);
+        args.putDouble("keyLng", latLng.longitude);
         fragment.setArguments(args);
         return fragment;
     }
@@ -62,14 +58,13 @@ public class WorkmateFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //       mApiService = DiRestaurant.getRestaurantApiService();
-//        workmateRepository = getWorkmateRepository(getContext());
         myViewModel = new ViewModelProvider(this).get(MyViewModel.class);
         myViewModel.init(getContext());
         myViewModel.getWorkmates().observe(this, this::updateWorkmatesList);
-        myViewModel.getRestaurants().observe(this, this::updateRestaurantsList);
         if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+            mLatitude = getArguments().getDouble("keyLat");
+            mLongitude = getArguments().getDouble("keyLng");
+            mLatLng = new LatLng(mLatitude, mLongitude);
         }
     }
 
@@ -77,39 +72,28 @@ public class WorkmateFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_workmate_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_joined_workmate_list, container, false);
 
-//        restaurants = mApiService.getRestaurants();
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
             recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 2) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
-//            workmateRepository.getWorkmates().observe(this, this::updateWorkmatesList);
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
         }
         return view;
     }
     private void updateWorkmatesList(List<Workmate> workmates) {
-        Log.i("TestWork", "WorkmateFragment: updateWorkmatesList");
+        Log.i("TestJoinedList", "WorkmateFragment: updateWorkmatesList");
         this.workmates = workmates;
         for (Workmate workmate : workmates) {
             Log.i("TestPlace", "location list retrieved = " + workmate.getName());
         }
-        Log.i("TestWork", "call recyclerView.setAdapter");
-        this.refresh();
-    }
-    private void updateRestaurantsList(List<Restaurant> restaurants) {
-        Log.i("TestWork", "WorkmateFragment: updateRestaurantsList");
-        this.restaurants = restaurants;
         this.refresh();
     }
     private void refresh() {
-        if ((workmates != null) && (restaurants != null) && (myViewModel != null)) {
-            Log.i("TestWork", "call recyclerView.setAdapter");
-            recyclerView.setAdapter(new MyWorkmateRecyclerViewAdapter(workmates, restaurants, myViewModel));
+        if ((workmates != null) && (myViewModel != null)) {
+            Log.i("TestJoinedList", "call recyclerView.setAdapter LatLng = (" + mLatLng.latitude + "," + mLatLng.longitude);
+            List<Workmate> joinedWorkmates = myViewModel.getWorkmatesByLatLng(workmates,mLatLng);
+            recyclerView.setAdapter(new MyJoinedWorkmateRecyclerViewAdapter(joinedWorkmates));
         }
     }
 }

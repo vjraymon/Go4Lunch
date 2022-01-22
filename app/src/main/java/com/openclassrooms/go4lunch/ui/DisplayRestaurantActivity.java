@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModelProvider;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -59,8 +58,16 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
         Log.i("TestPlace", "id onCreate= (" + currentId.latitude + "," + currentId.longitude + ")");
         textRestaurantName = findViewById(R.id.display_restaurant_name);
         buttonRestaurantJoin = findViewById(R.id.display_restaurant_join);
+        if (findViewById(R.id.container) != null) {
+            Log.i("TestJoinedList", "DisplayRestaurantActivity.onCreate fragment");
+            JoinedWorkmateFragment fragment = JoinedWorkmateFragment.newInstance(currentId);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container, fragment)
+                    .commit();
+        }
 
-    }
+
+        }
 
     private void updateRestaurantsList(List<Restaurant> restaurants) {
         Log.i("TestJoin", "DisplayRestaurantActivity: updateRestaurantsList");
