@@ -27,13 +27,17 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.openclassrooms.go4lunch.R;
+import com.openclassrooms.go4lunch.events.DisplayRestaurantEvent;
 import com.openclassrooms.go4lunch.model.Restaurant;
 import com.openclassrooms.go4lunch.model.Workmate;
 import com.openclassrooms.go4lunch.repository.RestaurantRepository;
 import com.openclassrooms.go4lunch.viewmodel.MyViewModel;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -322,6 +326,11 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                 } else {
                     color = BitmapDescriptorFactory.HUE_GREEN;
                 }
+                map.setOnMarkerClickListener(marker -> {
+                    Restaurant restaurant1 = myViewModel.getRestaurantByLatLng(restaurants, marker.getPosition());
+                    EventBus.getDefault().post(new DisplayRestaurantEvent(restaurant1));
+                    return false;
+                });
                 map.addMarker(new MarkerOptions()
                         .position(restaurant.getLatLng())
                         .title(restaurant.getName())
