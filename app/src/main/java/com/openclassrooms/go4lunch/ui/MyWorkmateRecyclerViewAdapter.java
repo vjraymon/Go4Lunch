@@ -5,14 +5,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.openclassrooms.go4lunch.databinding.FragmentRestaurantBinding;
 import com.openclassrooms.go4lunch.databinding.FragmentWorkmateBinding;
+import com.openclassrooms.go4lunch.events.DisplayRestaurantEvent;
 import com.openclassrooms.go4lunch.model.Restaurant;
 import com.openclassrooms.go4lunch.model.Workmate;
 import com.openclassrooms.go4lunch.viewmodel.MyViewModel;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
@@ -41,18 +46,20 @@ public class MyWorkmateRecyclerViewAdapter extends RecyclerView.Adapter<MyWorkma
         holder.mName.setText(workmates.get(position).getName());
         holder.mEmail.setText(workmates.get(position).getEmail());
         LatLng id = workmates.get(position).getRestaurant();
+        Restaurant restaurant = null;
         String s;
         if (id == null) {
             s = "none";
         } else {
             Log.i("TestWork", "MyWorkmateRecyclerViewAdapter: onBindViewHolder: ");
-            Restaurant restaurant = myViewModel.getRestaurantByLatLng(this.restaurants, id);
+            restaurant = myViewModel.getRestaurantByLatLng(this.restaurants, id);
             if (restaurant == null) {
                 s = "unknown";
             } else {
                 s = restaurant.getName();
             }
         }
+        holder.restaurant = restaurant;
         holder.mRestaurant.setText(s);
     }
 
@@ -66,12 +73,20 @@ public class MyWorkmateRecyclerViewAdapter extends RecyclerView.Adapter<MyWorkma
         public final TextView mEmail;
         public final TextView mRestaurant;
         public Workmate workmate;
+        public final View mView;
+        public Restaurant restaurant;
 
         public ViewHolder(@NonNull FragmentWorkmateBinding binding) {
             super(binding.getRoot());
             mName = binding.workmateName;
             mEmail = binding.workmateEmail;
             mRestaurant = binding.workmateRestaurant;
+            mView = binding.getRoot();
+            mView.setOnClickListener(v -> {
+                Log.i("TestPlace", "click sur un element");
+                v.setEnabled(false);
+                EventBus.getDefault().post(new DisplayRestaurantEvent(restaurant));
+            });
         }
 
         @NonNull

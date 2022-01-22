@@ -1,7 +1,6 @@
 package com.openclassrooms.go4lunch.ui;
 
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -98,7 +97,10 @@ public class MainActivity extends AppCompatActivity {
     }
     @Subscribe
     public void onDisplayRestaurant(DisplayRestaurantEvent event) {
-        Log.i("TestPlace", "id onDisplayRestaurant = (" + event.restaurant.getLatLng().latitude + "," + event.restaurant.getLatLng().longitude + ")");
-        DisplayRestaurantActivity.navigate(this, event.restaurant);
+        if (event.restaurant != null)
+        {
+            Log.i("TestPlace", "id onDisplayRestaurant = (" + event.restaurant.getLatLng().latitude + "," + event.restaurant.getLatLng().longitude + ")");
+            DisplayRestaurantActivity.navigate(this, event.restaurant);
+        }
     }
 }
