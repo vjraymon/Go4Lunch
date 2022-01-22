@@ -296,6 +296,11 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
             isWorkmatesInitialized = false;
             myViewModel.getRestaurants().observe(this, this::updateRestaurantsList);
             myViewModel.getWorkmates().observe(this, this::updateWorkmatesList);
+            map.setOnMarkerClickListener(marker -> {
+                Restaurant restaurant1 = myViewModel.getRestaurantByLatLng(restaurants, marker.getPosition());
+                EventBus.getDefault().post(new DisplayRestaurantEvent(restaurant1));
+                return false;
+            });
         }
     }
 
@@ -326,11 +331,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                 } else {
                     color = BitmapDescriptorFactory.HUE_GREEN;
                 }
-                map.setOnMarkerClickListener(marker -> {
-                    Restaurant restaurant1 = myViewModel.getRestaurantByLatLng(restaurants, marker.getPosition());
-                    EventBus.getDefault().post(new DisplayRestaurantEvent(restaurant1));
-                    return false;
-                });
                 map.addMarker(new MarkerOptions()
                         .position(restaurant.getLatLng())
                         .title(restaurant.getName())

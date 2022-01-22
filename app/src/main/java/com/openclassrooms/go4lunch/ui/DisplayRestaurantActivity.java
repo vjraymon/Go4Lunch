@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.openclassrooms.go4lunch.R;
@@ -41,6 +42,7 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
     private boolean workmateInitialized = false;
     private boolean restaurantInitialized = false;
     Button buttonRestaurantJoin;
+    TextView textRestaurantName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +57,7 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
         double mLongitude = getIntent().getDoubleExtra("keyLng", 0);
         currentId = new LatLng(mLatitude,mLongitude);
         Log.i("TestPlace", "id onCreate= (" + currentId.latitude + "," + currentId.longitude + ")");
+        textRestaurantName = findViewById(R.id.display_restaurant_name);
         buttonRestaurantJoin = findViewById(R.id.display_restaurant_join);
 
     }
@@ -76,6 +79,8 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
         if (this.restaurant == null) {
             return;
         }
+        textRestaurantName.setText(restaurant.getName());
+
         Log.i("TestJoin", "call setDisplayJoin");
         restaurantInitialized = true;
         setDisplayJoin();
@@ -96,7 +101,6 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
         Log.i("TestJoin", "begin setDisplayJoin()");
         if ((restaurantInitialized) && workmateInitialized) {
             Log.i("TestsJoin", "enter setActivity()");
-            Button buttonRestaurantJoin = findViewById(R.id.display_restaurant_join);
             buttonRestaurantJoin.setOnClickListener(v -> {
                 Log.i("TestJoin", "clicked on Join (");
                 myViewModel.joinRestaurant(this.restaurant);
