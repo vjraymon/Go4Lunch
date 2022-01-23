@@ -66,8 +66,6 @@ public class WorkmateFragment extends Fragment {
 //        workmateRepository = getWorkmateRepository(getContext());
         myViewModel = new ViewModelProvider(this).get(MyViewModel.class);
         myViewModel.init(getContext());
-        myViewModel.getWorkmates().observe(this, this::updateWorkmatesList);
-        myViewModel.getRestaurants().observe(this, this::updateRestaurantsList);
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
@@ -88,7 +86,8 @@ public class WorkmateFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-//            workmateRepository.getWorkmates().observe(this, this::updateWorkmatesList);
+            myViewModel.getWorkmates().observe(getViewLifecycleOwner(), this::updateWorkmatesList);
+            myViewModel.getRestaurants().observe(getViewLifecycleOwner(), this::updateRestaurantsList);
         }
         return view;
     }

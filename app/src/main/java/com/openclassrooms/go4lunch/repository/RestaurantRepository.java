@@ -67,7 +67,8 @@ public class RestaurantRepository {
                 Place.Field.NAME,
                 Place.Field.ADDRESS,
                 Place.Field.LAT_LNG,
-                Place.Field.TYPES
+                Place.Field.TYPES,
+                Place.Field.ICON_URL
         );
         FindCurrentPlaceRequest request = FindCurrentPlaceRequest.newInstance(placeFields);
         Log.i("TestPlace", "placesClient.findCurrentPlace");
@@ -86,6 +87,7 @@ public class RestaurantRepository {
                                     break;
                                 }
                                 Log.i("TestPlace", "location i = " + i + " : " + placeLikelihood.getPlace().getName());
+                                Log.i("TestIcon", "location i = " + i + " : " + placeLikelihood.getPlace().getIconUrl());
                                 Restaurant restaurant = new Restaurant(
                                         placeLikelihood.getPlace().getName(),
                                         placeLikelihood.getPlace().getAddress(),

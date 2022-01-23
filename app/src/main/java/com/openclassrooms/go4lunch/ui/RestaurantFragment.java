@@ -55,16 +55,15 @@ public class RestaurantFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
-
+    private MyViewModel myViewModel;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
  //       mApiService = DiRestaurant.getRestaurantApiService();
 //        restaurantRepository = RestaurantRepository.getRestaurantRepository(getContext());
-        final MyViewModel myViewModel = new ViewModelProvider(this).get(MyViewModel.class);
+        myViewModel = new ViewModelProvider(this).get(MyViewModel.class);
         myViewModel.init(getContext());
-        myViewModel.getRestaurants().observe(this, this::updateRestaurantsList);
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
@@ -80,12 +79,8 @@ public class RestaurantFragment extends Fragment {
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
             recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
- //           restaurantRepository.getRestaurants().observe(this, this::updateRestaurantsList);
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+            myViewModel.getRestaurants().observe(getViewLifecycleOwner(), this::updateRestaurantsList);
         }
         return view;
     }
@@ -96,6 +91,9 @@ public class RestaurantFragment extends Fragment {
             Log.i("TestPlace", "location list retrieved = " + restaurant.getName());
         }
         Log.i("TestPlace", "end of location list retrieved");
-        recyclerView.setAdapter(new MyRestaurantRecyclerViewAdapter(restaurants));
+        if (this.restaurants != null) {
+            recyclerView.setAdapter(new MyRestaurantRecyclerViewAdapter(this.restaurants));
+        }
     }
+
 }

@@ -42,6 +42,9 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
     private boolean restaurantInitialized = false;
     Button buttonRestaurantJoin;
     TextView textRestaurantName;
+
+    JoinedWorkmateFragment fragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,16 +61,24 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
         Log.i("TestPlace", "id onCreate= (" + currentId.latitude + "," + currentId.longitude + ")");
         textRestaurantName = findViewById(R.id.display_restaurant_name);
         buttonRestaurantJoin = findViewById(R.id.display_restaurant_join);
+        buttonRestaurantJoin.setEnabled(false);
+        buttonRestaurantJoin.setOnClickListener(v -> {
+            Log.i("TestJoin", "clicked on Join (");
+            myViewModel.joinRestaurant(this.restaurant);
+        });
         if (findViewById(R.id.container) != null) {
             Log.i("TestJoinedList", "DisplayRestaurantActivity.onCreate fragment");
-            JoinedWorkmateFragment fragment = JoinedWorkmateFragment.newInstance(currentId);
+            fragment = JoinedWorkmateFragment.newInstance(currentId);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.container, fragment)
                     .commit();
         }
+    }
 
-
-        }
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
 
     private void updateRestaurantsList(List<Restaurant> restaurants) {
         Log.i("TestJoin", "DisplayRestaurantActivity: updateRestaurantsList");
@@ -86,7 +97,13 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
         if (this.restaurant == null) {
             return;
         }
-        textRestaurantName.setText(restaurant.getName());
+        if (restaurant.getLatLng() == null) {
+            textRestaurantName.setText(restaurant.getName() + " null");
+        } else {
+            textRestaurantName.setText(restaurant.getName()
+                        + "(" + restaurant.getLatLng().latitude
+                        + " , " + restaurant.getLatLng().longitude);
+        }
 
         Log.i("TestJoin", "call setDisplayJoin");
         restaurantInitialized = true;
@@ -108,15 +125,12 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
         Log.i("TestJoin", "begin setDisplayJoin()");
         if ((restaurantInitialized) && workmateInitialized) {
             Log.i("TestsJoin", "enter setActivity()");
-            buttonRestaurantJoin.setOnClickListener(v -> {
-                Log.i("TestJoin", "clicked on Join (");
-                myViewModel.joinRestaurant(this.restaurant);
-            });
-
+            buttonRestaurantJoin.setEnabled(true);
             //initialization for tests
-            myViewModel.initForTest();
+//            myViewModel.initForTest();
             restaurantInitialized = false;
             workmateInitialized = false;
         }
+        if (fragment != null) fragment.reinit();
     }
 }

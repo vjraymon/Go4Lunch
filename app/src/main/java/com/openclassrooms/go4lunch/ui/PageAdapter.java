@@ -10,6 +10,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
+import com.google.firebase.auth.FirebaseUser;
+
 public class
 PageAdapter extends FragmentStateAdapter {
 

@@ -9,6 +9,8 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.openclassrooms.go4lunch.model.Restaurant;
 import com.openclassrooms.go4lunch.model.Workmate;
 import com.openclassrooms.go4lunch.repository.RestaurantRepository;
@@ -31,23 +33,33 @@ public class MyViewModel extends ViewModel {
     private RestaurantRepository restaurantRepository;
     private WorkmateRepository workmateRepository;
 
-    private Workmate myself = new Workmate("vjraymon@gmail.com", "Myself", null);
+    private Workmate myself;
 
     public MyViewModel() {
         // trigger user load.
     }
 
     public void init(Context context) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        Log.i("TestMySelf", "MyViewModel.init name = " + user.getDisplayName());
+        Log.i("TestMySelf", "MyViewModel.init email = " + user.getEmail());
+        myself = new Workmate(user.getEmail(), user.getDisplayName(), null);
         restaurantRepository = RestaurantRepository.getRestaurantRepository(context);
         workmateRepository = WorkmateRepository.getWorkmateRepository(context);
         workmateRepository.addWorkmate(myself);
+
     }
 
     public void initForTest() {
         Log.i("TestsJoin", "begin initForTest()");
-        workmateRepository.setRestaurant(
-                Objects.requireNonNull(workmateRepository.getWorkmates().getValue()).get(2),
-                Objects.requireNonNull(restaurantRepository.getRestaurants().getValue()).get(1));
+        workmateRepository.addWorkmate(new Workmate("Caroline@gmail.com", "Caroline",
+                restaurantRepository.getRestaurants().getValue().get(1).getLatLng()));
+        workmateRepository.addWorkmate(new Workmate("Jack@gmail.com", "Jack", null));
+        workmateRepository.addWorkmate(new Workmate("Emilie@gmail.com", "Emilie",
+                restaurantRepository.getRestaurants().getValue().get(0).getLatLng()));
+        workmateRepository.addWorkmate(new Workmate("Albert@gmail.com", "Albert",
+                restaurantRepository.getRestaurants().getValue().get(1).getLatLng()));
+
     }
 
     public Restaurant getRestaurantByLatLng(List<Restaurant> restaurants, LatLng id) {
@@ -74,8 +86,21 @@ public class MyViewModel extends ViewModel {
         return null;
     }
 
+    public LatLng getRestaurant(Workmate w) {
+        if (w.getHasJoined()) return new LatLng(w.getLatitude(), w.getLongitude());
+        return null;
+    }
+    public void setRestaurant(Workmate w, LatLng restaurant) {
+        w.setHasJoined((restaurant != null));
+        if (w.getHasJoined()) {
+            w.setLatitude(restaurant.latitude);
+            w.setLongitude(restaurant.longitude);
+        }
+    }
+
     List<Workmate> workmatesByLatLng;
     public List<Workmate> getWorkmatesByLatLng(List<Workmate> workmates, LatLng id) {
+//        workmates = workmateRepository.getWorkmates().getValue();
         workmatesByLatLng = new ArrayList<>();
         if ((workmates == null) || (id == null)) {
             if (workmates == null)
@@ -87,15 +112,19 @@ public class MyViewModel extends ViewModel {
             }
             return null;
         }
+        Log.i("TestJoinedList","MyViewModel: getRestaurantByLatLng: " + id.latitude + "," + id.longitude);
         for (Workmate i: workmates) {
-            if (i.getRestaurant() == null) {
+            Log.i("TestJoinedList","MyViewModel: getRestaurantByLatLng: " + i.getName());
+            Log.i("TestJoinedList","MyViewModel: getRestaurantByLatLng: " + i.getLatitude() + "," + i.getLongitude());
+            if (getRestaurant(i) == null) {
                 Log.i("TestPlace","MyViewModel: getRestaurantByLatLng: " + i.getName() + " without LatLng");
-            } else if (id.equals(i.getRestaurant())) {
+            } else if (id.equals(getRestaurant(i))) {
                 Log.i("TestJoin","MyViewModel: getRestaurantByLatLng: found restaurant");
                 workmatesByLatLng.add(i);
+            } else {
+                Log.i("TestJoin","MyViewModel: getRestaurantByLatLng: differents restaurant");
             }
         }
-        Log.i("TestJoin","MyViewModel: getRestaurantByLatLng: restaurant not found");
         return workmatesByLatLng;
     }
 

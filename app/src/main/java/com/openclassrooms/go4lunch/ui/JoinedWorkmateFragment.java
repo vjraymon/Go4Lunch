@@ -58,10 +58,9 @@ public class JoinedWorkmateFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        myViewModel = new ViewModelProvider(this).get(MyViewModel.class);
-        myViewModel.init(getContext());
-        myViewModel.getWorkmates().observe(this, this::updateWorkmatesList);
         if (getArguments() != null) {
+            myViewModel = new ViewModelProvider(this).get(MyViewModel.class);
+            myViewModel.init(getContext());
             mLatitude = getArguments().getDouble("keyLat");
             mLongitude = getArguments().getDouble("keyLng");
             mLatLng = new LatLng(mLatitude, mLongitude);
@@ -74,26 +73,42 @@ public class JoinedWorkmateFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_joined_workmate_list, container, false);
 
+        myViewModel.getWorkmates().observe(getViewLifecycleOwner(), this::updateWorkmatesList);
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
             recyclerView = (RecyclerView) view;
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
         }
-        return view;
+         return view;
     }
     private void updateWorkmatesList(List<Workmate> workmates) {
-        Log.i("TestJoinedList", "WorkmateFragment: updateWorkmatesList");
+        Log.i("TestJoinedList", "JoinedWorkmateFragment: updateWorkmatesList");
         this.workmates = workmates;
         for (Workmate workmate : workmates) {
-            Log.i("TestPlace", "location list retrieved = " + workmate.getName());
+            Log.i("TestJoinedList", "JoinedWorkmateFragment.updateWorkmatesListlocation list retrieved = " + workmate.getName());
+            Log.i("TestJoinedList", "JoinedWorkmateFragment.updateWorkmatesListlocation LatLng = (" + workmate.getLatitude() + "," + workmate.getLongitude());
         }
         this.refresh();
     }
+    List<Workmate> joinedWorkmates = null;
+
+
     private void refresh() {
-        if ((workmates != null) && (myViewModel != null)) {
-            Log.i("TestJoinedList", "call recyclerView.setAdapter LatLng = (" + mLatLng.latitude + "," + mLatLng.longitude);
-            List<Workmate> joinedWorkmates = myViewModel.getWorkmatesByLatLng(workmates,mLatLng);
-            recyclerView.setAdapter(new MyJoinedWorkmateRecyclerViewAdapter(joinedWorkmates));
+        if (mLatLng == null) return;
+        if ((this.workmates != null) && (myViewModel != null)) {
+            Log.i("TestJoinedList", "JoinedWorkmateFragment.refresh call recyclerView.setAdapter LatLng = (" + mLatLng.latitude + "," + mLatLng.longitude);
+            joinedWorkmates = myViewModel.getWorkmatesByLatLng(this.workmates,mLatLng);
         }
+        recyclerView.setAdapter(new MyJoinedWorkmateRecyclerViewAdapter(joinedWorkmates));
+    }
+
+    public void reinit() {
+        if (joinedWorkmates == null) return;
+        Log.i("TestJoinedList", "JoinedWorkmateFragment.reinit call recyclerView.setAdapter");
+        for (Workmate i : joinedWorkmates) {
+            Log.i("TestJoinedList", "JoinedWorkmateFragment.reinit " + i.getName());
+            Log.i("TestJoinedList", "JoinedWorkmateFragment.reinit LatLng = (" + i.getLatitude() + "," + i.getLongitude());
+        }
+        recyclerView.setAdapter(new MyJoinedWorkmateRecyclerViewAdapter(joinedWorkmates));
     }
 }

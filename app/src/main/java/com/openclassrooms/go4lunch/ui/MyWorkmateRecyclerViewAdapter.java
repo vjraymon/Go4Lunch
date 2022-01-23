@@ -40,12 +40,16 @@ public class MyWorkmateRecyclerViewAdapter extends RecyclerView.Adapter<MyWorkma
 
     }
 
+    public LatLng getRestaurant(Workmate w) {
+        if (w.getHasJoined()) return new LatLng(w.getLatitude(), w.getLongitude());
+        return null;
+    }
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.workmate = workmates.get(position);
         holder.mName.setText(workmates.get(position).getName());
         holder.mEmail.setText(workmates.get(position).getEmail());
-        LatLng id = workmates.get(position).getRestaurant();
+        LatLng id = getRestaurant(workmates.get(position));
         Restaurant restaurant = null;
         String s;
         if (id == null) {

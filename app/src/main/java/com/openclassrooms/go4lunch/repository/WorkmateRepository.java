@@ -3,10 +3,19 @@ package com.openclassrooms.go4lunch.repository;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.openclassrooms.go4lunch.model.Restaurant;
 import com.openclassrooms.go4lunch.model.Workmate;
 
@@ -17,7 +26,6 @@ import java.util.Objects;
 
 public class WorkmateRepository {
     private static WorkmateRepository service;
-
     /**
      * Get an instance on WorkmateRepository
      */
@@ -28,32 +36,65 @@ public class WorkmateRepository {
         return service;
     }
 
-    private List<Workmate> workmatesList = new ArrayList<>(
-            Arrays.asList(
-                    new Workmate("Caroline@gmail.com", "Caroline", null),
-                    new Workmate("Jack@gmail.com", "Jack", null),
-                    new Workmate("Emilie@gmail.com", "Emilie", null),
-                    new Workmate("Albert@gmail.com", "Albert", null)
-            )
-    );
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    public final CollectionReference workmatesRef = db.collection("workmates");
 
     public WorkmateRepository(Context context) {
         // Default Workmate list for test
-
-        select(this.workmatesList);
     }
 
-    private final MutableLiveData<List<Workmate>> workmates = new MutableLiveData<>();
+    private MutableLiveData<List<Workmate>> workmates = new MutableLiveData<>();
 
-    public void select(List<Workmate> item) {
-        workmates.setValue(item);
-    }
+    ArrayList<Workmate> freelances;
 
     public LiveData<List<Workmate>> getWorkmates() {
+        workmatesRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                ArrayList<Workmate> freelances = new ArrayList<>();
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    freelances.add(document.toObject(Workmate.class));
+                }
+                this.workmates.setValue(freelances);
+            } else {
+                Log.d("Error", "Error getting documents: ", task.getException());
+            }
+        }).addOnFailureListener(e -> {
+            //handle error
+            Log.i("TestWork", "Error failure listener ", e);
+            this.workmates.setValue(null);
+        });
         return this.workmates;
     }
 
     public void addWorkmate(Workmate myself) {
+        workmatesRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                boolean notAlreadyRegistered = true;
+                freelances = new ArrayList<>();
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    freelances.add(document.toObject(Workmate.class));
+                    if (myself.getEmail().equals(document.toObject(Workmate.class).getEmail())) {
+                        notAlreadyRegistered = false;
+                    }
+                }
+                if (notAlreadyRegistered) {
+                    // Add a new document with email as ID
+                    db.collection("workmates")
+                            .document(myself.getEmail())
+                            .set(myself);
+                    freelances.add(myself);
+                    this.workmates.setValue(freelances);
+                }
+            } else {
+                Log.d("Error", "Error getting documents: ", task.getException());
+
+            }
+        }).addOnFailureListener(e -> {
+            //handle error
+            Log.i("TestWork", "Error failure listener ", e);
+            this.workmates.postValue(null);
+        });
+/*
         List<Workmate> workmates = this.workmates.getValue();
         if (workmates == null)
         {
@@ -67,10 +108,95 @@ public class WorkmateRepository {
         }
         workmates.add(myself);
         select(workmates);
+*/    }
+    LatLng latLng;
+    private void setLatLng(Workmate w, LatLng latLng) {
+        w.setHasJoined((latLng != null));
+        if (latLng != null) {
+            w.setLatitude(latLng.latitude);
+            w.setLongitude(latLng.longitude);
+        }
+    }
+
+    public void updateLatLng(Workmate workmate, LatLng latLng) {
+        if (workmate == null) {
+            Log.i("TestWork", "FirebaseHelper.updateLatLng workmate null");
+            return;
+        }
+        Log.i("TestWork", "FirebaseHelper.updateLatLng");
+        if (latLng == null) {
+            Log.i("TestWork", "FirebaseHelper.updateLatLng latlng null");
+            db.collection("workmates").document(workmate.getEmail()).update("hasJoined", false);
+        } else {
+            Log.i("TestWork", "FirebaseHelper.updateLatLng name " + workmate.getName());
+            db.collection("workmates").document(workmate.getEmail()).update(
+                    "hasJoined", true,
+                    "latitude", latLng.latitude,
+                    "longitude", latLng.longitude)
+                    .addOnSuccessListener(unused -> {
+                        Log.d("TestWork", "FirebaseHelper.updateLatLng successfull");
+                        this.workmates.setValue(this.freelances);
+                    })
+                    .addOnFailureListener(e -> Log.e("TestWork", "FirebaseHelper.updateLatLng exception", e));
+
+
+ /*
+                    ) {
+                        @Override
+                        public void onComplete(Void aVoid) {
+                            Log.d("TestWork", "FirebaseHelper.updateLatLng successfully updated!");
+                            this.workmates.setValue(this.freelances);
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w("TestWork", "FirebaseHelper.updateLatLng updating document", e);
+                        }
+                    });
+
+  */
+        }
     }
 
     public Boolean setRestaurant(Workmate workmate, Restaurant restaurant) {
- //       List<Workmate> workmates = this.workmates.getValue();
+        Log.i("TestWork", "WorkmateRepository.setRestaurant");
+        if (workmate == null) {
+            Log.i("TestWork", "WorkmateRepository.setRestaurant : workmate null");
+            return false;
+        }
+        if (restaurant != null) latLng = restaurant.getLatLng();
+        else latLng = null;
+
+        workmatesRef.get().addOnCompleteListener(task -> {
+            Log.i("TestWork", "WorkmateRepository.OnCompleteListener");
+            if (task.isSuccessful()) {
+                freelances = new ArrayList<>();
+                Workmate w = null;
+                boolean notAlreadyRegistered = true;
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    freelances.add(document.toObject(Workmate.class));
+                    if (workmate.getEmail().equals(document.toObject(Workmate.class).getEmail())) {
+                        w = document.toObject(Workmate.class);
+                    }
+                }
+                if (w != null) {
+                    setLatLng(w, latLng);
+                    this.updateLatLng(workmate, latLng);
+//                    this.workmates.setValue(this.freelances);
+                }
+
+            } else {
+                Log.i("TestWork", "Error getting documents: ", task.getException());
+            }
+        }).addOnFailureListener(e -> {
+            //handle error
+            Log.i("TestWork", "Error failure listener ", e);
+            this.workmates.setValue(null);
+        });
+        return true;
+        /*
+
         if (this.workmatesList == null)
         {
             this.workmatesList = new ArrayList<>();
@@ -101,5 +227,6 @@ public class WorkmateRepository {
             }
         }
         return false;
+        */
     }
 }

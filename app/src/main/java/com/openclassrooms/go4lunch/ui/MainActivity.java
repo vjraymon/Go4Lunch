@@ -13,6 +13,8 @@ import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.openclassrooms.go4lunch.R;
 import com.openclassrooms.go4lunch.events.DisplayRestaurantEvent;
 
@@ -63,7 +65,9 @@ public class MainActivity extends AppCompatActivity {
     private void onSignInResult(FirebaseAuthUIAuthenticationResult result) {
 //      IdpResponse response = result.getIdpResponse();
         if (result.getResultCode() == RESULT_OK) {
-//          FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            Log.i("TestMySelf", "MainActivity.onSignInResult name = " + user.getDisplayName());
+            Log.i("TestMySelf", "MainActivity.onSignInResult email = " + user.getEmail());
             //3 - Configure ViewPager
             this.configureViewPager();
         } else {
@@ -94,6 +98,12 @@ public class MainActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
     @Subscribe
     public void onDisplayRestaurant(DisplayRestaurantEvent event) {
