@@ -2,21 +2,14 @@ package com.openclassrooms.go4lunch.ui;
 
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.openclassrooms.go4lunch.databinding.FragmentWorkmateBinding;
-import com.openclassrooms.go4lunch.events.DisplayRestaurantEvent;
-import com.openclassrooms.go4lunch.model.Restaurant;
 import com.openclassrooms.go4lunch.model.Workmate;
-import com.openclassrooms.go4lunch.viewmodel.MyViewModel;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 

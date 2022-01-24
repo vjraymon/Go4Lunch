@@ -2,21 +2,18 @@ package com.openclassrooms.go4lunch.ui;
 
 import android.content.Context;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.openclassrooms.go4lunch.R;
 import com.openclassrooms.go4lunch.model.Restaurant;
-import com.openclassrooms.go4lunch.repository.RestaurantRepository;
 import com.openclassrooms.go4lunch.viewmodel.MyViewModel;
 
 import java.util.List;
@@ -26,17 +23,6 @@ import java.util.List;
  */
 public class RestaurantFragment extends Fragment {
 
-//    private RestaurantRepository restaurantRepository;
-
-//    private RestaurantApiService mApiService;
-    private List<Restaurant> restaurants;
-
-    // TODO: Customize parameter argument names
-    // As each 3 tabs are specific, these parameters might be irrelevant
-    private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
-    private int mColumnCount = 1;
-
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -44,28 +30,15 @@ public class RestaurantFragment extends Fragment {
     public RestaurantFragment() {
     }
 
-    // TODO: Customize parameter initialization
-    // As each 3 tabs are specific, this parameter might be irrelevant
-
-
-    public static RestaurantFragment newInstance(int columnCount) {
-        RestaurantFragment fragment = new RestaurantFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        fragment.setArguments(args);
-        return fragment;
+    public static RestaurantFragment newInstance() {
+        return new RestaurantFragment();
     }
     private MyViewModel myViewModel;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
- //       mApiService = DiRestaurant.getRestaurantApiService();
-//        restaurantRepository = RestaurantRepository.getRestaurantRepository(getContext());
         myViewModel = new ViewModelProvider(this).get(MyViewModel.class);
-        if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-        }
     }
 
     RecyclerView recyclerView;
@@ -74,7 +47,6 @@ public class RestaurantFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_restaurant_list, container, false);
 
-//        restaurants = mApiService.getRestaurants();
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
             recyclerView = (RecyclerView) view;
@@ -85,14 +57,12 @@ public class RestaurantFragment extends Fragment {
     }
     private void updateRestaurantsList(List<Restaurant> restaurants) {
         Log.i("TestJoin", "RestaurantFragment: updateRestaurantsList");
-        this.restaurants = restaurants;
-        for (Restaurant restaurant : restaurants) {
-            Log.i("TestPlace", "location list retrieved = " + restaurant.getName());
+        if (restaurants == null) return;
+            for (Restaurant restaurant : restaurants) {
+            Log.i("TestPlace", "RestaurantFragment: updateRestaurantsList location list retrieved = " + restaurant.getName());
         }
-        Log.i("TestPlace", "end of location list retrieved");
-        if (this.restaurants != null) {
-            recyclerView.setAdapter(new MyRestaurantRecyclerViewAdapter(this.restaurants));
-        }
+        Log.i("TestPlace", "RestaurantFragment: updateRestaurantsList end of location list retrieved");
+        recyclerView.setAdapter(new MyRestaurantRecyclerViewAdapter(restaurants));
     }
 
 }

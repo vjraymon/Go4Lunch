@@ -11,7 +11,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 public class
 PageAdapter extends FragmentStateAdapter {
 
-    private String [] data = {"A", "B", "C"};
+    private final String [] data = {"A", "B", "C"};
 
     public PageAdapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);
@@ -34,7 +34,7 @@ PageAdapter extends FragmentStateAdapter {
 
         if (position == 1) {
             Log.i("TestPlace", "return RestaurantFragment");
-            return RestaurantFragment.newInstance(position);
+            return RestaurantFragment.newInstance();
         }
 
         if (position == 2) {

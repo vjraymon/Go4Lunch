@@ -9,7 +9,6 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
@@ -19,7 +18,6 @@ import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.openclassrooms.go4lunch.R;
 import com.openclassrooms.go4lunch.model.Restaurant;
-import com.openclassrooms.go4lunch.model.Workmate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,7 +37,7 @@ public class RestaurantRepository {
         return service;
     }
 
-    private PlacesClient placesClient;
+    private final PlacesClient placesClient;
     private static final int M_MAX_ENTRIES = 5;
 
     public RestaurantRepository(Context context) {

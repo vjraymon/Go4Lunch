@@ -7,7 +7,7 @@ public class DisplayRestaurantEvent {
     /**
      * Restaurant to display
      */
-    public Restaurant restaurant;
+    public final Restaurant restaurant;
 
     /**
      * Constructor.

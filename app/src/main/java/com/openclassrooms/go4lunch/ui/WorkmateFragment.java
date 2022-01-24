@@ -1,7 +1,5 @@
 package com.openclassrooms.go4lunch.ui;
 
-import static com.openclassrooms.go4lunch.repository.WorkmateRepository.getWorkmateRepository;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,7 +16,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.openclassrooms.go4lunch.R;
 import com.openclassrooms.go4lunch.model.Restaurant;
 import com.openclassrooms.go4lunch.model.Workmate;
-import com.openclassrooms.go4lunch.repository.WorkmateRepository;
 import com.openclassrooms.go4lunch.viewmodel.MyViewModel;
 
 import java.util.List;
@@ -62,8 +59,6 @@ public class WorkmateFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //       mApiService = DiRestaurant.getRestaurantApiService();
-//        workmateRepository = getWorkmateRepository(getContext());
         myViewModel = new ViewModelProvider(this).get(MyViewModel.class);
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
@@ -107,7 +102,7 @@ public class WorkmateFragment extends Fragment {
     private void refresh() {
         if ((workmates != null) && (restaurants != null) && (myViewModel != null)) {
             Log.i("TestWork", "call recyclerView.setAdapter");
-            recyclerView.setAdapter(new MyWorkmateRecyclerViewAdapter(workmates, restaurants, myViewModel));
+            recyclerView.setAdapter(new MyWorkmateRecyclerViewAdapter(workmates, myViewModel));
         }
     }
 }

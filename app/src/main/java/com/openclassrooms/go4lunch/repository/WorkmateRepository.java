@@ -1,28 +1,19 @@
 package com.openclassrooms.go4lunch.repository;
 
-import android.content.Context;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.openclassrooms.go4lunch.model.Restaurant;
 import com.openclassrooms.go4lunch.model.Workmate;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 public class WorkmateRepository {
     private static WorkmateRepository service;
@@ -43,7 +34,7 @@ public class WorkmateRepository {
         // Default Workmate list for test
     }
 
-    private MutableLiveData<List<Workmate>> workmates = new MutableLiveData<>();
+    private final MutableLiveData<List<Workmate>> workmates = new MutableLiveData<>();
 
     ArrayList<Workmate> freelances;
 
@@ -94,22 +85,10 @@ public class WorkmateRepository {
             Log.i("TestWork", "Error failure listener ", e);
             this.workmates.postValue(null);
         });
-/*
-        List<Workmate> workmates = this.workmates.getValue();
-        if (workmates == null)
-        {
-            workmates = new ArrayList<>();
-        }
-        for (Workmate i: workmates) {
-            if (myself.getEmail().equals(i.getEmail())) {
-                // in this first step, there is no possible modification of an already registered user
-                return;
-            }
-        }
-        workmates.add(myself);
-        select(workmates);
-*/    }
-    LatLng latLng;
+    }
+
+ //   LatLng latLng;
+
     private void setLatLng(Workmate w, LatLng latLng) {
         w.setHasJoined((latLng != null));
         if (latLng != null) {
@@ -149,32 +128,15 @@ public class WorkmateRepository {
                         }
                     })
                     .addOnFailureListener(e -> Log.e("TestWork", "FirebaseHelper.updateLatLng exception", e));
-
-
- /*
-                    ) {
-                        @Override
-                        public void onComplete(Void aVoid) {
-                            Log.d("TestWork", "FirebaseHelper.updateLatLng successfully updated!");
-                            this.workmates.setValue(this.freelances);
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.w("TestWork", "FirebaseHelper.updateLatLng updating document", e);
-                        }
-                    });
-
-  */
-        }
+       }
     }
 
-    public Boolean setRestaurant(Workmate workmate, Restaurant restaurant) {
+    public void setRestaurant(Workmate workmate, Restaurant restaurant) {
+        LatLng latLng;
         Log.i("TestWork", "WorkmateRepository.setRestaurant");
         if (workmate == null) {
             Log.i("TestWork", "WorkmateRepository.setRestaurant : workmate null");
-            return false;
+            return;
         }
         if (restaurant != null) latLng = restaurant.getLatLng();
         else latLng = null;
@@ -207,39 +169,5 @@ public class WorkmateRepository {
             Log.i("TestWork", "WorkmateRepository.setRestaurant Error failure listener ", e);
 //            this.workmates.setValue(null);
         });
-        return true;
-        /*
-
-        if (this.workmatesList == null)
-        {
-            this.workmatesList = new ArrayList<>();
-        }
-        for (Workmate i: this.workmatesList) {
-            if (workmate.getEmail().equals(i.getEmail())) {
-                Log.i("TestJoin", "WorkmateRepository: setRestaurant: emails equals ");
-                if (i.getRestaurant() == null){
-                    if ((restaurant == null) || (restaurant.getLatLng() == null)) {
-                        Log.i("TestJoin", "WorkmateRepository: setRestaurant: target = source = null");
-                        return true;
-                    }
-                    Log.i("TestJoin", "WorkmateRepository: setRestaurant: target = null source = (" + restaurant.getLatLng().latitude + "," + restaurant.getLatLng().longitude + ")");
-                    i.setRestaurant(restaurant.getLatLng());
-                } else {
-                    if (restaurant == null) {
-                        Log.i("TestJoin", "WorkmateRepository: setRestaurant: target != source = null");
-                        i.setRestaurant(null);
-                    } else if (i.getRestaurant().equals(restaurant.getLatLng())) {
-                        Log.i("TestJoin", "WorkmateRepository: setRestaurant: null != target = source");
-                        return true;
-                    }
-                    Log.i("TestJoin", "WorkmateRepository: setRestaurant: null != target != source = (" + Objects.requireNonNull(restaurant).getLatLng().latitude + "," + restaurant.getLatLng().longitude + ")");
-                    i.setRestaurant(restaurant.getLatLng());
-                }
-                select(this.workmatesList);
-                return true;
-            }
-        }
-        return false;
-        */
     }
 }

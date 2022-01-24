@@ -1,14 +1,11 @@
 package com.openclassrooms.go4lunch.viewmodel;
 
 import android.app.Application;
-import android.content.Context;
 import android.util.Log;
 
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
@@ -20,17 +17,16 @@ import com.openclassrooms.go4lunch.repository.WorkmateRepository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class MyViewModel extends AndroidViewModel {
 
     private LiveData<List<Restaurant>> restaurantsLiveData = new MutableLiveData<>();
     private LiveData<List<Workmate>> workmatesLiveData = new MutableLiveData<>();
 
-    private RestaurantRepository restaurantRepository;
-    private WorkmateRepository workmateRepository;
+    private final RestaurantRepository restaurantRepository;
+    private final WorkmateRepository workmateRepository;
 
-    private Workmate myself;
+    private final Workmate myself;
 
     public MyViewModel(Application application) {
         super(application);
@@ -49,24 +45,7 @@ public class MyViewModel extends AndroidViewModel {
         workmateRepository = WorkmateRepository.getWorkmateRepository();
         workmateRepository.addWorkmate(myself);
     }
-/*
-    public void init(Context context) {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null)
-        {
-            Log.i("TestMySelf", "MyViewModel.init user null");
-            myself = null;
-        } else {
-            Log.i("TestMySelf", "MyViewModel.init name = " + user.getDisplayName());
-            Log.i("TestMySelf", "MyViewModel.init email = " + user.getEmail());
-            myself = new Workmate(user.getEmail(), user.getDisplayName(), null);
-        }
-        restaurantRepository = RestaurantRepository.getRestaurantRepository(context);
-        workmateRepository = WorkmateRepository.getWorkmateRepository();
-        workmateRepository.addWorkmate(myself);
 
-    }
-*/
     public void initForTest() {
         Log.i("TestsJoin", "MyViewModel.initForTest()");
         workmateRepository.addWorkmate(new Workmate("Caroline@gmail.com", "Caroline",

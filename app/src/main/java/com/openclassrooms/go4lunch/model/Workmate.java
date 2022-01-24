@@ -1,7 +1,6 @@
 package com.openclassrooms.go4lunch.model;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.firestore.GeoPoint;
 
 public class Workmate {
     private String name;

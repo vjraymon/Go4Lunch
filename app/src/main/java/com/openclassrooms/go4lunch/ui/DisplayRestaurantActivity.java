@@ -35,12 +35,8 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
 
     private Restaurant restaurant;
     private MyViewModel  myViewModel;
-//    private RestaurantRepository restaurantRepository;
-//    private Workmate workmate;
-//    private WorkmateRepository workmateRepository;
     private LatLng currentId;
     private List<Workmate> workmates;
-    private List<Restaurant> restaurants;
     private boolean workmateInitialized = false;
     private boolean restaurantInitialized = false;
     Button buttonRestaurantJoin;
@@ -75,16 +71,10 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
     private void updateRestaurantsList(List<Restaurant> restaurants) {
         Log.i("TestJoin", "DisplayRestaurantActivity: updateRestaurantsList");
-        this.restaurants = restaurants;
         for (Restaurant restaurant : restaurants) {
-            Log.i("TestPlace", "DisplayRestaurantActivity: updateRestaurantsListlocation list retrieved = " + restaurant.getName());
+            Log.i("TestPlace", "DisplayRestaurantActivity: updateRestaurantsList list retrieved = " + restaurant.getName());
         }
         Log.i("TestPlace", "DisplayRestaurantActivity: updateRestaurantsList end of location list retrieved");
 

@@ -6,7 +6,7 @@ import java.util.List;
 
 public class DummyRestaurantApiService implements RestaurantApiService {
 
-    private List<Restaurant> restaurants = DummyRestaurantGenerator.generateNeighbours();
+    private final List<Restaurant> restaurants = DummyRestaurantGenerator.generateNeighbours();
 
     @Override
     public List<Restaurant> getRestaurants() {

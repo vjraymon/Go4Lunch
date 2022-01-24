@@ -2,14 +2,6 @@ package com.openclassrooms.go4lunch.ui;
 
 import static android.content.Context.LOCATION_SERVICE;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -21,13 +13,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.openclassrooms.go4lunch.R;
@@ -46,8 +45,9 @@ import java.util.Objects;
 public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     private GoogleMap map;
-    //    private FusedLocationProviderClient fusedLocationProviderClient;
     private PlacesClient placesClient;
+
+    MyViewModel myViewModel;
 
     private Location lastKnownLocation;
 
@@ -58,18 +58,18 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
 //    private RestaurantRepository restaurantRepository;
 
-    private LocationManager objgps;
-    private LocationListener objlistener;
+    private LocationManager objGps;
+    private LocationListener objListener;
 
     /**
      * Called when the activity is first created.
      */
     private void initGps() {
-        objgps = (LocationManager) Objects.requireNonNull(getActivity()).getSystemService(LOCATION_SERVICE);
-        objlistener = new Myobjlistener();
+        objGps = (LocationManager) Objects.requireNonNull(getActivity()).getSystemService(LOCATION_SERVICE);
+        objListener = new MyObjListener();
     }
 
-    private class Myobjlistener implements LocationListener {
+    private class MyObjListener implements LocationListener {
         public void onProviderDisabled(String provider) {
             // TODO Auto-generated method stub
         }
@@ -98,40 +98,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-
     private void getDeviceLocation() {
         try {
             if (locationPermissionGranted) {
- /*
-                Log.i("TestPlace", "locationPermissionGranted");
-                Task<Location> locationResult = fusedLocationProviderClient.getLastLocation();
-                Log.i("TestPlace", "addOnCompleteListener call");
-                locationResult.addOnCompleteListener(Objects.requireNonNull(getActivity()), location -> {
-                    Log.i("TestPlace", "onComplete");
-                    if (locationResult.isSuccessful()) {
-                        Log.i("TestPlace", "task.isSuccessful()");
-                        lastKnownLocation = location.getResult();
-                        if (lastKnownLocation != null) {
-                            Log.i("TestPlace", "map.moveCamera");
-                            map.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                                    new LatLng(lastKnownLocation.getLatitude(),
-                                            lastKnownLocation.getLongitude()),
-                                    DEFAULT_ZOOM
-                                    )
-                            );
-                            showCurrentPlace();
-                        } else {
-                            Log.i("TestPlace", "Current location is null");
-                            map.getUiSettings().setMyLocationButtonEnabled(false);
-                        }
-                    }
-                });
-*/
-                objgps.requestLocationUpdates(
+                 objGps.requestLocationUpdates(
                         LocationManager.GPS_PROVIDER,
                         60 * 1000,
                         10.0F,
-                        objlistener);
+                         objListener);
             }
         } catch (SecurityException e) {
             Log.i("TestPlace", "Exception");
@@ -139,66 +113,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
 
     }
-/*
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-//        getActivity().setContentView(R.id.map);
-        Log.i("TestPlace", "Places.initialize");
-        Places.initialize(getContext(), getString(R.string.google_maps_key));
-        Log.i("TestPlace", "Places.createClient");
-        placesClient = Places.createClient(getActivity());
-        Log.i("TestPlace", "getDeviceLocation");
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
-        Log.i("TestPlace", "add fragment");
-        SupportMapFragment mapFragment =
-                (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-        if (mapFragment != null) {
-            mapFragment.getMapAsync(this);
-        }
-    }
-*/
 
-    private ActivityResultLauncher<String> permissionResult = registerForActivityResult(
+    private final ActivityResultLauncher<String> permissionResult = registerForActivityResult(
             new ActivityResultContracts.RequestPermission(),
-            result -> {
-//                Log.i("TestPlace", "ActivityResult " + result);
-                locationPermissionGranted = result;
-//                updateLocationUI();
-            });
+            result -> locationPermissionGranted = result
+            );
 
     private void getLocationPermission() {
         if (ContextCompat.checkSelfPermission(Objects.requireNonNull(getContext()), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             locationPermissionGranted = true;
         } else {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-//            ActivityCompat.requestPermissions(Objects.requireNonNull(getActivity()),
-//                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-//                    PERMISSION_REQUEST_ACCESS_FINE_LOCATION);
             permissionResult.launch(Manifest.permission.ACCESS_FINE_LOCATION);
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
         }
     }
 
-    /*
-        @Override
-        public void onRequestPermissionsResult(int requestCode,
-                                               @NonNull String[] permissions,
-                                               @NonNull int[] grantResults) {
-            locationPermissionGranted = false;
-            if (requestCode == PERMISSION_REQUEST_ACCESS_FINE_LOCATION) {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    locationPermissionGranted = true;
-                }
-            }
-            updateLocationUI();
-        }
-    */
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         map = googleMap;
@@ -245,15 +173,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         return inflater.inflate(R.layout.fragment_maps, container, false);
     }
 
-    MyViewModel myViewModel;
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-//        restaurantRepository = RestaurantRepository.getRestaurantRepository(getContext());
+
         myViewModel = new ViewModelProvider(this).get(MyViewModel.class);
-        //       Log.i("TestPlace", "getFusedLocationProviderClient");
-        //       fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
 
         Log.i("TestPlace", "add fragment");
         SupportMapFragment mapFragment =
@@ -263,22 +187,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    /*
-        private void setRestaurantStyle() {
-            Log.i("TestPlace", "setRestaurantStyle");
-            try {
-                boolean success = map.setMapStyle(
-                        MapStyleOptions.loadRawResourceStyle(getActivity(), R.raw.style_json)
-                );
-                if (!success) {
-                    Log.e("TestPlace", "Style parsing failed");
-                }
-                Log.i("TestPlace", "end ok setRestaurantStyle");
-            } catch (Resources.NotFoundException e) {
-                Log.e("TestPlace", "Can't find style error : ", e);
-            }
-        }
-    */
     List<Restaurant> restaurants = new ArrayList<>();
     List<Workmate> workmates = new ArrayList<>();
     boolean isRestaurantsInitialized;
@@ -299,7 +207,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 Log.i("TestMarker", "MapsFragment.showCurrentPlace OnMarkerClickListener");
                 Restaurant restaurant = myViewModel.getRestaurantByLatLng(marker.getPosition());
                 EventBus.getDefault().post(new DisplayRestaurantEvent(restaurant));
-//                initializeMarker(marker);
                 return false;
             });
         }
@@ -322,41 +229,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void initializeMarkers() {
-        // Use a custom info window adapter to handle multiple lines of text in the
-        // info window contents.
         Log.i("TestMarker", "MapsFragment.initializeMarkers");
- /*
-        this.map.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-            @Override
-            // Return null here, so that getInfoContents() is called next.
-            public View getInfoWindow(Marker arg0) {
-                Log.i("TestMarker", "MapsFragment.setInfoWindowAdapter.getInfoWindow");
-                initializeMarker(arg0);
-                return null;
-            }
-
-            @Override
-            public View getInfoContents(Marker marker) {
-/*
-                // Inflate the layouts for the info window, title and snippet.
-
-                View infoWindow = getLayoutInflater().inflate(R.layout.custom_info_contents,
-                        (FrameLayout) findViewById(R.id.map), false);
-
-                TextView title = infoWindow.findViewById(R.id.title);
-                title.setText(marker.getTitle());
-
-                TextView snippet = infoWindow.findViewById(R.id.snippet);
-                snippet.setText(marker.getSnippet());
-
-                return infoWindow;
-
-                Log.i("TestMarker", "MapsFragment.setInfoWindowAdapter.getInfoContents");
-                initializeMarker(marker);
-                return null;
-            }
-        });
-*/
         for (Restaurant i : restaurants) {
             initializeMarker(i);
         }
@@ -380,31 +253,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     .position(restaurant.getLatLng())
                     .title(restaurant.getName())
                     .icon(BitmapDescriptorFactory.defaultMarker(color)));
-
-        Log.i("TestMarker","MapsFragment.initializeMarker end");
-    }
-
-    private void initializeMarker(Marker marker) {
-        Restaurant restaurant = myViewModel.getRestaurantByLatLng(marker.getPosition());
-        if ((restaurant == null) || (restaurant.getLatLng() == null)) {
-            Log.i("TestMarker", "MapsFragment.initializeMarker restaurant not found");
-            return;
-        }
-            Log.i("TestMarker", "MapsFragment.initializeMarker restaurant = " + restaurant.getName());
-            List<Workmate> currentWorkmateList = myViewModel.getWorkmatesByLatLng(restaurant.getLatLng());
-            float color;
-            if ((currentWorkmateList == null) || currentWorkmateList.isEmpty()) {
-                color = BitmapDescriptorFactory.HUE_RED;
-            } else {
-                color = BitmapDescriptorFactory.HUE_GREEN;
-            }
-/*
-            Marker currentMarker = map.addMarker(new MarkerOptions()
-                    .position(restaurant.getLatLng())
-                    .title(restaurant.getName())
-            );
-*/
-            marker.setIcon(BitmapDescriptorFactory.defaultMarker(color));
 
         Log.i("TestMarker","MapsFragment.initializeMarker end");
     }

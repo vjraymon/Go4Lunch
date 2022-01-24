@@ -1,16 +1,15 @@
 package com.openclassrooms.go4lunch.ui;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.gms.maps.model.LatLng;
-import com.openclassrooms.go4lunch.databinding.FragmentRestaurantBinding;
 import com.openclassrooms.go4lunch.databinding.FragmentWorkmateBinding;
 import com.openclassrooms.go4lunch.events.DisplayRestaurantEvent;
 import com.openclassrooms.go4lunch.model.Restaurant;
@@ -24,13 +23,11 @@ import java.util.List;
 public class MyWorkmateRecyclerViewAdapter extends RecyclerView.Adapter<MyWorkmateRecyclerViewAdapter.ViewHolder> {
 
     private final List<Workmate> workmates;
-    private final List<Restaurant> restaurants;
     private final MyViewModel myViewModel;
 
-    public MyWorkmateRecyclerViewAdapter(List<Workmate> workmates, List<Restaurant> restaurants, MyViewModel myViewModel) {
+    public MyWorkmateRecyclerViewAdapter(List<Workmate> workmates, MyViewModel myViewModel) {
         this.workmates = workmates;
         this.myViewModel = myViewModel;
-        this.restaurants = restaurants;
     }
 
     @NonNull
