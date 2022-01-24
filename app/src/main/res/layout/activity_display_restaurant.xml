@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/listJoinWorkmateContainer"
@@ -25,12 +26,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/display_restaurant_name" />
 
-    <FrameLayout
-        android:id="@+id/container"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/listJoinWorkmate"
+        android:name="com.openclassrooms.go4lunch.ui.DisplayRestaurantActivity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        app:layoutManager="LinearLayoutManager"
+        tools:context=".ui.DisplayRestaurantActivity"
         app:layout_constraintTop_toBottomOf="@+id/display_restaurant_join"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" >
-    </FrameLayout>
+        tools:listitem="@layout/joined_workmate" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,14 +1,17 @@
 package com.openclassrooms.go4lunch.ui;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.lifecycle.ViewModelProvider;
-
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.openclassrooms.go4lunch.R;
@@ -43,7 +46,8 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
     Button buttonRestaurantJoin;
     TextView textRestaurantName;
 
-    JoinedWorkmateFragment fragment;
+    RecyclerView recyclerView;
+    List<Workmate> joinedWorkmates = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,13 +69,10 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
             Log.i("TestJoin", "DisplayRestaurantActivity: clicked on Join");
             myViewModel.joinRestaurant(this.restaurant);
         });
-        if (findViewById(R.id.container) != null) {
-            Log.i("TestJoinedList", "DisplayRestaurantActivity.onCreate fragment");
-            fragment = JoinedWorkmateFragment.newInstance(currentId);
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, fragment)
-                    .commit();
-        }
+
+            recyclerView = findViewById(R.id.listJoinWorkmate);
+            Context context = getApplicationContext();
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
     }
 
     @Override
@@ -121,6 +122,7 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
         Log.i("TestJoin", "DisplayRestaurantActivity: updateWorkmatesList call setDisplayJoin");
         workmateInitialized = true;
         setDisplayJoin();
+        this.refresh(currentId);
     }
 
     private void setDisplayJoin() {
@@ -133,6 +135,14 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
             restaurantInitialized = false;
             workmateInitialized = false;
         }
-        if (fragment != null) fragment.reinit();
+    }
+
+    private void refresh(LatLng mLatLng) {
+        if (mLatLng == null) return;
+        if ((this.workmates != null) && (myViewModel != null)) {
+            Log.i("TestJoinedList", "JoinedWorkmateFragment.refresh call recyclerView.setAdapter LatLng = (" + mLatLng.latitude + "," + mLatLng.longitude);
+            joinedWorkmates = myViewModel.getWorkmatesByLatLng(mLatLng);
+        }
+        recyclerView.setAdapter(new MyJoinedWorkmateRecyclerViewAdapter(joinedWorkmates));
     }
 }
