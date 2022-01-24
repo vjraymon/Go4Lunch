@@ -56,7 +56,7 @@ public class MyWorkmateRecyclerViewAdapter extends RecyclerView.Adapter<MyWorkma
             s = "none";
         } else {
             Log.i("TestWork", "MyWorkmateRecyclerViewAdapter: onBindViewHolder: ");
-            restaurant = myViewModel.getRestaurantByLatLng(this.restaurants, id);
+            restaurant = myViewModel.getRestaurantByLatLng(id);
             if (restaurant == null) {
                 s = "unknown";
             } else {

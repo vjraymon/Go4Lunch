@@ -1,8 +1,10 @@
 package com.openclassrooms.go4lunch.viewmodel;
 
+import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -20,25 +22,34 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class MyViewModel extends ViewModel {
-/*
-    private final MutableLiveData<Restaurant> restaurantLiveData = new MutableLiveData<>();
+public class MyViewModel extends AndroidViewModel {
 
-
-    public LiveData<Restaurant> getRestaurant() {
-        return restaurantLiveData;
-    }
-*/
+    private LiveData<List<Restaurant>> restaurantsLiveData = new MutableLiveData<>();
+    private LiveData<List<Workmate>> workmatesLiveData = new MutableLiveData<>();
 
     private RestaurantRepository restaurantRepository;
     private WorkmateRepository workmateRepository;
 
     private Workmate myself;
 
-    public MyViewModel() {
+    public MyViewModel(Application application) {
+        super(application);
         // trigger user load.
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null)
+        {
+            Log.i("TestMySelf", "MyViewModel.init user null");
+            myself = null;
+        } else {
+            Log.i("TestMySelf", "MyViewModel.init name = " + user.getDisplayName());
+            Log.i("TestMySelf", "MyViewModel.init email = " + user.getEmail());
+            myself = new Workmate(user.getEmail(), user.getDisplayName(), null);
+        }
+        restaurantRepository = RestaurantRepository.getRestaurantRepository(application.getApplicationContext());
+        workmateRepository = WorkmateRepository.getWorkmateRepository();
+        workmateRepository.addWorkmate(myself);
     }
-
+/*
     public void init(Context context) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null)
@@ -51,11 +62,11 @@ public class MyViewModel extends ViewModel {
             myself = new Workmate(user.getEmail(), user.getDisplayName(), null);
         }
         restaurantRepository = RestaurantRepository.getRestaurantRepository(context);
-        workmateRepository = WorkmateRepository.getWorkmateRepository(context);
+        workmateRepository = WorkmateRepository.getWorkmateRepository();
         workmateRepository.addWorkmate(myself);
 
     }
-
+*/
     public void initForTest() {
         Log.i("TestsJoin", "MyViewModel.initForTest()");
         workmateRepository.addWorkmate(new Workmate("Caroline@gmail.com", "Caroline",
@@ -68,8 +79,8 @@ public class MyViewModel extends ViewModel {
 
     }
 
-    public Restaurant getRestaurantByLatLng(List<Restaurant> restaurants, LatLng id) {
-//        List<Restaurant> restaurants = restaurantRepository.getRestaurants().getValue();
+    public Restaurant getRestaurantByLatLng(LatLng id) {
+        List<Restaurant> restaurants = restaurantsLiveData.getValue();
         if ((restaurants == null) || (id == null)) {
             if (restaurants == null)
             {
@@ -98,8 +109,8 @@ public class MyViewModel extends ViewModel {
     }
 
     List<Workmate> workmatesByLatLng;
-    public List<Workmate> getWorkmatesByLatLng(List<Workmate> workmates, LatLng id) {
-//        workmates = workmateRepository.getWorkmates().getValue();
+    public List<Workmate> getWorkmatesByLatLng(LatLng id) {
+        List<Workmate> workmates = workmatesLiveData.getValue();
         workmatesByLatLng = new ArrayList<>();
         if ((workmates == null) || (id == null)) {
             if (workmates == null)
@@ -139,7 +150,8 @@ public class MyViewModel extends ViewModel {
             Log.i("TestPlace","Error workmateRepository null in MyViewModel");
             return null;
         }
-        return workmateRepository.getWorkmates();
+        workmatesLiveData = workmateRepository.getWorkmates();
+        return workmatesLiveData;
     }
 
     public LiveData<List<Restaurant>> getRestaurants() {
@@ -147,6 +159,7 @@ public class MyViewModel extends ViewModel {
             Log.i("TestPlace","Error restaurantRepository null in MyViewModel");
             return null;
         }
-        return restaurantRepository.getRestaurants();
+        restaurantsLiveData = restaurantRepository.getRestaurants();
+        return restaurantsLiveData;
     }
 }

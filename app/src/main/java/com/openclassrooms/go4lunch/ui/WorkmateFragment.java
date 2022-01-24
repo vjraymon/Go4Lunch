@@ -65,7 +65,6 @@ public class WorkmateFragment extends Fragment {
         //       mApiService = DiRestaurant.getRestaurantApiService();
 //        workmateRepository = getWorkmateRepository(getContext());
         myViewModel = new ViewModelProvider(this).get(MyViewModel.class);
-        myViewModel.init(getContext());
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }

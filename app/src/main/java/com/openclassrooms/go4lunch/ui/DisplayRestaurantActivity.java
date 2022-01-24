@@ -51,7 +51,6 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
         setContentView(R.layout.activity_display_restaurant);
 
         myViewModel = new ViewModelProvider(this).get(MyViewModel.class);
-        myViewModel.init(this);
         myViewModel.getRestaurants().observe(this, this::updateRestaurantsList);
         myViewModel.getWorkmates().observe(this, this::updateWorkmatesList);
 
@@ -88,7 +87,7 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
         }
         Log.i("TestPlace", "DisplayRestaurantActivity: updateRestaurantsList end of location list retrieved");
 
-        this.restaurant = myViewModel.getRestaurantByLatLng(restaurants, this.currentId);
+        this.restaurant = myViewModel.getRestaurantByLatLng(this.currentId);
         if (this.restaurant == null) {
             Log.i("TestJoin", "DisplayRestaurantActivity: updateRestaurantsList unknown restaurant ? (" + this.currentId.latitude + "," + this.currentId.longitude + ")");
         } else {

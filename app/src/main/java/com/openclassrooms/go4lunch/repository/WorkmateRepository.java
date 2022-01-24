@@ -29,9 +29,9 @@ public class WorkmateRepository {
     /**
      * Get an instance on WorkmateRepository
      */
-    public static WorkmateRepository getWorkmateRepository(Context context) {
+    public static WorkmateRepository getWorkmateRepository() {
         if (service == null) {
-            service = new WorkmateRepository(context);
+            service = new WorkmateRepository();
         }
         return service;
     }
@@ -39,7 +39,7 @@ public class WorkmateRepository {
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     public final CollectionReference workmatesRef = db.collection("workmates");
 
-    public WorkmateRepository(Context context) {
+    public WorkmateRepository() {
         // Default Workmate list for test
     }
 

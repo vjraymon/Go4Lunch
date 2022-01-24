@@ -6,11 +6,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
-
-import com.google.firebase.auth.FirebaseUser;
 
 public class
 PageAdapter extends FragmentStateAdapter {
@@ -33,7 +29,7 @@ PageAdapter extends FragmentStateAdapter {
 
         if (position == 0) {
             Log.i("TestPlace", "return MapsFragment");
-            return new MapsFragment();
+            return new MapFragment();
         }
 
         if (position == 1) {

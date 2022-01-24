@@ -63,7 +63,6 @@ public class RestaurantFragment extends Fragment {
  //       mApiService = DiRestaurant.getRestaurantApiService();
 //        restaurantRepository = RestaurantRepository.getRestaurantRepository(getContext());
         myViewModel = new ViewModelProvider(this).get(MyViewModel.class);
-        myViewModel.init(getContext());
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }

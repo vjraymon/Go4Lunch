@@ -25,18 +25,15 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PointOfInterest;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.openclassrooms.go4lunch.R;
 import com.openclassrooms.go4lunch.events.DisplayRestaurantEvent;
 import com.openclassrooms.go4lunch.model.Restaurant;
 import com.openclassrooms.go4lunch.model.Workmate;
-import com.openclassrooms.go4lunch.repository.RestaurantRepository;
 import com.openclassrooms.go4lunch.viewmodel.MyViewModel;
 
 import org.greenrobot.eventbus.EventBus;
@@ -46,7 +43,7 @@ import java.util.List;
 import java.util.Objects;
 
 // Adaptation from https://developers.google.com/maps/documentation/android-sdk/current-place-tutorial?hl=fr
-public class MapsFragment extends Fragment implements OnMapReadyCallback {
+public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     private GoogleMap map;
     //    private FusedLocationProviderClient fusedLocationProviderClient;
@@ -54,7 +51,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
     private Location lastKnownLocation;
 
-    private static final int DEFAULT_ZOOM = 15;
+    private static final int DEFAULT_ZOOM = 17;
 
     private boolean locationPermissionGranted = false;
     private static final int PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1;
@@ -132,8 +129,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 */
                 objgps.requestLocationUpdates(
                         LocationManager.GPS_PROVIDER,
-                        10 * 1000,
-                        5.0F,
+                        60 * 1000,
+                        10.0F,
                         objlistener);
             }
         } catch (SecurityException e) {
@@ -255,7 +252,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         super.onViewCreated(view, savedInstanceState);
 //        restaurantRepository = RestaurantRepository.getRestaurantRepository(getContext());
         myViewModel = new ViewModelProvider(this).get(MyViewModel.class);
-        myViewModel.init(getContext());
         //       Log.i("TestPlace", "getFusedLocationProviderClient");
         //       fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
 
@@ -289,6 +285,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     boolean isWorkmatesInitialized;
 
     private void showCurrentPlace() {
+        Log.i("TestMarker", "MapsFragment.showCurrentPlace");
         if (map == null) {
             return;
         }
@@ -299,8 +296,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
             myViewModel.getRestaurants().observe(this, this::updateRestaurantsList);
             myViewModel.getWorkmates().observe(this, this::updateWorkmatesList);
             map.setOnMarkerClickListener(marker -> {
-                Restaurant restaurant = myViewModel.getRestaurantByLatLng(restaurants, marker.getPosition());
+                Log.i("TestMarker", "MapsFragment.showCurrentPlace OnMarkerClickListener");
+                Restaurant restaurant = myViewModel.getRestaurantByLatLng(marker.getPosition());
                 EventBus.getDefault().post(new DisplayRestaurantEvent(restaurant));
+//                initializeMarker(marker);
                 return false;
             });
         }
@@ -323,26 +322,90 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void initializeMarkers() {
-        for (Restaurant restaurant : this.restaurants) {
-            if ((restaurant != null) && (restaurant.getLatLng() != null)) {
-                Log.i("TestPlace", "location retrieved = " + restaurant.getName());
-                List<Workmate> currentWorkmateList = myViewModel.getWorkmatesByLatLng(this.workmates, restaurant.getLatLng());
-                float color;
-                if ((currentWorkmateList == null) || currentWorkmateList.isEmpty()) {
-                    color = BitmapDescriptorFactory.HUE_RED;
-                } else {
-                    color = BitmapDescriptorFactory.HUE_GREEN;
-                }
-
-                map.addMarker(new MarkerOptions()
-                        .position(restaurant.getLatLng())
-                        .title(restaurant.getName())
-                        .icon(BitmapDescriptorFactory.defaultMarker(color))
-                );
-
+        // Use a custom info window adapter to handle multiple lines of text in the
+        // info window contents.
+        Log.i("TestMarker", "MapsFragment.initializeMarkers");
+ /*
+        this.map.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+            @Override
+            // Return null here, so that getInfoContents() is called next.
+            public View getInfoWindow(Marker arg0) {
+                Log.i("TestMarker", "MapsFragment.setInfoWindowAdapter.getInfoWindow");
+                initializeMarker(arg0);
+                return null;
             }
 
+            @Override
+            public View getInfoContents(Marker marker) {
+/*
+                // Inflate the layouts for the info window, title and snippet.
+
+                View infoWindow = getLayoutInflater().inflate(R.layout.custom_info_contents,
+                        (FrameLayout) findViewById(R.id.map), false);
+
+                TextView title = infoWindow.findViewById(R.id.title);
+                title.setText(marker.getTitle());
+
+                TextView snippet = infoWindow.findViewById(R.id.snippet);
+                snippet.setText(marker.getSnippet());
+
+                return infoWindow;
+
+                Log.i("TestMarker", "MapsFragment.setInfoWindowAdapter.getInfoContents");
+                initializeMarker(marker);
+                return null;
+            }
+        });
+*/
+        for (Restaurant i : restaurants) {
+            initializeMarker(i);
         }
-        Log.i("TestPlace","end of location retrieved");
+    }
+
+    private void initializeMarker(Restaurant restaurant) {
+        if ((restaurant == null) || (restaurant.getLatLng() == null)) {
+            Log.i("TestMarker", "MapsFragment.initializeMarker restaurant not found");
+            return;
+        }
+        Log.i("TestMarker", "MapsFragment.initializeMarker restaurant = " + restaurant.getName());
+        List<Workmate> currentWorkmateList = myViewModel.getWorkmatesByLatLng(restaurant.getLatLng());
+        float color;
+        if ((currentWorkmateList == null) || currentWorkmateList.isEmpty()) {
+            color = BitmapDescriptorFactory.HUE_RED;
+        } else {
+            color = BitmapDescriptorFactory.HUE_GREEN;
+        }
+
+        map.addMarker(new MarkerOptions()
+                    .position(restaurant.getLatLng())
+                    .title(restaurant.getName())
+                    .icon(BitmapDescriptorFactory.defaultMarker(color)));
+
+        Log.i("TestMarker","MapsFragment.initializeMarker end");
+    }
+
+    private void initializeMarker(Marker marker) {
+        Restaurant restaurant = myViewModel.getRestaurantByLatLng(marker.getPosition());
+        if ((restaurant == null) || (restaurant.getLatLng() == null)) {
+            Log.i("TestMarker", "MapsFragment.initializeMarker restaurant not found");
+            return;
+        }
+            Log.i("TestMarker", "MapsFragment.initializeMarker restaurant = " + restaurant.getName());
+            List<Workmate> currentWorkmateList = myViewModel.getWorkmatesByLatLng(restaurant.getLatLng());
+            float color;
+            if ((currentWorkmateList == null) || currentWorkmateList.isEmpty()) {
+                color = BitmapDescriptorFactory.HUE_RED;
+            } else {
+                color = BitmapDescriptorFactory.HUE_GREEN;
+            }
+/*
+            Marker currentMarker = map.addMarker(new MarkerOptions()
+                    .position(restaurant.getLatLng())
+                    .title(restaurant.getName())
+            );
+*/
+            marker.setIcon(BitmapDescriptorFactory.defaultMarker(color));
+
+        Log.i("TestMarker","MapsFragment.initializeMarker end");
     }
 }

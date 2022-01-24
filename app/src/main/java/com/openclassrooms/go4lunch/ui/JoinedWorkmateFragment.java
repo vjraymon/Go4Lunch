@@ -60,7 +60,6 @@ public class JoinedWorkmateFragment extends Fragment {
 
         if (getArguments() != null) {
             myViewModel = new ViewModelProvider(this).get(MyViewModel.class);
-            myViewModel.init(getContext());
             mLatitude = getArguments().getDouble("keyLat");
             mLongitude = getArguments().getDouble("keyLng");
             mLatLng = new LatLng(mLatitude, mLongitude);
@@ -97,7 +96,7 @@ public class JoinedWorkmateFragment extends Fragment {
         if (mLatLng == null) return;
         if ((this.workmates != null) && (myViewModel != null)) {
             Log.i("TestJoinedList", "JoinedWorkmateFragment.refresh call recyclerView.setAdapter LatLng = (" + mLatLng.latitude + "," + mLatLng.longitude);
-            joinedWorkmates = myViewModel.getWorkmatesByLatLng(this.workmates,mLatLng);
+            joinedWorkmates = myViewModel.getWorkmatesByLatLng(mLatLng);
         }
         recyclerView.setAdapter(new MyJoinedWorkmateRecyclerViewAdapter(joinedWorkmates));
     }
