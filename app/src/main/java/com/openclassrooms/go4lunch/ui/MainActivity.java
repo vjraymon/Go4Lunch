@@ -66,8 +66,12 @@ public class MainActivity extends AppCompatActivity {
 //      IdpResponse response = result.getIdpResponse();
         if (result.getResultCode() == RESULT_OK) {
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            Log.i("TestMySelf", "MainActivity.onSignInResult name = " + user.getDisplayName());
-            Log.i("TestMySelf", "MainActivity.onSignInResult email = " + user.getEmail());
+            if (user == null) {
+                Log.i("TestMySelf", "MainActivity.onSignInResult user null");
+            }else {
+                Log.i("TestMySelf", "MainActivity.onSignInResult name = " + user.getDisplayName());
+                Log.i("TestMySelf", "MainActivity.onSignInResult email = " + user.getEmail());
+            }
             //3 - Configure ViewPager
             this.configureViewPager();
         } else {
@@ -109,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
     public void onDisplayRestaurant(DisplayRestaurantEvent event) {
         if (event.restaurant != null)
         {
-            Log.i("TestPlace", "id onDisplayRestaurant = (" + event.restaurant.getLatLng().latitude + "," + event.restaurant.getLatLng().longitude + ")");
+            Log.i("TestPlace", "MainActivity.onDisplayRestaurant id = (" + event.restaurant.getLatLng().latitude + "," + event.restaurant.getLatLng().longitude + ")");
             DisplayRestaurantActivity.navigate(this, event.restaurant);
         }
     }

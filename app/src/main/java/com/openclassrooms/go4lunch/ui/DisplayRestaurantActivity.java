@@ -23,7 +23,7 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
      * Used to navigate to this activity
      */
     public static void navigate(android.content.Context context, Restaurant restaurant) {
-        Log.i("TestPlace", "id navigate = (" + restaurant.getLatLng().latitude + "," + restaurant.getLatLng().longitude + ")");
+        Log.i("TestPlace", "DisplayRestaurantActivity.navigate id = (" + restaurant.getLatLng().latitude + "," + restaurant.getLatLng().longitude + ")");
         Intent intent = new Intent(context, DisplayRestaurantActivity.class);
         intent.putExtra("keyLat", restaurant.getLatLng().latitude);
         intent.putExtra("keyLng", restaurant.getLatLng().longitude);
@@ -58,12 +58,12 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
         double mLatitude = getIntent().getDoubleExtra("keyLat", 0);
         double mLongitude = getIntent().getDoubleExtra("keyLng", 0);
         currentId = new LatLng(mLatitude,mLongitude);
-        Log.i("TestPlace", "id onCreate= (" + currentId.latitude + "," + currentId.longitude + ")");
+        Log.i("TestPlace", "DisplayRestaurantActivity.onCreate id = (" + currentId.latitude + "," + currentId.longitude + ")");
         textRestaurantName = findViewById(R.id.display_restaurant_name);
         buttonRestaurantJoin = findViewById(R.id.display_restaurant_join);
         buttonRestaurantJoin.setEnabled(false);
         buttonRestaurantJoin.setOnClickListener(v -> {
-            Log.i("TestJoin", "clicked on Join (");
+            Log.i("TestJoin", "DisplayRestaurantActivity: clicked on Join");
             myViewModel.joinRestaurant(this.restaurant);
         });
         if (findViewById(R.id.container) != null) {
@@ -84,15 +84,15 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
         Log.i("TestJoin", "DisplayRestaurantActivity: updateRestaurantsList");
         this.restaurants = restaurants;
         for (Restaurant restaurant : restaurants) {
-            Log.i("TestPlace", "location list retrieved = " + restaurant.getName());
+            Log.i("TestPlace", "DisplayRestaurantActivity: updateRestaurantsListlocation list retrieved = " + restaurant.getName());
         }
-        Log.i("TestPlace", "end of location list retrieved");
+        Log.i("TestPlace", "DisplayRestaurantActivity: updateRestaurantsList end of location list retrieved");
 
         this.restaurant = myViewModel.getRestaurantByLatLng(restaurants, this.currentId);
         if (this.restaurant == null) {
-            Log.i("TestJoin", "unknown restaurant ? (" + this.currentId.latitude + "," + this.currentId.longitude + ")");
+            Log.i("TestJoin", "DisplayRestaurantActivity: updateRestaurantsList unknown restaurant ? (" + this.currentId.latitude + "," + this.currentId.longitude + ")");
         } else {
-            Log.i("TestJoin", "restaurant " + this.restaurant.getName());
+            Log.i("TestJoin", "DisplayRestaurantActivity: updateRestaurantsList restaurant " + this.restaurant.getName());
         }
         if (this.restaurant == null) {
             return;
@@ -105,7 +105,7 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
                         + " , " + restaurant.getLatLng().longitude);
         }
 
-        Log.i("TestJoin", "call setDisplayJoin");
+        Log.i("TestJoin", "DisplayRestaurantActivity: updateRestaurantsList call setDisplayJoin");
         restaurantInitialized = true;
         setDisplayJoin();
     }
@@ -113,18 +113,21 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
         Log.i("TestJoin", "DisplayRestaurantActivity: updateWorkmatesList");
         this.workmates = workmates;
         for (Workmate workmate : workmates) {
-            Log.i("TestPlace", "location list retrieved = " + workmate.getName());
+            if (workmate.getHasJoined()) {
+                Log.i("TestPlace", "DisplayRestaurantActivity: updateWorkmatesListlocation list retrieved = " + workmate.getName() + " (" + workmate.getLatitude() + "," + workmate.getLongitude() + ")");
+            } else {
+                Log.i("TestPlace", "DisplayRestaurantActivity: updateWorkmatesListlocation list retrieved = " + workmate.getName() + " none");
+            }
         }
-        Log.i("TestPlace", "end of location list retrieved");
-        Log.i("TestJoin", "call setDisplayJoin");
+        Log.i("TestJoin", "DisplayRestaurantActivity: updateWorkmatesList call setDisplayJoin");
         workmateInitialized = true;
         setDisplayJoin();
     }
 
     private void setDisplayJoin() {
-        Log.i("TestJoin", "begin setDisplayJoin()");
+        Log.i("TestJoin", "DisplayRestaurantActivity.setDisplayJoin()");
         if ((restaurantInitialized) && workmateInitialized) {
-            Log.i("TestsJoin", "enter setActivity()");
+            Log.i("TestsJoin", "DisplayRestaurantActivity.setDisplayJoin enable button");
             buttonRestaurantJoin.setEnabled(true);
             //initialization for tests
 //            myViewModel.initForTest();

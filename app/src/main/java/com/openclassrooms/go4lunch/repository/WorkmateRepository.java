@@ -128,7 +128,7 @@ public class WorkmateRepository {
             Log.i("TestWork", "FirebaseHelper.updateLatLng latlng null");
             db.collection("workmates").document(workmate.getEmail()).update("hasJoined", false);
         } else {
-            Log.i("TestWork", "FirebaseHelper.updateLatLng name " + workmate.getName());
+            Log.i("TestWork", "FirebaseHelper.updateLatLng name " + workmate.getName() + " (" + latLng.latitude + "," + latLng.longitude + ")");
             db.collection("workmates").document(workmate.getEmail()).update(
                     "hasJoined", true,
                     "latitude", latLng.latitude,
@@ -136,6 +136,17 @@ public class WorkmateRepository {
                     .addOnSuccessListener(unused -> {
                         Log.d("TestWork", "FirebaseHelper.updateLatLng successfull");
                         this.workmates.setValue(this.freelances);
+                        if (freelances== null) {
+                            Log.i("TestWork", "FirebaseHelper.updateLatLng freelances null");
+                            return;
+                        }
+                        for (Workmate i : freelances) {
+                            if (i.getHasJoined()) {
+                                Log.i("TestWork", "FirebaseHelper.updateLatLng freelances = " + i.getName() + " (" + i.getLatitude() + "," + i.getLongitude() + ")");
+                            } else {
+                                Log.i("TestWork", "FirebaseHelper.updateLatLng freelances = " + i.getName() + " none");
+                            }
+                        }
                     })
                     .addOnFailureListener(e -> Log.e("TestWork", "FirebaseHelper.updateLatLng exception", e));
 
@@ -175,24 +186,26 @@ public class WorkmateRepository {
                 Workmate w = null;
                 boolean notAlreadyRegistered = true;
                 for (QueryDocumentSnapshot document : task.getResult()) {
-                    freelances.add(document.toObject(Workmate.class));
+                    Workmate i = document.toObject(Workmate.class);
                     if (workmate.getEmail().equals(document.toObject(Workmate.class).getEmail())) {
-                        w = document.toObject(Workmate.class);
+                        setLatLng(i, latLng);
+                        w = i;
                     }
+                    freelances.add(i);
                 }
                 if (w != null) {
-                    setLatLng(w, latLng);
                     this.updateLatLng(workmate, latLng);
 //                    this.workmates.setValue(this.freelances);
+                    Log.i("TestWork", "WorkmateRepository.setRestaurant done");
                 }
 
             } else {
-                Log.i("TestWork", "Error getting documents: ", task.getException());
+                Log.i("TestWork", "WorkmateRepository.setRestaurant Error getting documents: ", task.getException());
             }
         }).addOnFailureListener(e -> {
             //handle error
-            Log.i("TestWork", "Error failure listener ", e);
-            this.workmates.setValue(null);
+            Log.i("TestWork", "WorkmateRepository.setRestaurant Error failure listener ", e);
+//            this.workmates.setValue(null);
         });
         return true;
         /*

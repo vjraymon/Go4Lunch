@@ -41,9 +41,15 @@ public class MyViewModel extends ViewModel {
 
     public void init(Context context) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        Log.i("TestMySelf", "MyViewModel.init name = " + user.getDisplayName());
-        Log.i("TestMySelf", "MyViewModel.init email = " + user.getEmail());
-        myself = new Workmate(user.getEmail(), user.getDisplayName(), null);
+        if (user == null)
+        {
+            Log.i("TestMySelf", "MyViewModel.init user null");
+            myself = null;
+        } else {
+            Log.i("TestMySelf", "MyViewModel.init name = " + user.getDisplayName());
+            Log.i("TestMySelf", "MyViewModel.init email = " + user.getEmail());
+            myself = new Workmate(user.getEmail(), user.getDisplayName(), null);
+        }
         restaurantRepository = RestaurantRepository.getRestaurantRepository(context);
         workmateRepository = WorkmateRepository.getWorkmateRepository(context);
         workmateRepository.addWorkmate(myself);
@@ -51,7 +57,7 @@ public class MyViewModel extends ViewModel {
     }
 
     public void initForTest() {
-        Log.i("TestsJoin", "begin initForTest()");
+        Log.i("TestsJoin", "MyViewModel.initForTest()");
         workmateRepository.addWorkmate(new Workmate("Caroline@gmail.com", "Caroline",
                 restaurantRepository.getRestaurants().getValue().get(1).getLatLng()));
         workmateRepository.addWorkmate(new Workmate("Jack@gmail.com", "Jack", null));
@@ -90,13 +96,6 @@ public class MyViewModel extends ViewModel {
         if (w.getHasJoined()) return new LatLng(w.getLatitude(), w.getLongitude());
         return null;
     }
-    public void setRestaurant(Workmate w, LatLng restaurant) {
-        w.setHasJoined((restaurant != null));
-        if (w.getHasJoined()) {
-            w.setLatitude(restaurant.latitude);
-            w.setLongitude(restaurant.longitude);
-        }
-    }
 
     List<Workmate> workmatesByLatLng;
     public List<Workmate> getWorkmatesByLatLng(List<Workmate> workmates, LatLng id) {
@@ -105,24 +104,24 @@ public class MyViewModel extends ViewModel {
         if ((workmates == null) || (id == null)) {
             if (workmates == null)
             {
-                Log.i("TestJoin","MyViewModel: getRestaurantByLatLng: restaurants null");
+                Log.i("TestJoin","MyViewModel: getWorkmatesByLatLng: restaurants null");
             }
             if (id == null) {
-                Log.i("TestJoin", "MyViewModel: getRestaurantByLatLng: id null");
+                Log.i("TestJoin", "MyViewModel: getWorkmatesByLatLng: id null");
             }
             return null;
         }
-        Log.i("TestJoinedList","MyViewModel: getRestaurantByLatLng: " + id.latitude + "," + id.longitude);
+        Log.i("TestJoinedList","MyViewModel: getWorkmatesByLatLng: " + id.latitude + "," + id.longitude);
         for (Workmate i: workmates) {
-            Log.i("TestJoinedList","MyViewModel: getRestaurantByLatLng: " + i.getName());
-            Log.i("TestJoinedList","MyViewModel: getRestaurantByLatLng: " + i.getLatitude() + "," + i.getLongitude());
+            Log.i("TestJoinedList","MyViewModel: getWorkmatesByLatLng: " + i.getName());
+            Log.i("TestJoinedList","MyViewModel: getWorkmatesByLatLng: " + i.getLatitude() + "," + i.getLongitude());
             if (getRestaurant(i) == null) {
-                Log.i("TestPlace","MyViewModel: getRestaurantByLatLng: " + i.getName() + " without LatLng");
+                Log.i("TestPlace","MyViewModel: getWorkmatesByLatLng: " + i.getName() + " without LatLng");
             } else if (id.equals(getRestaurant(i))) {
-                Log.i("TestJoin","MyViewModel: getRestaurantByLatLng: found restaurant");
+                Log.i("TestJoin","MyViewModel: getWorkmatesByLatLng: found restaurant");
                 workmatesByLatLng.add(i);
             } else {
-                Log.i("TestJoin","MyViewModel: getRestaurantByLatLng: differents restaurant");
+                Log.i("TestJoin","MyViewModel: getWorkmatesByLatLng: differents restaurant");
             }
         }
         return workmatesByLatLng;
