@@ -27,6 +27,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.openclassrooms.go4lunch.R;
@@ -243,16 +244,21 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         Log.i("TestMarker", "MapsFragment.initializeMarker restaurant = " + restaurant.getName());
         List<Workmate> currentWorkmateList = myViewModel.getWorkmatesByLatLng(restaurant.getLatLng());
         float color;
+        int pinRestaurant;
         if ((currentWorkmateList == null) || currentWorkmateList.isEmpty()) {
             color = BitmapDescriptorFactory.HUE_RED;
+            pinRestaurant = R.drawable.ic_pin_restaurant;
         } else {
             color = BitmapDescriptorFactory.HUE_GREEN;
+            pinRestaurant = R.drawable.ic_pin_restaurant_green;
         }
 
-        map.addMarker(new MarkerOptions()
+        Marker marker = map.addMarker(new MarkerOptions()
                     .position(restaurant.getLatLng())
                     .title(restaurant.getName())
-                    .icon(BitmapDescriptorFactory.defaultMarker(color)));
+// TODO Find the good pin dimensions
+  .icon(BitmapDescriptorFactory.fromResource(pinRestaurant)));
+//                    .icon(BitmapDescriptorFactory.defaultMarker(color)));
 
         Log.i("TestMarker","MapsFragment.initializeMarker end");
     }
