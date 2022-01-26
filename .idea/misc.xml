@@ -16,14 +16,18 @@
         <entry key="..\:/Users/vjray/StudioProjects/Go4Lunch/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.5661458333333333" />
         <entry key="..\:/Users/vjray/StudioProjects/Go4Lunch/app/src/main/res/drawable/ic_launcher_background.xml" value="0.5661458333333333" />
         <entry key="..\:/Users/vjray/StudioProjects/Go4Lunch/app/src/main/res/layout/activity_display_restaurant.xml" value="0.1" />
-        <entry key="..\:/Users/vjray/StudioProjects/Go4Lunch/app/src/main/res/layout/activity_main.xml" value="0.1595744680851064" />
+        <entry key="..\:/Users/vjray/StudioProjects/Go4Lunch/app/src/main/res/layout/activity_main.xml" value="0.13953488372093023" />
         <entry key="..\:/Users/vjray/StudioProjects/Go4Lunch/app/src/main/res/layout/fragment_joined_workmate.xml" value="0.23324275362318841" />
         <entry key="..\:/Users/vjray/StudioProjects/Go4Lunch/app/src/main/res/layout/fragment_joined_workmate_list.xml" value="0.23324275362318841" />
         <entry key="..\:/Users/vjray/StudioProjects/Go4Lunch/app/src/main/res/layout/fragment_restaurant.xml" value="0.328125" />
         <entry key="..\:/Users/vjray/StudioProjects/Go4Lunch/app/src/main/res/layout/fragment_restaurant_list.xml" value="0.328125" />
         <entry key="..\:/Users/vjray/StudioProjects/Go4Lunch/app/src/main/res/layout/fragment_workmate.xml" value="0.328125" />
         <entry key="..\:/Users/vjray/StudioProjects/Go4Lunch/app/src/main/res/layout/fragment_workmate_list.xml" value="0.328125" />
+        <entry key="..\:/Users/vjray/StudioProjects/Go4Lunch/app/src/main/res/layout/nav_header.xml" value="0.23333333333333334" />
+        <entry key="..\:/Users/vjray/StudioProjects/Go4Lunch/app/src/main/res/layout/toolbat.xml" value="0.1595744680851064" />
         <entry key="..\:/Users/vjray/StudioProjects/Go4Lunch/app/src/main/res/menu/login_menu.xml" value="0.2490740740740741" />
+        <entry key="..\:/Users/vjray/StudioProjects/Go4Lunch/app/src/main/res/menu/menu.xml" value="0.23333333333333334" />
+        <entry key="..\:/Users/vjray/StudioProjects/Go4Lunch/app/src/main/res/menu/menu_search.xml" value="0.23333333333333334" />
       </map>
     </option>
   </component>

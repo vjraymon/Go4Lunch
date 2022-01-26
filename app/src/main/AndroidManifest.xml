@@ -17,12 +17,13 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <!--        android:theme="@style/Theme.Go4Lunch" -->
+        android:theme="@style/Theme.Go4Lunch">
+        <!--        android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"> -->
         <activity
             android:name=".ui.DisplayRestaurantActivity"
             android:parentActivityName=".ui.MainActivity"
-            android:label="Restaurant detail" />
+            android:label="Restaurant detail"
+            android:theme="@style/Theme.Go4Lunch.NoActionBar"/>
         <meta-data
            android:name="android.support.PARENT_ACTIVITY"
            android:value=".ui.MainActivity" />

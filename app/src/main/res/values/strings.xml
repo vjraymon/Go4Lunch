@@ -7,4 +7,7 @@
     <string name="list_view">List View</string>
     <string name="workmates">Workmates</string>
     <string name="join">Join</string>
+    <string name="navigation_drawer_open">Open</string>
+    <string name="navigation_drawer_close">Close</string>
+    <string name="search">Search</string>
 </resources>
