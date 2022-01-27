@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.ImageView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
@@ -25,6 +26,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.openclassrooms.go4lunch.R;
 import com.openclassrooms.go4lunch.events.DisplayRestaurantEvent;
+import com.squareup.picasso.Picasso;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -38,9 +40,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private DrawerLayout drawer;
 
+    private ImageView userPhoto;
+    FirebaseUser myself;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         data.add(getApplicationContext().getString(R.string.map_view));
         data.add(getApplicationContext().getString(R.string.list_view));
         data.add(getApplicationContext().getString(R.string.workmates));
@@ -49,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setSupportActionBar(myToolbar);
 
         drawer = findViewById(R.id.drawer_layout);
+
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -57,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+        userPhoto = findViewById(R.id.user_photo);
         Log.i("TestPlace", "startSignInActivity()");
         startSignInActivity();
     }
@@ -161,6 +169,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }else {
                 Log.i("TestMySelf", "MainActivity.onSignInResult name = " + user.getDisplayName());
                 Log.i("TestMySelf", "MainActivity.onSignInResult email = " + user.getEmail());
+                if (user.getPhotoUrl() == null) {
+                    Log.i("TestMySelf", "MainActivity.onSignInResult myself.getPhotoUrl() null");
+                } else {
+                    Log.i("TestMySelf", "MainActivity.onSignInResult myself.getPhotoUrl()" + user.getPhotoUrl().toString());
+                    userPhoto = findViewById(R.id.user_photo);
+                    Picasso.with(this).load(user.getPhotoUrl()).into(userPhoto);
+                }
             }
             //3 - Configure ViewPager
             this.configureViewPager();

@@ -39,7 +39,9 @@ public class MyViewModel extends AndroidViewModel {
         } else {
             Log.i("TestMySelf", "MyViewModel.init name = " + user.getDisplayName());
             Log.i("TestMySelf", "MyViewModel.init email = " + user.getEmail());
-            myself = new Workmate(user.getEmail(), user.getDisplayName(), null);
+            myself = new Workmate(user.getEmail(),
+                    user.getDisplayName(),
+                    null);
         }
         restaurantRepository = RestaurantRepository.getRestaurantRepository(application.getApplicationContext());
         workmateRepository = WorkmateRepository.getWorkmateRepository();
