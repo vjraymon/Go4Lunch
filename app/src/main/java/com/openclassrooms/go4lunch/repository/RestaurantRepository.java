@@ -4,6 +4,7 @@ import static com.google.android.libraries.places.api.model.Place.Type.RESTAURAN
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -12,8 +13,10 @@ import androidx.lifecycle.MutableLiveData;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.PhotoMetadata;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.model.PlaceLikelihood;
+import com.google.android.libraries.places.api.net.FetchPhotoRequest;
 import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest;
 import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse;
@@ -59,6 +62,8 @@ public class RestaurantRepository {
     }
 
     List<Restaurant> restaurantList = new ArrayList<>();
+    String oh = null;
+    String ws = null;
 
     private void getRestaurantByIdFromGooglePlace(String placeId) {
         // Specify the fields to return.
@@ -69,6 +74,7 @@ public class RestaurantRepository {
                 Place.Field.OPENING_HOURS,
                 Place.Field.PHONE_NUMBER,
                 Place.Field.WEBSITE_URI,
+                Place.Field.PHOTO_METADATAS,
                 Place.Field.LAT_LNG
         );
 
@@ -77,27 +83,63 @@ public class RestaurantRepository {
 
         placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
             Place place = response.getPlace();
-            String oh = null;
             // TODO Select the current day
             if (place.getOpeningHours() != null) oh = place.getOpeningHours().getWeekdayText().toString();
-            String ws = null;
             if (place.getWebsiteUri() != null) ws = place.getWebsiteUri().toString();
             Log.i("TestDetailedPlace", "Place NAME found: " + place.getName());
             Log.i("TestDetailedPlace", "Place ADDRESS found: " + place.getAddress());
             Log.i("TestDetailedPlace", "Place OPENING_HOURS found: " + oh);
             Log.i("TestDetailedPlace", "Place PHONE_NUMBER found: " + place.getPhoneNumber());
             Log.i("TestDetailedPlace", "Place WEBSITE_URI found: " + place.getWebsiteUri() + " " + ws);
-            Restaurant restaurant = new Restaurant(
-                    place.getName(),
-                    place.getAddress(),
-                    place.getLatLng(),
-                    oh,
-                    ws,
-                    "+33 1 77 46 51 77"
-       //             place.getPhoneNumber()
-            );
-            restaurantList.add(restaurant);
-            select(restaurantList);
+            // Get the photo metadata.
+            final List<PhotoMetadata> metadata = place.getPhotoMetadatas();
+            if (metadata == null || metadata.isEmpty()) {
+                Log.w("TestDetailedPlace", "No photo metadata.");
+                Restaurant restaurant = new Restaurant(
+                        place.getName(),
+                        place.getAddress(),
+                        place.getLatLng(),
+                        oh,
+                        ws,
+                        null,
+                        "+33 1 77 46 51 77"
+                        //             place.getPhoneNumber()
+                );
+                return;
+            }
+            final PhotoMetadata photoMetadata = metadata.get(0);
+
+            // Get the attribution text.
+            final String attributions = photoMetadata.getAttributions();
+
+            // Create a FetchPhotoRequest.
+            final FetchPhotoRequest photoRequest = FetchPhotoRequest.builder(photoMetadata)
+                    .setMaxWidth(500) // Optional.
+                    .setMaxHeight(300) // Optional.
+                    .build();
+            placesClient.fetchPhoto(photoRequest).addOnSuccessListener((fetchPhotoResponse) -> {
+                Bitmap bitmap = fetchPhotoResponse.getBitmap();
+                Restaurant restaurant = new Restaurant(
+                        place.getName(),
+                        place.getAddress(),
+                        place.getLatLng(),
+                        oh,
+                        ws,
+                        bitmap,
+                        "+33 1 77 46 51 77"
+                        //             place.getPhoneNumber()
+                );
+                restaurantList.add(restaurant);
+                select(restaurantList);
+//                imageView.setImageBitmap(bitmap);
+            }).addOnFailureListener((exception) -> {
+                if (exception instanceof ApiException) {
+                    final ApiException apiException = (ApiException) exception;
+                    Log.e("TestDetailedPlace", "Place not found: " + exception.getMessage());
+                    final int statusCode = apiException.getStatusCode();
+                    // TODO: Handle error with given status code.
+                }
+            });
         }).addOnFailureListener((exception) -> {
             if (exception instanceof ApiException) {
                 final ApiException apiException = (ApiException) exception;

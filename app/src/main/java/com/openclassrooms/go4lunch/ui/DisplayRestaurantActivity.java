@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -45,6 +46,7 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
     TextView textRestaurantOpeningHours;
     Button buttonRestaurantWebsiteUri;
     Button buttonRestaurantPhoneNumber;
+    ImageView imageRestaurant;
 
     RecyclerView recyclerView;
     List<Workmate> joinedWorkmates = null;
@@ -67,6 +69,7 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
         buttonRestaurantWebsiteUri = findViewById(R.id.display_restaurant_website_uri);
         buttonRestaurantPhoneNumber = findViewById(R.id.display_restaurant_phone_number);
         buttonRestaurantJoin = findViewById(R.id.display_restaurant_join);
+        imageRestaurant = findViewById(R.id.display_restaurant_bitmap);
         buttonRestaurantJoin.setEnabled(false);
         buttonRestaurantJoin.setOnClickListener(v -> {
             Log.i("TestJoin", "DisplayRestaurantActivity: clicked on Join");
@@ -115,6 +118,9 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
                 callIntent.setData(Uri.parse("tel:"+buttonRestaurantPhoneNumber.getText()));
                 startActivity(callIntent);
             });
+            if (this.restaurant.getBitmap() != null) {
+                imageRestaurant.setImageBitmap(this.restaurant.getBitmap());
+            }
         }
 
         Log.i("TestJoin", "DisplayRestaurantActivity: updateRestaurantsList call setDisplayJoin");
