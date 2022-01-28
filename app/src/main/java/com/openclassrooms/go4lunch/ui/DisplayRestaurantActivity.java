@@ -43,7 +43,7 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
     Button buttonRestaurantJoin;
     TextView textRestaurantName;
     TextView textRestaurantOpeningHours;
-    TextView textRestaurantWebsiteUri;
+    Button buttonRestaurantWebsiteUri;
     Button buttonRestaurantPhoneNumber;
 
     RecyclerView recyclerView;
@@ -64,7 +64,7 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
         Log.i("TestPlace", "DisplayRestaurantActivity.onCreate id = (" + currentId.latitude + "," + currentId.longitude + ")");
         textRestaurantName = findViewById(R.id.display_restaurant_name);
         textRestaurantOpeningHours = findViewById(R.id.display_restaurant_opening_hours);
-        textRestaurantWebsiteUri = findViewById(R.id.display_restaurant_website_uri);
+        buttonRestaurantWebsiteUri = findViewById(R.id.display_restaurant_website_uri);
         buttonRestaurantPhoneNumber = findViewById(R.id.display_restaurant_phone_number);
         buttonRestaurantJoin = findViewById(R.id.display_restaurant_join);
         buttonRestaurantJoin.setEnabled(false);
@@ -101,7 +101,13 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
                         + "(" + restaurant.getLatLng().latitude
                         + " , " + restaurant.getLatLng().longitude);
             textRestaurantOpeningHours.setText(restaurant.getOpeningHours());
-            textRestaurantWebsiteUri.setText(restaurant.getWebsiteUri());
+            buttonRestaurantWebsiteUri.setText(restaurant.getWebsiteUri());
+            buttonRestaurantWebsiteUri.setOnClickListener(v -> {
+                Log.i("TestJoin", "DisplayRestaurantActivity: clicked on Website");
+                Uri uri = Uri.parse(buttonRestaurantWebsiteUri.getText().toString());
+                Intent webIntent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(webIntent);
+            });
             buttonRestaurantPhoneNumber.setText(restaurant.getPhoneNumber());
             buttonRestaurantPhoneNumber.setOnClickListener(v -> {
                 Log.i("TestJoin", "DisplayRestaurantActivity: clicked on Call");
