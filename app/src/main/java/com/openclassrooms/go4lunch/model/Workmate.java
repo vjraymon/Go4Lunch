@@ -1,5 +1,7 @@
 package com.openclassrooms.go4lunch.model;
 
+import android.net.Uri;
+
 import com.google.android.gms.maps.model.LatLng;
 
 public class Workmate {
@@ -8,10 +10,11 @@ public class Workmate {
     private double longitude;
     private String email;
     private boolean hasJoined;
+    private String photoUrl;
 
     public Workmate() {}
 
-    public Workmate(String email, String name, LatLng restaurant) {
+    public Workmate(String email, String name, LatLng restaurant, Uri photoUri) {
         this.email = email;
         this.name = name;
         hasJoined = (restaurant != null);
@@ -19,6 +22,7 @@ public class Workmate {
             this.latitude = restaurant.latitude;
             this.longitude = restaurant.longitude;
         }
+        this.photoUrl = photoUri.toString();
     }
 
     public String getName() { return name; }
@@ -35,4 +39,7 @@ public class Workmate {
 
     public double getLongitude() { return longitude; }
     public void setLongitude(double longitude) { this.longitude = longitude; }
+
+    public String getPhotoUrl() { return photoUrl; }
+    public void setPhotoUrl(String photoUrl) { this.photoUrl = photoUrl; }
 }

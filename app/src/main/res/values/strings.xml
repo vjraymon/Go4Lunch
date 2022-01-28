@@ -12,4 +12,5 @@
     <string name="search">Search</string>
     <string name="user_s_photo">User\'s photo</string>
     <string name="restaurant_bitmap">Restaurant bitmap</string>
+    <string name="workmate_photo">Workmate photo</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.openclassrooms.go4lunch.viewmodel;
 
 import android.app.Application;
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.lifecycle.AndroidViewModel;
@@ -41,7 +42,8 @@ public class MyViewModel extends AndroidViewModel {
             Log.i("TestMySelf", "MyViewModel.init email = " + user.getEmail());
             myself = new Workmate(user.getEmail(),
                     user.getDisplayName(),
-                    null);
+                    null,
+                    user.getPhotoUrl());
         }
         restaurantRepository = RestaurantRepository.getRestaurantRepository(application.getApplicationContext());
         workmateRepository = WorkmateRepository.getWorkmateRepository();
@@ -50,13 +52,18 @@ public class MyViewModel extends AndroidViewModel {
 
     public void initForTest() {
         Log.i("TestsJoin", "MyViewModel.initForTest()");
+
         workmateRepository.addWorkmate(new Workmate("Caroline@gmail.com", "Caroline",
-                restaurantRepository.getRestaurants().getValue().get(1).getLatLng()));
-        workmateRepository.addWorkmate(new Workmate("Jack@gmail.com", "Jack", null));
+                restaurantRepository.getRestaurants().getValue().get(1).getLatLng(),
+                Uri.parse("https://lh3.googleusercontent.com/a/AATXAJy5CJheMr1OSP2ef-jbhmBfNHRMc0XnYTnlrfj-=s96-c")));
+        workmateRepository.addWorkmate(new Workmate("Jack@gmail.com", "Jack", null,
+                Uri.parse("https://lh3.googleusercontent.com/a/AATXAJy5CJheMr1OSP2ef-jbhmBfNHRMc0XnYTnlrfj-=s96-c")));
         workmateRepository.addWorkmate(new Workmate("Emilie@gmail.com", "Emilie",
-                restaurantRepository.getRestaurants().getValue().get(0).getLatLng()));
+                restaurantRepository.getRestaurants().getValue().get(0).getLatLng(),
+                Uri.parse("https://lh3.googleusercontent.com/a/AATXAJy5CJheMr1OSP2ef-jbhmBfNHRMc0XnYTnlrfj-=s96-c")));
         workmateRepository.addWorkmate(new Workmate("Albert@gmail.com", "Albert",
-                restaurantRepository.getRestaurants().getValue().get(1).getLatLng()));
+                restaurantRepository.getRestaurants().getValue().get(1).getLatLng(),
+                Uri.parse("https://lh3.googleusercontent.com/a/AATXAJy5CJheMr1OSP2ef-jbhmBfNHRMc0XnYTnlrfj-=s96-c")));
 
     }
 

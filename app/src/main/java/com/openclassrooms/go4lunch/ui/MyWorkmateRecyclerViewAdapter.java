@@ -1,9 +1,11 @@
 package com.openclassrooms.go4lunch.ui;
 
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,6 +17,7 @@ import com.openclassrooms.go4lunch.events.DisplayRestaurantEvent;
 import com.openclassrooms.go4lunch.model.Restaurant;
 import com.openclassrooms.go4lunch.model.Workmate;
 import com.openclassrooms.go4lunch.viewmodel.MyViewModel;
+import com.squareup.picasso.Picasso;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -46,6 +49,9 @@ public class MyWorkmateRecyclerViewAdapter extends RecyclerView.Adapter<MyWorkma
         holder.workmate = workmates.get(position);
         holder.mName.setText(workmates.get(position).getName());
         holder.mEmail.setText(workmates.get(position).getEmail());
+        Uri uri = Uri.parse(workmates.get(position).getPhotoUrl());
+        Picasso.with(holder.mPhoto.getContext()).load(uri).into(holder.mPhoto);
+
         LatLng id = getRestaurant(workmates.get(position));
         Restaurant restaurant = null;
         String s;
@@ -76,12 +82,14 @@ public class MyWorkmateRecyclerViewAdapter extends RecyclerView.Adapter<MyWorkma
         public Workmate workmate;
         public final View mView;
         public Restaurant restaurant;
+        public final ImageView mPhoto;
 
         public ViewHolder(@NonNull FragmentWorkmateBinding binding) {
             super(binding.getRoot());
             mName = binding.workmateName;
             mEmail = binding.workmateEmail;
             mRestaurant = binding.workmateRestaurant;
+            mPhoto = binding.workmatePhoto;
             mView = binding.getRoot();
             mView.setOnClickListener(v -> {
                 Log.i("TestPlace", "click on an element");
