@@ -202,8 +202,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             //          restaurantRepository.getRestaurants().observe(this, this::updateRestaurantsList);
             isRestaurantsInitialized = false;
             isWorkmatesInitialized = false;
-            myViewModel.getRestaurants().observe(this, this::updateRestaurantsList);
-            myViewModel.getWorkmates().observe(this, this::updateWorkmatesList);
+            myViewModel.getRestaurants().observeForever(this::updateRestaurantsList);
+            myViewModel.getWorkmates().observeForever(this::updateWorkmatesList);
             map.setOnMarkerClickListener(marker -> {
                 Log.i("TestMarker", "MapsFragment.showCurrentPlace OnMarkerClickListener");
                 Restaurant restaurant = myViewModel.getRestaurantByLatLng(marker.getPosition());

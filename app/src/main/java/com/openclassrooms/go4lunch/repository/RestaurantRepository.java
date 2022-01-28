@@ -9,10 +9,12 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.model.PlaceLikelihood;
+import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest;
 import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
@@ -38,7 +40,7 @@ public class RestaurantRepository {
     }
 
     private final PlacesClient placesClient;
-    private static final int M_MAX_ENTRIES = 5;
+    private static final int M_MAX_ENTRIES = 10;
 
     public RestaurantRepository(Context context) {
         Log.i("TestPlace", "Places.initialize");
@@ -50,24 +52,71 @@ public class RestaurantRepository {
 
     private final MutableLiveData<List<Restaurant>> restaurants = new MutableLiveData<>();
 
-    public void select(List<Restaurant> item) {
-        restaurants.setValue(item);
-    }
+    public void select(List<Restaurant> item) { restaurants.setValue(item); }
 
     public LiveData<List<Restaurant>> getRestaurants() {
         return this.restaurants;
     }
 
-    private void getRestaurantsFromGooglePlace() {
-        List<Restaurant> restaurants = new ArrayList<>();
+    List<Restaurant> restaurantList = new ArrayList<>();
 
-        List<Place.Field> placeFields = Arrays.asList(
+    private void getRestaurantByIdFromGooglePlace(String placeId) {
+        // Specify the fields to return.
+        final List<Place.Field> placeFields = Arrays.asList(
+                Place.Field.ID,
                 Place.Field.NAME,
                 Place.Field.ADDRESS,
-                Place.Field.LAT_LNG,
-                Place.Field.TYPES,
-                Place.Field.ICON_URL
+                Place.Field.OPENING_HOURS,
+                Place.Field.PHONE_NUMBER,
+                Place.Field.WEBSITE_URI,
+                Place.Field.LAT_LNG
         );
+
+        // Construct a request object, passing the place ID and fields array.
+        final FetchPlaceRequest request = FetchPlaceRequest.newInstance(placeId, placeFields);
+
+        placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
+            Place place = response.getPlace();
+            String oh = null;
+            // TODO Select the current day
+            if (place.getOpeningHours() != null) oh = place.getOpeningHours().getWeekdayText().toString();
+            String ws = null;
+            if (place.getWebsiteUri() != null) ws = place.getWebsiteUri().toString();
+            Log.i("TestDetailedPlace", "Place NAME found: " + place.getName());
+            Log.i("TestDetailedPlace", "Place ADDRESS found: " + place.getAddress());
+            Log.i("TestDetailedPlace", "Place OPENING_HOURS found: " + oh);
+            Log.i("TestDetailedPlace", "Place PHONE_NUMBER found: " + place.getPhoneNumber());
+            Log.i("TestDetailedPlace", "Place WEBSITE_URI found: " + place.getWebsiteUri() + " " + ws);
+            Restaurant restaurant = new Restaurant(
+                    place.getName(),
+                    place.getAddress(),
+                    place.getLatLng(),
+                    oh,
+                    ws,
+                    "+33 1 77 46 51 77"
+       //             place.getPhoneNumber()
+            );
+            restaurantList.add(restaurant);
+            select(restaurantList);
+        }).addOnFailureListener((exception) -> {
+            if (exception instanceof ApiException) {
+                final ApiException apiException = (ApiException) exception;
+                Log.e("TestDetailedPlace", "Place not found: " + exception.getMessage());
+                final int statusCode = apiException.getStatusCode();
+                // TODO: Handle error with given status code.
+            }
+        });
+    }
+
+
+    private void getRestaurantsFromGooglePlace() {
+        List<Place.Field> placeFields = Arrays.asList(
+                Place.Field.ID,
+                Place.Field.TYPES
+        );
+
+        restaurantList = new ArrayList<>();
+
         FindCurrentPlaceRequest request = FindCurrentPlaceRequest.newInstance(placeFields);
         Log.i("TestPlace", "placesClient.findCurrentPlace");
         @SuppressLint("MissingPermission")
@@ -85,21 +134,17 @@ public class RestaurantRepository {
                                     break;
                                 }
                                 Log.i("TestPlace", "location i = " + i + " : " + placeLikelihood.getPlace().getName());
-                                Log.i("TestIcon", "location i = " + i + " : " + placeLikelihood.getPlace().getIconUrl());
-                                Restaurant restaurant = new Restaurant(
-                                        placeLikelihood.getPlace().getName(),
-                                        placeLikelihood.getPlace().getAddress(),
-                                        placeLikelihood.getPlace().getLatLng()
-                                );
-                                restaurants.add(restaurant);
+                                getRestaurantByIdFromGooglePlace(placeLikelihood.getPlace().getId());
                             }
                         }
-                        select(restaurants);
+                        select(restaurantList);
                     } else {
                         Log.i("TestPlace", "incorrect response");
                     }
                 }
         );
     }
+
+
 
 }

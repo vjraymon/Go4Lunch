@@ -2,6 +2,7 @@ package com.openclassrooms.go4lunch.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -41,6 +42,9 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
     private boolean restaurantInitialized = false;
     Button buttonRestaurantJoin;
     TextView textRestaurantName;
+    TextView textRestaurantOpeningHours;
+    TextView textRestaurantWebsiteUri;
+    Button buttonRestaurantPhoneNumber;
 
     RecyclerView recyclerView;
     List<Workmate> joinedWorkmates = null;
@@ -59,6 +63,9 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
         currentId = new LatLng(mLatitude,mLongitude);
         Log.i("TestPlace", "DisplayRestaurantActivity.onCreate id = (" + currentId.latitude + "," + currentId.longitude + ")");
         textRestaurantName = findViewById(R.id.display_restaurant_name);
+        textRestaurantOpeningHours = findViewById(R.id.display_restaurant_opening_hours);
+        textRestaurantWebsiteUri = findViewById(R.id.display_restaurant_website_uri);
+        buttonRestaurantPhoneNumber = findViewById(R.id.display_restaurant_phone_number);
         buttonRestaurantJoin = findViewById(R.id.display_restaurant_join);
         buttonRestaurantJoin.setEnabled(false);
         buttonRestaurantJoin.setOnClickListener(v -> {
@@ -93,6 +100,15 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
             textRestaurantName.setText(restaurant.getName()
                         + "(" + restaurant.getLatLng().latitude
                         + " , " + restaurant.getLatLng().longitude);
+            textRestaurantOpeningHours.setText(restaurant.getOpeningHours());
+            textRestaurantWebsiteUri.setText(restaurant.getWebsiteUri());
+            buttonRestaurantPhoneNumber.setText(restaurant.getPhoneNumber());
+            buttonRestaurantPhoneNumber.setOnClickListener(v -> {
+                Log.i("TestJoin", "DisplayRestaurantActivity: clicked on Call");
+                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                callIntent.setData(Uri.parse("tel:"+buttonRestaurantPhoneNumber.getText()));
+                startActivity(callIntent);
+            });
         }
 
         Log.i("TestJoin", "DisplayRestaurantActivity: updateRestaurantsList call setDisplayJoin");
