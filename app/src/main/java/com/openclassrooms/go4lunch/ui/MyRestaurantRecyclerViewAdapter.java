@@ -11,12 +11,15 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.res.TypedArrayUtils;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.openclassrooms.go4lunch.R;
 import com.openclassrooms.go4lunch.databinding.FragmentRestaurantBinding;
 import com.openclassrooms.go4lunch.events.DisplayRestaurantEvent;
 import com.openclassrooms.go4lunch.model.Restaurant;
+import com.openclassrooms.go4lunch.model.Workmate;
+import com.openclassrooms.go4lunch.viewmodel.MyViewModel;
 import com.squareup.picasso.Picasso;
 
 import org.greenrobot.eventbus.EventBus;
@@ -26,23 +29,25 @@ import java.util.List;
 public class MyRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<MyRestaurantRecyclerViewAdapter.ViewHolder> {
 
     private final List<Restaurant> restaurants;
+    private MyViewModel myViewModel;
 
-    public MyRestaurantRecyclerViewAdapter(List<Restaurant> restaurants) {
+    public MyRestaurantRecyclerViewAdapter(List<Restaurant> restaurants, MyViewModel myViewModel) {
         this.restaurants = restaurants;
+        this.myViewModel = myViewModel;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new ViewHolder(FragmentRestaurantBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
-
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.restaurant = restaurants.get(position);
-        holder.mIdView.setText(restaurants.get(position).getName());
-        holder.mContentView.setText(restaurants.get(position).getAddress());
+        holder.mName.setText(restaurants.get(position).getName());
+        holder.mAddress.setText(restaurants.get(position).getAddress());
+        holder.mOpeningHours.setText(restaurants.get(position).getOpeningHours());
         if (holder.restaurant.getBitmap() != null) {
             holder.mPhoto.setImageBitmap(holder.restaurant.getBitmap());
         }
@@ -61,6 +66,16 @@ public class MyRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<MyRest
             distance = results[0];
         }
         holder.mDistance.setText(String.format("%sm",Math.round(distance)));
+
+        Log.i("TestSize", "onBindViewHolder call getWorkmatesByLatLng");
+        List<Workmate> w = myViewModel.getWorkmatesByLatLng(holder.restaurant.getLatLng());
+        if ((w == null) || (w.size() < 1)) {
+            holder.mNumberWorkmate.setVisibility(View.INVISIBLE);
+        } else {
+            Log.i("TestSize", "onBindViewHolder call getWorkmatesByLatLng != null");
+            holder.mNumberWorkmate.setVisibility(View.VISIBLE);
+            holder.mNumberWorkmate.setText(String.format("(%s)", myViewModel.getWorkmatesByLatLng(holder.restaurant.getLatLng()).size()));
+        }
     }
 
     @Override
@@ -69,19 +84,23 @@ public class MyRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<MyRest
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public final TextView mIdView;
-        public final TextView mContentView;
+        public final TextView mName;
+        public final TextView mAddress;
+        public final TextView mOpeningHours;
         public final View mView;
         public final ImageView mPhoto;
         public final TextView mDistance;
+        public final TextView mNumberWorkmate;
         public Restaurant restaurant;
 
         public ViewHolder(@NonNull FragmentRestaurantBinding binding) {
             super(binding.getRoot());
-            mIdView = binding.itemNumber;
-            mContentView = binding.content;
+            mName = binding.restaurantName;
+            mAddress = binding.restaurantAddress;
+            mOpeningHours = binding.restaurantOpeningHours;
             mPhoto = binding.restaurantBitmap;
-            mDistance = binding.distance;
+            mDistance = binding.restaurantDistance;
+            mNumberWorkmate = binding.restaurantNumberWorkmate;
             mView = binding.getRoot();
             mView.setOnClickListener(v -> {
                 Log.i("TestPlace", "click on an element");
@@ -94,7 +113,7 @@ public class MyRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<MyRest
         @NonNull
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + mAddress.getText() + "'";
         }
     }
 }

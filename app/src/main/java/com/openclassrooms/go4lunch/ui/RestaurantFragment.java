@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.openclassrooms.go4lunch.R;
 import com.openclassrooms.go4lunch.model.Restaurant;
+import com.openclassrooms.go4lunch.model.Workmate;
 import com.openclassrooms.go4lunch.viewmodel.MyViewModel;
 
 import java.util.List;
@@ -22,6 +23,8 @@ import java.util.List;
  * A fragment representing a list of Items.
  */
 public class RestaurantFragment extends Fragment {
+
+    List<Restaurant> restaurants;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -51,18 +54,24 @@ public class RestaurantFragment extends Fragment {
             Context context = view.getContext();
             recyclerView = (RecyclerView) view;
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
+            myViewModel.getWorkmates().observe(getViewLifecycleOwner(), this::updateWorkmatesList);
             myViewModel.getRestaurants().observe(getViewLifecycleOwner(), this::updateRestaurantsList);
         }
         return view;
     }
     private void updateRestaurantsList(List<Restaurant> restaurants) {
         Log.i("TestJoin", "RestaurantFragment: updateRestaurantsList");
+        this.restaurants = restaurants;
         if (restaurants == null) return;
             for (Restaurant restaurant : restaurants) {
             Log.i("TestPlace", "RestaurantFragment: updateRestaurantsList location list retrieved = " + restaurant.getName());
         }
         Log.i("TestPlace", "RestaurantFragment: updateRestaurantsList end of location list retrieved");
-        recyclerView.setAdapter(new MyRestaurantRecyclerViewAdapter(restaurants));
+        recyclerView.setAdapter(new MyRestaurantRecyclerViewAdapter(restaurants, myViewModel));
+    }
+    private void updateWorkmatesList(List<Workmate> workmates) {
+        Log.i("TestWork", "WorkmateFragment: updateWorkmatesList");
+        recyclerView.setAdapter(new MyRestaurantRecyclerViewAdapter(restaurants, myViewModel));
     }
 
 }
