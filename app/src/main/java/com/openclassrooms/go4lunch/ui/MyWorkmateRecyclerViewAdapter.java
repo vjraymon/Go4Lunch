@@ -47,8 +47,8 @@ public class MyWorkmateRecyclerViewAdapter extends RecyclerView.Adapter<MyWorkma
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.workmate = workmates.get(position);
-        holder.mName.setText(workmates.get(position).getName());
-        holder.mEmail.setText(workmates.get(position).getEmail());
+//        holder.mName.setText(workmates.get(position).getName());
+//        holder.mEmail.setText(workmates.get(position).getEmail());
         Uri uri = Uri.parse(workmates.get(position).getPhotoUrl());
         Picasso.with(holder.mPhoto.getContext()).load(uri).into(holder.mPhoto);
 
@@ -56,18 +56,18 @@ public class MyWorkmateRecyclerViewAdapter extends RecyclerView.Adapter<MyWorkma
         Restaurant restaurant = null;
         String s;
         if (id == null) {
-            s = "none";
+            s = String.format("%s haven't chosen yet", workmates.get(position).getName());
         } else {
             Log.i("TestWork", "MyWorkmateRecyclerViewAdapter: onBindViewHolder: ");
             restaurant = myViewModel.getRestaurantByLatLng(id);
             if (restaurant == null) {
                 s = "unknown";
             } else {
-                s = restaurant.getName();
+                s = String.format("%s have chosen %s", workmates.get(position).getName(), restaurant.getName());
             }
         }
         holder.restaurant = restaurant;
-        holder.mRestaurant.setText(s);
+        holder.mName.setText(s);
     }
 
     @Override
@@ -93,7 +93,7 @@ public class MyWorkmateRecyclerViewAdapter extends RecyclerView.Adapter<MyWorkma
             mView = binding.getRoot();
             mView.setOnClickListener(v -> {
                 Log.i("TestPlace", "click on an element");
-                v.setEnabled(false);
+//                v.setEnabled(false);
                 EventBus.getDefault().post(new DisplayRestaurantEvent(restaurant));
             });
         }

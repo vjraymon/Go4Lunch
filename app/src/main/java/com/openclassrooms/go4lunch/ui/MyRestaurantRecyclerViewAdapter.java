@@ -4,6 +4,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -37,6 +38,9 @@ public class MyRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<MyRest
         holder.restaurant = restaurants.get(position);
         holder.mIdView.setText(restaurants.get(position).getName());
         holder.mContentView.setText(restaurants.get(position).getAddress());
+        if (holder.restaurant.getBitmap() != null) {
+            holder.mPhoto.setImageBitmap(holder.restaurant.getBitmap());
+        }
     }
 
     @Override
@@ -48,16 +52,18 @@ public class MyRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<MyRest
         public final TextView mIdView;
         public final TextView mContentView;
         public final View mView;
+        public final ImageView mPhoto;
         public Restaurant restaurant;
 
         public ViewHolder(@NonNull FragmentRestaurantBinding binding) {
             super(binding.getRoot());
             mIdView = binding.itemNumber;
             mContentView = binding.content;
+            mPhoto = binding.restaurantBitmap;
             mView = binding.getRoot();
             mView.setOnClickListener(v -> {
                 Log.i("TestPlace", "click on an element");
-                    v.setEnabled(false);
+//                    v.setEnabled(false);
                     EventBus.getDefault().post(new DisplayRestaurantEvent(restaurant));
                 Log.i("TestPlace", "id = (" + restaurant.getLatLng().latitude + "," + restaurant.getLatLng().longitude + ")");
             });

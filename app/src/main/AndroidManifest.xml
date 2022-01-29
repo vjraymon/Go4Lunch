@@ -39,8 +39,7 @@
         <activity
             android:name=".ui.DisplayRestaurantActivity"
             android:label="Restaurant detail"
-            android:parentActivityName=".ui.MainActivity"
-            android:theme="@style/Theme.Go4Lunch.NoActionBar" />
+            android:parentActivityName=".ui.MainActivity"/>
         <meta-data
             android:name="android.support.PARENT_ACTIVITY"
             android:value=".ui.MainActivity" />
@@ -58,7 +57,8 @@
 
         <activity
             android:name=".ui.MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.Go4Lunch.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

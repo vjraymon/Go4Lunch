@@ -63,8 +63,6 @@ public class RestaurantRepository {
     }
 
     List<Restaurant> restaurantList = new ArrayList<>();
-    String oh = null;
-    String ws = null;
 
     private void getRestaurantByIdFromGooglePlace(String placeId) {
         // Specify the fields to return.
@@ -83,8 +81,7 @@ public class RestaurantRepository {
         final FetchPlaceRequest request = FetchPlaceRequest.newInstance(placeId, placeFields);
 
         placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
-            Place place = response.getPlace();
-            // TODO Select the current day
+            final Place place = response.getPlace();
             Calendar calendar = Calendar.getInstance();
             int day = calendar.get(Calendar.DAY_OF_WEEK);
             Log.i("TestDetailedPlace", "Place DAY found: " + day);
@@ -98,23 +95,21 @@ public class RestaurantRepository {
                 case Calendar.FRIDAY:    index = 4; break;
                 case Calendar.SATURDAY:  index = 5; break;
             }
-            if (place.getOpeningHours() != null) {
-                Log.i("TestDetailedPlace", "Place OPENING_HOURS found: " + place.getOpeningHours().getWeekdayText());
-                oh = place.getOpeningHours().getWeekdayText().get(index);
-            }
-            if (place.getWebsiteUri() != null) ws = place.getWebsiteUri().toString();
+            final String oh = (place.getOpeningHours()==null) ? null : place.getOpeningHours().getWeekdayText().get(index);
+            final String ws = (place.getWebsiteUri()==null) ? null : place.getWebsiteUri().toString();
+
             Log.i("TestDetailedPlace", "Place NAME found: " + place.getName());
             Log.i("TestDetailedPlace", "Place ADDRESS found: " + place.getAddress());
-            Log.i("TestDetailedPlace", "Place OPENING_HOURS found: " + oh);
+            Log.i("TestDetailedPlace", "Place OPENING_HOURS found: " + place.getOpeningHours());
             Log.i("TestDetailedPlace", "Place PHONE_NUMBER found: " + place.getPhoneNumber());
-            Log.i("TestDetailedPlace", "Place WEBSITE_URI found: " + place.getWebsiteUri() + " " + ws);
+            Log.i("TestDetailedPlace", "Place WEBSITE_URI found: " + place.getWebsiteUri());
             // Get the photo metadata.
             final List<PhotoMetadata> metadata = place.getPhotoMetadatas();
             if (metadata == null || metadata.isEmpty()) {
                 Log.w("TestDetailedPlace", "No photo metadata.");
                 Restaurant restaurant = new Restaurant(
                         place.getName(),
-                        place.getAddress(),
+                        Objects.requireNonNull(place.getAddress()).split(",")[0],
                         place.getLatLng(),
                         oh,
                         ws,
@@ -122,6 +117,8 @@ public class RestaurantRepository {
                         "+33 1 77 46 51 77"
                         //             place.getPhoneNumber()
                 );
+                restaurantList.add(restaurant);
+                select(restaurantList);
                 return;
             }
             final PhotoMetadata photoMetadata = metadata.get(0);
@@ -132,13 +129,13 @@ public class RestaurantRepository {
             // Create a FetchPhotoRequest.
             final FetchPhotoRequest photoRequest = FetchPhotoRequest.builder(photoMetadata)
                     .setMaxWidth(500) // Optional.
-                    .setMaxHeight(300) // Optional.
+//                    .setMaxHeight(300) // Optional.
                     .build();
             placesClient.fetchPhoto(photoRequest).addOnSuccessListener((fetchPhotoResponse) -> {
-                Bitmap bitmap = fetchPhotoResponse.getBitmap();
-                Restaurant restaurant = new Restaurant(
+                 Bitmap bitmap = fetchPhotoResponse.getBitmap();
+                 Restaurant restaurant = new Restaurant(
                         place.getName(),
-                        place.getAddress(),
+                        Objects.requireNonNull(place.getAddress()).split(",")[0],
                         place.getLatLng(),
                         oh,
                         ws,
