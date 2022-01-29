@@ -50,7 +50,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     MyViewModel myViewModel;
 
-    private Location lastKnownLocation;
+    private static Location lastKnownLocation = null;
+
+    public static Location getLastKnownLocation() { return lastKnownLocation; }
 
     private static final int DEFAULT_ZOOM = 17;
 

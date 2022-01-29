@@ -12,14 +12,16 @@ public class Restaurant {
     private String openingHours;
     private String websiteUri;
     private Bitmap bitmap;
+    private String iconUrl;
 
-    public Restaurant(String name, String address, LatLng latLng, String openingHours, String websiteUri, Bitmap bitmap, String phoneNumber) {
+    public Restaurant(String name, String address, LatLng latLng, String openingHours, String websiteUri, Bitmap bitmap, String iconUrl, String phoneNumber) {
         this.name = name;
         this.address = address;
         this.latLng = latLng;
         this.phoneNumber = phoneNumber;
         this.openingHours = openingHours;
         this.websiteUri = websiteUri;
+        this.iconUrl = iconUrl;
         this.bitmap = bitmap;
     }
 
@@ -40,6 +42,9 @@ public class Restaurant {
 
     public String getPhoneNumber() { return phoneNumber; }
     public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
+
+    public String getIconUrl() { return iconUrl; }
+    public void setIconUrl(String iconUrl) { this.iconUrl = iconUrl; }
 
     public Bitmap getBitmap() { return bitmap; }
     public void setBitmap(Bitmap bitmap) { this.bitmap = bitmap; }

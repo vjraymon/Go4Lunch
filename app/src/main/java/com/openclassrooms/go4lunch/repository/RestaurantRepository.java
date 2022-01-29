@@ -74,6 +74,7 @@ public class RestaurantRepository {
                 Place.Field.PHONE_NUMBER,
                 Place.Field.WEBSITE_URI,
                 Place.Field.PHOTO_METADATAS,
+                Place.Field.ICON_URL,
                 Place.Field.LAT_LNG
         );
 
@@ -114,6 +115,7 @@ public class RestaurantRepository {
                         oh,
                         ws,
                         null,
+                        null,
                         "+33 1 77 46 51 77"
                         //             place.getPhoneNumber()
                 );
@@ -128,7 +130,7 @@ public class RestaurantRepository {
 
             // Create a FetchPhotoRequest.
             final FetchPhotoRequest photoRequest = FetchPhotoRequest.builder(photoMetadata)
-                    .setMaxWidth(500) // Optional.
+//                    .setMaxWidth(500) // Optional.
 //                    .setMaxHeight(300) // Optional.
                     .build();
             placesClient.fetchPhoto(photoRequest).addOnSuccessListener((fetchPhotoResponse) -> {
@@ -140,6 +142,7 @@ public class RestaurantRepository {
                         oh,
                         ws,
                         bitmap,
+                        place.getIconUrl(),
                         "+33 1 77 46 51 77"
                         //             place.getPhoneNumber()
                 );

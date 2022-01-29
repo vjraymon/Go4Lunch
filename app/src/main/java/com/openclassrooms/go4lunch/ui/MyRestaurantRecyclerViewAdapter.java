@@ -1,5 +1,7 @@
 package com.openclassrooms.go4lunch.ui;
 
+import android.location.Location;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,11 +10,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.res.TypedArrayUtils;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.openclassrooms.go4lunch.R;
 import com.openclassrooms.go4lunch.databinding.FragmentRestaurantBinding;
 import com.openclassrooms.go4lunch.events.DisplayRestaurantEvent;
 import com.openclassrooms.go4lunch.model.Restaurant;
+import com.squareup.picasso.Picasso;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -41,6 +46,21 @@ public class MyRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<MyRest
         if (holder.restaurant.getBitmap() != null) {
             holder.mPhoto.setImageBitmap(holder.restaurant.getBitmap());
         }
+ /*
+        if (restaurants.get(position).getIconUrl()!=null) {
+            Uri uri = Uri.parse(restaurants.get(position).getIconUrl());
+            Picasso.with(holder.mPhoto.getContext()).load(uri).into(holder.mPhoto);
+        }
+ */
+        double distance = 0;
+        if ((MapFragment.getLastKnownLocation() != null) && (holder.restaurant.getLatLng() != null)) {
+            float[] results = new float[1];
+            Location.distanceBetween(MapFragment.getLastKnownLocation().getLatitude(), MapFragment.getLastKnownLocation().getLongitude(),
+                    holder.restaurant.getLatLng().latitude, holder.restaurant.getLatLng().longitude,
+                    results);
+            distance = results[0];
+        }
+        holder.mDistance.setText(String.format("%sm",Math.round(distance)));
     }
 
     @Override
@@ -53,6 +73,7 @@ public class MyRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<MyRest
         public final TextView mContentView;
         public final View mView;
         public final ImageView mPhoto;
+        public final TextView mDistance;
         public Restaurant restaurant;
 
         public ViewHolder(@NonNull FragmentRestaurantBinding binding) {
@@ -60,6 +81,7 @@ public class MyRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<MyRest
             mIdView = binding.itemNumber;
             mContentView = binding.content;
             mPhoto = binding.restaurantBitmap;
+            mDistance = binding.distance;
             mView = binding.getRoot();
             mView.setOnClickListener(v -> {
                 Log.i("TestPlace", "click on an element");

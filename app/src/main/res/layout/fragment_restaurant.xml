@@ -15,6 +15,15 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:id="@+id/distance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/text_margin"
+        android:textAppearance="?attr/textAppearanceListItem"
+        app:layout_constraintEnd_toStartOf="@+id/restaurant_bitmap"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
         android:id="@+id/content"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
@@ -25,7 +34,7 @@
 
     <ImageView
         android:layout_width="100dp"
-        android:layout_height="wrap_content"
+        android:layout_height="80dp"
         android:id="@+id/restaurant_bitmap"
         android:contentDescription="@string/restaurant_bitmap"
         app:layout_constraintEnd_toEndOf="parent"

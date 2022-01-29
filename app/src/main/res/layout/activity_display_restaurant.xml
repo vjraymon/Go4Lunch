@@ -1,79 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/listJoinWorkmateContainer"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.DisplayRestaurantActivity">
+    android:layout_height="match_parent">
 
-    <ImageView
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/listJoinWorkmateContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/display_restaurant_bitmap"
-        android:contentDescription="@string/restaurant_bitmap"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        tools:context=".ui.DisplayRestaurantActivity">
 
-    <TextView
-        android:id="@+id/display_restaurant_opening_hours"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/display_restaurant_bitmap" />
-
-    <Button
-        android:id="@+id/display_restaurant_website_uri"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/display_restaurant_opening_hours" />
-
-    <Button
-        android:id="@+id/display_restaurant_phone_number"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/display_restaurant_website_uri" />
-
-    <TextView
-        android:id="@+id/display_restaurant_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.304"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/display_restaurant_phone_number" />
-
-    <Button
-        android:id="@+id/display_restaurant_join"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/join"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/display_restaurant_name" />
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/display_restaurant_join"
-        >
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/listJoinWorkmate"
-            android:name="com.openclassrooms.go4lunch.ui.DisplayRestaurantActivity"
+        <ImageView
+            android:id="@+id/display_restaurant_bitmap"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            app:layoutManager="LinearLayoutManager"
-            tools:context=".ui.DisplayRestaurantActivity"
-            tools:listitem="@layout/joined_workmate" />
-    </RelativeLayout>
+            android:contentDescription="@string/restaurant_bitmap"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/display_restaurant_opening_hours"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/display_restaurant_bitmap" />
+
+        <Button
+            android:id="@+id/display_restaurant_website_uri"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/display_restaurant_opening_hours" />
+
+        <Button
+            android:id="@+id/display_restaurant_phone_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/display_restaurant_website_uri" />
+
+        <TextView
+            android:id="@+id/display_restaurant_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.304"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/display_restaurant_phone_number" />
+
+        <Button
+            android:id="@+id/display_restaurant_join"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/join"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/display_restaurant_name" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/display_restaurant_join">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/listJoinWorkmate"
+                android:name="com.openclassrooms.go4lunch.ui.DisplayRestaurantActivity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                app:layoutManager="LinearLayoutManager"
+                tools:context=".ui.DisplayRestaurantActivity"
+                tools:listitem="@layout/joined_workmate" />
+        </RelativeLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
