@@ -26,6 +26,7 @@ import com.openclassrooms.go4lunch.model.Restaurant;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 
@@ -84,7 +85,23 @@ public class RestaurantRepository {
         placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
             Place place = response.getPlace();
             // TODO Select the current day
-            if (place.getOpeningHours() != null) oh = place.getOpeningHours().getWeekdayText().toString();
+            Calendar calendar = Calendar.getInstance();
+            int day = calendar.get(Calendar.DAY_OF_WEEK);
+            Log.i("TestDetailedPlace", "Place DAY found: " + day);
+            int index = 0;
+            switch (day) {
+                case Calendar.SUNDAY:    index = 6; break;
+                case Calendar.MONDAY:    index = 0; break;
+                case Calendar.TUESDAY:   index = 1; break;
+                case Calendar.WEDNESDAY: index = 2; break;
+                case Calendar.THURSDAY:  index = 3; break;
+                case Calendar.FRIDAY:    index = 4; break;
+                case Calendar.SATURDAY:  index = 5; break;
+            }
+            if (place.getOpeningHours() != null) {
+                Log.i("TestDetailedPlace", "Place OPENING_HOURS found: " + place.getOpeningHours().getWeekdayText());
+                oh = place.getOpeningHours().getWeekdayText().get(index);
+            }
             if (place.getWebsiteUri() != null) ws = place.getWebsiteUri().toString();
             Log.i("TestDetailedPlace", "Place NAME found: " + place.getName());
             Log.i("TestDetailedPlace", "Place ADDRESS found: " + place.getAddress());

@@ -23,6 +23,22 @@
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             android:elevation="4dp"/>
 
+        <Button
+            android:id="@+id/subscribeButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:text="@string/subscribe_to_weather" />
+
+        <Button
+            android:id="@+id/logTokenButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="60dp"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/log_token" />
+
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/blank_tabLayout"
@@ -54,7 +70,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_above="@+id/blank_tabLayout"
-            android:layout_below="@id/my_toolbar"
+            android:layout_below="@id/logTokenButton"
             android:layout_marginTop="0dp" />
     </RelativeLayout>
 
