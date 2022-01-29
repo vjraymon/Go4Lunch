@@ -70,11 +70,26 @@ public class WorkmateRepository {
                 }
                 if (notAlreadyRegistered) {
                     // Add a new document with email as ID
+                    freelances.add(myself);
                     db.collection("workmates")
                             .document(myself.getEmail())
-                            .set(myself);
-                    freelances.add(myself);
-                    this.workmates.setValue(freelances);
+                            .set(myself)
+                            .addOnSuccessListener(unused -> {
+                                Log.d("TestWork", "FirebaseHelper.updateLatLng successfull");
+                                this.workmates.setValue(this.freelances);
+                                if (freelances== null) {
+                                    Log.i("TestWork", "FirebaseHelper.updateLatLng freelances null");
+                                    return;
+                                }
+                                for (Workmate i : freelances) {
+                                    if (i.getHasJoined()) {
+                                        Log.i("TestWork", "FirebaseHelper.updateLatLng freelances = " + i.getName() + " (" + i.getLatitude() + "," + i.getLongitude() + ")");
+                                    } else {
+                                        Log.i("TestWork", "FirebaseHelper.updateLatLng freelances = " + i.getName() + " none");
+                                    }
+                                }
+                            })
+                            .addOnFailureListener(e -> Log.e("TestWork", "FirebaseHelper.updateLatLng exception", e));
                 }
             } else {
                 Log.d("Error", "Error getting documents: ", task.getException());
@@ -106,6 +121,7 @@ public class WorkmateRepository {
         if (latLng == null) {
             Log.i("TestWork", "FirebaseHelper.updateLatLng latlng null");
             db.collection("workmates").document(workmate.getEmail()).update("hasJoined", false);
+            this.workmates.setValue(this.freelances);
         } else {
             Log.i("TestWork", "FirebaseHelper.updateLatLng name " + workmate.getName() + " (" + latLng.latitude + "," + latLng.longitude + ")");
             db.collection("workmates").document(workmate.getEmail()).update(

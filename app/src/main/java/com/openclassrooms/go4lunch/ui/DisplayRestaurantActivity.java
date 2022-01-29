@@ -149,14 +149,14 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
             Log.i("TestsJoin", "DisplayRestaurantActivity.setDisplayJoin enable button");
             buttonRestaurantJoin.setEnabled(true);
             //initialization for tests
-//            myViewModel.initForTest();
+            myViewModel.initForTest();
             restaurantInitialized = false;
             workmateInitialized = false;
         }
     }
 
     private void refresh(LatLng mLatLng) {
-        if (mLatLng == null) return;
+//        if (mLatLng == null) return;
         if ((this.workmates != null) && (myViewModel != null)) {
             Log.i("TestJoinedList", "JoinedWorkmateFragment.refresh call recyclerView.setAdapter LatLng = (" + mLatLng.latitude + "," + mLatLng.longitude);
             joinedWorkmates = myViewModel.getWorkmatesByLatLng(mLatLng);

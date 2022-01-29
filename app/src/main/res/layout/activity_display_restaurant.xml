@@ -59,16 +59,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/display_restaurant_name" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/listJoinWorkmate"
-        android:name="com.openclassrooms.go4lunch.ui.DisplayRestaurantActivity"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        app:layoutManager="LinearLayoutManager"
-        tools:context=".ui.DisplayRestaurantActivity"
         app:layout_constraintTop_toBottomOf="@+id/display_restaurant_join"
-        tools:listitem="@layout/joined_workmate" />
+        >
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/listJoinWorkmate"
+            android:name="com.openclassrooms.go4lunch.ui.DisplayRestaurantActivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            app:layoutManager="LinearLayoutManager"
+            tools:context=".ui.DisplayRestaurantActivity"
+            tools:listitem="@layout/joined_workmate" />
+    </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
