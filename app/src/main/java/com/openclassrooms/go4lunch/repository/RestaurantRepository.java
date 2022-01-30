@@ -67,7 +67,6 @@ public class RestaurantRepository {
     private void getRestaurantByIdFromGooglePlace(String placeId) {
         // Specify the fields to return.
         final List<Place.Field> placeFields = Arrays.asList(
-                Place.Field.ID,
                 Place.Field.NAME,
                 Place.Field.ADDRESS,
                 Place.Field.OPENING_HOURS,
@@ -104,11 +103,13 @@ public class RestaurantRepository {
             Log.i("TestDetailedPlace", "Place OPENING_HOURS found: " + place.getOpeningHours());
             Log.i("TestDetailedPlace", "Place PHONE_NUMBER found: " + place.getPhoneNumber());
             Log.i("TestDetailedPlace", "Place WEBSITE_URI found: " + place.getWebsiteUri());
+            Log.i("TestDetailedPlace", "Place PLUS_CODE found: " + place.getPlusCode());
             // Get the photo metadata.
             final List<PhotoMetadata> metadata = place.getPhotoMetadatas();
             if (metadata == null || metadata.isEmpty()) {
                 Log.w("TestDetailedPlace", "No photo metadata.");
                 Restaurant restaurant = new Restaurant(
+                        placeId,
                         place.getName(),
                         Objects.requireNonNull(place.getAddress()).split(",")[0],
                         place.getLatLng(),
@@ -134,17 +135,18 @@ public class RestaurantRepository {
 //                    .setMaxHeight(300) // Optional.
                     .build();
             placesClient.fetchPhoto(photoRequest).addOnSuccessListener((fetchPhotoResponse) -> {
-                 Bitmap bitmap = fetchPhotoResponse.getBitmap();
-                 Restaurant restaurant = new Restaurant(
-                        place.getName(),
-                        Objects.requireNonNull(place.getAddress()).split(",")[0],
-                        place.getLatLng(),
-                        oh,
-                        ws,
-                        bitmap,
-                        place.getIconUrl(),
-                        "+33 1 77 46 51 77"
-                        //             place.getPhoneNumber()
+                Bitmap bitmap = fetchPhotoResponse.getBitmap();
+                Restaurant restaurant = new Restaurant(
+                    placeId,
+                    place.getName(),
+                    Objects.requireNonNull(place.getAddress()).split(",")[0],
+                    place.getLatLng(),
+                    oh,
+                    ws,
+                    bitmap,
+                    place.getIconUrl(),
+                    "+33 1 77 46 51 77"
+                    //             place.getPhoneNumber()
                 );
                 restaurantList.add(restaurant);
                 select(restaurantList);
@@ -194,6 +196,7 @@ public class RestaurantRepository {
                                 }
                                 Log.i("TestPlace", "location i = " + i + " : " + placeLikelihood.getPlace().getName());
                                 getRestaurantByIdFromGooglePlace(placeLikelihood.getPlace().getId());
+                                Log.i("TestDetailedPlace", "Place TYPES found: " + placeLikelihood.getPlace().getTypes());
                             }
                         }
                         select(restaurantList);

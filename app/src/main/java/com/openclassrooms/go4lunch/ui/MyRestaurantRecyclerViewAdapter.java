@@ -68,13 +68,13 @@ public class MyRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<MyRest
         holder.mDistance.setText(String.format("%sm",Math.round(distance)));
 
         Log.i("TestSize", "onBindViewHolder call getWorkmatesByLatLng");
-        List<Workmate> w = myViewModel.getWorkmatesByLatLng(holder.restaurant.getLatLng());
+        List<Workmate> w = myViewModel.getWorkmatesByIdRestaurant(holder.restaurant.getId());
         if ((w == null) || (w.size() < 1)) {
             holder.mNumberWorkmate.setVisibility(View.INVISIBLE);
         } else {
             Log.i("TestSize", "onBindViewHolder call getWorkmatesByLatLng != null");
             holder.mNumberWorkmate.setVisibility(View.VISIBLE);
-            holder.mNumberWorkmate.setText(String.format("(%s)", myViewModel.getWorkmatesByLatLng(holder.restaurant.getLatLng()).size()));
+            holder.mNumberWorkmate.setText(String.format("(%s)", w.size()));
         }
     }
 

@@ -28,16 +28,15 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
      * Used to navigate to this activity
      */
     public static void navigate(android.content.Context context, Restaurant restaurant) {
-        Log.i("TestPlace", "DisplayRestaurantActivity.navigate id = (" + restaurant.getLatLng().latitude + "," + restaurant.getLatLng().longitude + ")");
+        Log.i("TestPlace", "DisplayRestaurantActivity.navigate id = " + restaurant.getId());
         Intent intent = new Intent(context, DisplayRestaurantActivity.class);
-        intent.putExtra("keyLat", restaurant.getLatLng().latitude);
-        intent.putExtra("keyLng", restaurant.getLatLng().longitude);
+        intent.putExtra("keyId", restaurant.getId());
         ActivityCompat.startActivity(context, intent, null);
     }
 
     private Restaurant restaurant;
     private MyViewModel  myViewModel;
-    private LatLng currentId;
+    private String currentId;
     private List<Workmate> workmates;
     private boolean workmateInitialized = false;
     private boolean restaurantInitialized = false;
@@ -60,10 +59,8 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
         myViewModel.getRestaurants().observe(this, this::updateRestaurantsList);
         myViewModel.getWorkmates().observe(this, this::updateWorkmatesList);
 
-        double mLatitude = getIntent().getDoubleExtra("keyLat", 0);
-        double mLongitude = getIntent().getDoubleExtra("keyLng", 0);
-        currentId = new LatLng(mLatitude,mLongitude);
-        Log.i("TestPlace", "DisplayRestaurantActivity.onCreate id = (" + currentId.latitude + "," + currentId.longitude + ")");
+        currentId = getIntent().getStringExtra("keyId");
+        Log.i("TestPlace", "DisplayRestaurantActivity.onCreate id = " + currentId);
         textRestaurantName = findViewById(R.id.display_restaurant_name);
         textRestaurantOpeningHours = findViewById(R.id.display_restaurant_opening_hours);
         buttonRestaurantWebsiteUri = findViewById(R.id.display_restaurant_website_uri);
@@ -88,21 +85,20 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
         }
         Log.i("TestPlace", "DisplayRestaurantActivity: updateRestaurantsList end of location list retrieved");
 
-        this.restaurant = myViewModel.getRestaurantByLatLng(this.currentId);
+        this.restaurant = myViewModel.getRestaurantById(this.currentId);
         if (this.restaurant == null) {
-            Log.i("TestJoin", "DisplayRestaurantActivity: updateRestaurantsList unknown restaurant ? (" + this.currentId.latitude + "," + this.currentId.longitude + ")");
+            Log.i("TestJoin", "DisplayRestaurantActivity: updateRestaurantsList unknown restaurant ? " + this.currentId);
         } else {
             Log.i("TestJoin", "DisplayRestaurantActivity: updateRestaurantsList restaurant " + this.restaurant.getName());
         }
         if (this.restaurant == null) {
             return;
         }
-        if (restaurant.getLatLng() == null) {
+        if (restaurant.getId() == null) {
             textRestaurantName.setText(restaurant.getName() + " null");
         } else {
             textRestaurantName.setText(restaurant.getName()
-                        + "(" + restaurant.getLatLng().latitude
-                        + " , " + restaurant.getLatLng().longitude);
+                        + " " + restaurant.getId());
             textRestaurantOpeningHours.setText(restaurant.getOpeningHours());
             buttonRestaurantWebsiteUri.setText(restaurant.getWebsiteUri());
             buttonRestaurantWebsiteUri.setOnClickListener(v -> {
@@ -131,11 +127,7 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
         Log.i("TestJoin", "DisplayRestaurantActivity: updateWorkmatesList");
         this.workmates = workmates;
         for (Workmate workmate : workmates) {
-            if (workmate.getHasJoined()) {
-                Log.i("TestPlace", "DisplayRestaurantActivity: updateWorkmatesListlocation list retrieved = " + workmate.getName() + " (" + workmate.getLatitude() + "," + workmate.getLongitude() + ")");
-            } else {
-                Log.i("TestPlace", "DisplayRestaurantActivity: updateWorkmatesListlocation list retrieved = " + workmate.getName() + " none");
-            }
+                Log.i("TestPlace", "DisplayRestaurantActivity: updateWorkmatesListlocation list retrieved = " + workmate.getName() + " " + workmate.getIdRestaurant());
         }
         Log.i("TestJoin", "DisplayRestaurantActivity: updateWorkmatesList call setDisplayJoin");
         workmateInitialized = true;
@@ -155,11 +147,10 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
         }
     }
 
-    private void refresh(LatLng mLatLng) {
-//        if (mLatLng == null) return;
+    private void refresh(String mIdRestaurant) {
         if ((this.workmates != null) && (myViewModel != null)) {
-            Log.i("TestJoinedList", "JoinedWorkmateFragment.refresh call recyclerView.setAdapter LatLng = (" + mLatLng.latitude + "," + mLatLng.longitude);
-            joinedWorkmates = myViewModel.getWorkmatesByLatLng(mLatLng);
+            Log.i("TestJoinedList", "JoinedWorkmateFragment.refresh call recyclerView.setAdapter IdRestaurant =" + mIdRestaurant);
+            joinedWorkmates = myViewModel.getWorkmatesByIdRestaurant(mIdRestaurant);
         }
         recyclerView.setAdapter(new MyJoinedWorkmateRecyclerViewAdapter(joinedWorkmates));
     }

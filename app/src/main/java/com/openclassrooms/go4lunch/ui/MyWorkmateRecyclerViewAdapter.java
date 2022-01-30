@@ -40,10 +40,6 @@ public class MyWorkmateRecyclerViewAdapter extends RecyclerView.Adapter<MyWorkma
 
     }
 
-    public LatLng getRestaurant(Workmate w) {
-        if (w.getHasJoined()) return new LatLng(w.getLatitude(), w.getLongitude());
-        return null;
-    }
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.workmate = workmates.get(position);
@@ -52,14 +48,14 @@ public class MyWorkmateRecyclerViewAdapter extends RecyclerView.Adapter<MyWorkma
         Uri uri = Uri.parse(workmates.get(position).getPhotoUrl());
         Picasso.with(holder.mPhoto.getContext()).load(uri).into(holder.mPhoto);
 
-        LatLng id = getRestaurant(workmates.get(position));
+        String id = workmates.get(position).getIdRestaurant();
         Restaurant restaurant = null;
         String s;
         if (id == null) {
             s = String.format("%s haven't chosen yet", workmates.get(position).getName());
         } else {
             Log.i("TestWork", "MyWorkmateRecyclerViewAdapter: onBindViewHolder: ");
-            restaurant = myViewModel.getRestaurantByLatLng(id);
+            restaurant = myViewModel.getRestaurantById(id);
             if (restaurant == null) {
                 s = "unknown";
             } else {

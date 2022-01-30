@@ -204,31 +204,36 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             //          restaurantRepository.getRestaurants().observe(this, this::updateRestaurantsList);
             isRestaurantsInitialized = false;
             isWorkmatesInitialized = false;
-            myViewModel.getRestaurants().observeForever(this::updateRestaurantsList);
-            myViewModel.getWorkmates().observeForever(this::updateWorkmatesList);
+            myViewModel.getRestaurants().observe(this, this::updateRestaurantsList);
+            myViewModel.getWorkmates().observe(this, this::updateWorkmatesList);
             map.setOnMarkerClickListener(marker -> {
                 Log.i("TestMarker", "MapsFragment.showCurrentPlace OnMarkerClickListener");
                 Restaurant restaurant = myViewModel.getRestaurantByLatLng(marker.getPosition());
                 EventBus.getDefault().post(new DisplayRestaurantEvent(restaurant));
+                Log.i("TestMarker", "MapsFragment.showCurrentPlace OnMarkerClickListener " + restaurant.getName() + " " + restaurant.getId());
+//                marker.hideInfoWindow();
+//                marker.showInfoWindow();
                 return false;
             });
         }
     }
 
     private void updateRestaurantsList(List<Restaurant> restaurants) {
+        Log.i("TestMarker", "MapsFragment.updateRestaurantsList");
         this.restaurants = restaurants;
-        isRestaurantsInitialized = true;
-        if (isWorkmatesInitialized) {
+//        isRestaurantsInitialized = true;
+//        if (isWorkmatesInitialized) {
             initializeMarkers();
-        }
+//        }
     }
 
     private void updateWorkmatesList(List<Workmate> workmates) {
+        Log.i("TestMarker", "MapsFragment.updateWorkmatesList");
         this.workmates = workmates;
-        isWorkmatesInitialized = true;
-        if (isRestaurantsInitialized) {
+//        isWorkmatesInitialized = true;
+//        if (isRestaurantsInitialized) {
             initializeMarkers();
-        }
+//        }
     }
 
     private void initializeMarkers() {
@@ -243,14 +248,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             Log.i("TestMarker", "MapsFragment.initializeMarker restaurant not found");
             return;
         }
-        Log.i("TestMarker", "MapsFragment.initializeMarker restaurant = " + restaurant.getName());
-        List<Workmate> currentWorkmateList = myViewModel.getWorkmatesByLatLng(restaurant.getLatLng());
+        Log.i("TestMarker", "MapsFragment.initializeMarker restaurant = " + restaurant.getName() + " " + restaurant.getId());
+        List<Workmate> currentWorkmateList = myViewModel.getWorkmatesByIdRestaurant(restaurant.getId());
         float color;
         int pinRestaurant;
         if ((currentWorkmateList == null) || currentWorkmateList.isEmpty()) {
+            Log.i("TestMarker", "MapsFragment.initializeMarker red " + restaurant.getName());
             color = BitmapDescriptorFactory.HUE_RED;
             pinRestaurant = R.drawable.ic_pin_restaurant;
         } else {
+            Log.i("TestMarker", "MapsFragment.initializeMarker green " + restaurant.getName());
             color = BitmapDescriptorFactory.HUE_GREEN;
             pinRestaurant = R.drawable.ic_pin_restaurant_green;
         }
@@ -261,6 +268,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 // TODO Find the good pin dimensions
   .icon(BitmapDescriptorFactory.fromResource(pinRestaurant)));
 //                    .icon(BitmapDescriptorFactory.defaultMarker(color)));
+        // To refresh the display of the marker
+        if (marker != null) {
+            marker.hideInfoWindow();
+            marker.showInfoWindow();
+        }
 
         Log.i("TestMarker","MapsFragment.initializeMarker end");
     }

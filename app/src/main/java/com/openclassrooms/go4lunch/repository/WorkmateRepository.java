@@ -75,87 +75,61 @@ public class WorkmateRepository {
                             .document(myself.getEmail())
                             .set(myself)
                             .addOnSuccessListener(unused -> {
-                                Log.d("TestWork", "FirebaseHelper.updateLatLng successfull");
+                                Log.d("TestWork", "FirebaseHelper.addWorkmate successfull");
                                 this.workmates.setValue(this.freelances);
                                 if (freelances== null) {
-                                    Log.i("TestWork", "FirebaseHelper.updateLatLng freelances null");
+                                    Log.i("TestWork", "FirebaseHelper.addWorkmate freelances null");
                                     return;
                                 }
                                 for (Workmate i : freelances) {
-                                    if (i.getHasJoined()) {
-                                        Log.i("TestWork", "FirebaseHelper.updateLatLng freelances = " + i.getName() + " (" + i.getLatitude() + "," + i.getLongitude() + ")");
-                                    } else {
-                                        Log.i("TestWork", "FirebaseHelper.updateLatLng freelances = " + i.getName() + " none");
-                                    }
+                                    Log.i("TestWork", "FirebaseHelper.addWorkmate freelances = " + i.getName() + " " + i.getIdRestaurant());
                                 }
                             })
-                            .addOnFailureListener(e -> Log.e("TestWork", "FirebaseHelper.updateLatLng exception", e));
+                            .addOnFailureListener(e -> Log.e("TestWork", "FirebaseHelper.addWorkmate exception", e));
                 }
             } else {
-                Log.d("Error", "Error getting documents: ", task.getException());
+                Log.d("Error", "FirebaseHelper.addWorkmate Error getting documents: ", task.getException());
 
             }
         }).addOnFailureListener(e -> {
             //handle error
-            Log.i("TestWork", "Error failure listener ", e);
+            Log.i("TestWork", "FirebaseHelper.addWorkmate Error failure listener ", e);
             this.workmates.postValue(null);
         });
     }
 
- //   LatLng latLng;
-
-    private void setLatLng(Workmate w, LatLng latLng) {
-        w.setHasJoined((latLng != null));
-        if (latLng != null) {
-            w.setLatitude(latLng.latitude);
-            w.setLongitude(latLng.longitude);
-        }
-    }
-
-    public void updateLatLng(Workmate workmate, LatLng latLng) {
+    public void updateIdRestaurant(Workmate workmate, String idRestaurant) {
         if (workmate == null) {
-            Log.i("TestWork", "FirebaseHelper.updateLatLng workmate null");
+            Log.i("TestWork", "FirebaseHelper.updateIdRestaurant workmate null");
             return;
         }
-        Log.i("TestWork", "FirebaseHelper.updateLatLng");
-        if (latLng == null) {
-            Log.i("TestWork", "FirebaseHelper.updateLatLng latlng null");
-            db.collection("workmates").document(workmate.getEmail()).update("hasJoined", false);
-            this.workmates.setValue(this.freelances);
-        } else {
-            Log.i("TestWork", "FirebaseHelper.updateLatLng name " + workmate.getName() + " (" + latLng.latitude + "," + latLng.longitude + ")");
+        Log.i("TestWork", "FirebaseHelper.updateIdRestaurant");
+            Log.i("TestWork", "FirebaseHelper.updateIdRestaurant name " + workmate.getName() + idRestaurant);
             db.collection("workmates").document(workmate.getEmail()).update(
-                    "hasJoined", true,
-                    "latitude", latLng.latitude,
-                    "longitude", latLng.longitude)
-                    .addOnSuccessListener(unused -> {
-                        Log.d("TestWork", "FirebaseHelper.updateLatLng successfull");
-                        this.workmates.setValue(this.freelances);
-                        if (freelances== null) {
-                            Log.i("TestWork", "FirebaseHelper.updateLatLng freelances null");
-                            return;
-                        }
-                        for (Workmate i : freelances) {
-                            if (i.getHasJoined()) {
-                                Log.i("TestWork", "FirebaseHelper.updateLatLng freelances = " + i.getName() + " (" + i.getLatitude() + "," + i.getLongitude() + ")");
-                            } else {
-                                Log.i("TestWork", "FirebaseHelper.updateLatLng freelances = " + i.getName() + " none");
-                            }
-                        }
-                    })
-                    .addOnFailureListener(e -> Log.e("TestWork", "FirebaseHelper.updateLatLng exception", e));
-       }
+                "idRestaurant", idRestaurant)
+                .addOnSuccessListener(unused -> {
+                    Log.d("TestWork", "FirebaseHelper.updateIdRestaurant successfull");
+                    this.workmates.setValue(this.freelances);
+                    if (freelances== null) {
+                        Log.i("TestWork", "FirebaseHelper.updateIdRestaurant freelances null");
+                        return;
+                    }
+                    for (Workmate i : freelances) {
+                        Log.i("TestWork", "FirebaseHelper.updateIdRestaurant freelances = " + i.getName() + i.getIdRestaurant());
+                    }
+                })
+                .addOnFailureListener(e -> Log.e("TestWork", "FirebaseHelper.updateIdRestaurant exception", e));
     }
 
     public void setRestaurant(Workmate workmate, Restaurant restaurant) {
-        LatLng latLng;
+        String idRestaurant;
         Log.i("TestWork", "WorkmateRepository.setRestaurant");
         if (workmate == null) {
             Log.i("TestWork", "WorkmateRepository.setRestaurant : workmate null");
             return;
         }
-        if (restaurant != null) latLng = restaurant.getLatLng();
-        else latLng = null;
+        if (restaurant != null) idRestaurant = restaurant.getId();
+        else idRestaurant = null;
 
         workmatesRef.get().addOnCompleteListener(task -> {
             Log.i("TestWork", "WorkmateRepository.OnCompleteListener");
@@ -166,13 +140,13 @@ public class WorkmateRepository {
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     Workmate i = document.toObject(Workmate.class);
                     if (workmate.getEmail().equals(document.toObject(Workmate.class).getEmail())) {
-                        setLatLng(i, latLng);
+                        i.setIdRestaurant(idRestaurant);
                         w = i;
                     }
                     freelances.add(i);
                 }
                 if (w != null) {
-                    this.updateLatLng(workmate, latLng);
+                    this.updateIdRestaurant(workmate, idRestaurant);
 //                    this.workmates.setValue(this.freelances);
                     Log.i("TestWork", "WorkmateRepository.setRestaurant done");
                 }

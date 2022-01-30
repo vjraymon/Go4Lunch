@@ -42,8 +42,8 @@ public class MyViewModel extends AndroidViewModel {
             Log.i("TestMySelf", "MyViewModel.init email = " + user.getEmail());
             myself = new Workmate(user.getEmail(),
                     user.getDisplayName(),
-                    null,
-                    user.getPhotoUrl());
+                    user.getPhotoUrl(),
+                    null);
         }
         restaurantRepository = RestaurantRepository.getRestaurantRepository(application.getApplicationContext());
         workmateRepository = WorkmateRepository.getWorkmateRepository();
@@ -54,16 +54,17 @@ public class MyViewModel extends AndroidViewModel {
         Log.i("TestsJoin", "MyViewModel.initForTest()");
 
         workmateRepository.addWorkmate(new Workmate("Caroline@gmail.com", "Caroline",
-                restaurantRepository.getRestaurants().getValue().get(1).getLatLng(),
-                Uri.parse("https://lh3.googleusercontent.com/a/AATXAJy5CJheMr1OSP2ef-jbhmBfNHRMc0XnYTnlrfj-=s96-c")));
-        workmateRepository.addWorkmate(new Workmate("Jack@gmail.com", "Jack", null,
-                Uri.parse("https://lh3.googleusercontent.com/a/AATXAJy5CJheMr1OSP2ef-jbhmBfNHRMc0XnYTnlrfj-=s96-c")));
+                Uri.parse("https://lh3.googleusercontent.com/a/AATXAJy5CJheMr1OSP2ef-jbhmBfNHRMc0XnYTnlrfj-=s96-c"),
+                restaurantRepository.getRestaurants().getValue().get(1).getId()));
+        workmateRepository.addWorkmate(new Workmate("Jack@gmail.com", "Jack",
+                Uri.parse("https://lh3.googleusercontent.com/a/AATXAJy5CJheMr1OSP2ef-jbhmBfNHRMc0XnYTnlrfj-=s96-c"),
+                null));
         workmateRepository.addWorkmate(new Workmate("Emilie@gmail.com", "Emilie",
-                restaurantRepository.getRestaurants().getValue().get(0).getLatLng(),
-                Uri.parse("https://lh3.googleusercontent.com/a/AATXAJy5CJheMr1OSP2ef-jbhmBfNHRMc0XnYTnlrfj-=s96-c")));
+                Uri.parse("https://lh3.googleusercontent.com/a/AATXAJy5CJheMr1OSP2ef-jbhmBfNHRMc0XnYTnlrfj-=s96-c"),
+                restaurantRepository.getRestaurants().getValue().get(0).getId()));
         workmateRepository.addWorkmate(new Workmate("Albert@gmail.com", "Albert",
-                restaurantRepository.getRestaurants().getValue().get(1).getLatLng(),
-                Uri.parse("https://lh3.googleusercontent.com/a/AATXAJy5CJheMr1OSP2ef-jbhmBfNHRMc0XnYTnlrfj-=s96-c")));
+                Uri.parse("https://lh3.googleusercontent.com/a/AATXAJy5CJheMr1OSP2ef-jbhmBfNHRMc0XnYTnlrfj-=s96-c"),
+                restaurantRepository.getRestaurants().getValue().get(1).getId()));
 
     }
 
@@ -91,6 +92,31 @@ public class MyViewModel extends AndroidViewModel {
         return null;
     }
 
+
+    public Restaurant getRestaurantById(String id) {
+        List<Restaurant> restaurants = restaurantsLiveData.getValue();
+        if ((restaurants == null) || (id == null)) {
+            if (restaurants == null)
+            {
+                Log.i("TestJoin","MyViewModel: getRestaurantById: restaurants null");
+            }
+            if (id == null) {
+                Log.i("TestJoin", "MyViewModel: getRestaurantById: id null");
+            }
+            return null;
+        }
+        for (Restaurant i: restaurants) {
+            if (i.getId() == null) {
+                Log.i("TestPlace","MyViewModel: getRestaurantById: " + i.getName() + " without Id");
+            } else if (id.equals(i.getId())) {
+                Log.i("TestJoin","MyViewModel: getRestaurantById: found restaurant");
+                return i;
+            }
+        }
+        Log.i("TestJoin","MyViewModel: getRestaurantById: restaurant not found");
+        return null;
+    }
+ /*
     public LatLng getRestaurant(Workmate w) {
         if (w.getHasJoined()) return new LatLng(w.getLatitude(), w.getLongitude());
         return null;
@@ -124,6 +150,36 @@ public class MyViewModel extends AndroidViewModel {
             }
         }
         return workmatesByLatLng;
+    }
+*/
+    List<Workmate> workmatesByIdRestaurant;
+    public List<Workmate> getWorkmatesByIdRestaurant(String id) {
+        List<Workmate> workmates = workmatesLiveData.getValue();
+        workmatesByIdRestaurant = new ArrayList<>();
+        if ((workmates == null) || (id == null)) {
+            if (workmates == null)
+            {
+                Log.i("TestJoin","MyViewModel: getWorkmatesByIdRestaurant: restaurants null");
+            }
+            if (id == null) {
+                Log.i("TestJoin", "MyViewModel: getWorkmatesByIdRestaurant: id null");
+            }
+            return null;
+        }
+        Log.i("TestJoinedList","MyViewModel: getWorkmatesByIdRestaurant: " + id);
+        for (Workmate i: workmates) {
+            Log.i("TestJoinedList","MyViewModel: getWorkmatesByIdRestaurant: " + i.getName());
+            Log.i("TestJoinedList","MyViewModel: getWorkmatesByIdRestaurant: " + i.getIdRestaurant());
+            if (i.getIdRestaurant() == null) {
+                Log.i("TestPlace","MyViewModel: getWorkmatesByIdRestaurant: " + i.getName() + " without IdRestaurant");
+            } else if (id.equals(i.getIdRestaurant())) {
+                Log.i("TestJoin","MyViewModel: getWorkmatesByIdRestaurant: found restaurant");
+                workmatesByIdRestaurant.add(i);
+            } else {
+                Log.i("TestJoin","MyViewModel: getWorkmatesByIdRestaurant: differents restaurant");
+            }
+        }
+        return workmatesByIdRestaurant;
     }
 
     public void joinRestaurant(Restaurant restaurant) {
