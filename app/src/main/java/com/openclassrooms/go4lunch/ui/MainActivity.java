@@ -46,6 +46,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private final ArrayList<String> data = new ArrayList<>();
+    final int[] tabIcons = {R.drawable.ic_baseline_map_24, R.drawable.ic_baseline_view_list_24, R.drawable.ic_baseline_people_24};
 
     private DrawerLayout drawer;
 
@@ -298,18 +299,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void sendRegistrationToServer(String token) {}
 
     private void configureViewPager(){
-        // 1 - Get ViewPager from layout
         ViewPager2 page = findViewById(R.id.activity_main_viewpager);
+        TabLayout blankTabLayout = findViewById(R.id.blank_tabLayout);
+        // 1 - Get ViewPager from layout
         page.setAdapter(
                 new PageAdapter(this)
         );
         page.setUserInputEnabled(false);
-        TabLayout blankTabLayout = findViewById(R.id.blank_tabLayout);
         new TabLayoutMediator(
                 blankTabLayout,
                 page,
                 (tab, position) -> {
                     tab.setText(data.get(position));
+                    tab.setIcon(tabIcons[position]);
 //                    tab.setIcon(R.drawable.ic_launcher_foreground);
                 }
         ).attach();

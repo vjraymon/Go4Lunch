@@ -133,6 +133,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         map = googleMap;
+        map.clear();
         initGps();
         Log.i("TestPlace", "first getLocationPermission()");
         getLocationPermission();
