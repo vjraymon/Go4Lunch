@@ -38,5 +38,8 @@
     <string name="your_lunch">your lunch</string>
     <string name="settings">settings</string>
     <string name="logout">logout</string>
+    <string name="name_of_the_user">Name of the user</string>
+    <string name="email_of_the_user">Email of the user</string>
+    <string name="tiltle_of_the_drawer">Go4Lunch</string>
 
 </resources>

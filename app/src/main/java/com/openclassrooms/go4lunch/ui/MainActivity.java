@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -56,6 +57,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout drawer;
 
     private ImageView userPhoto;
+    private TextView userName;
+    private TextView userEmail;
     FirebaseUser myself;
 
     MyViewModel myViewModel;
@@ -75,6 +78,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setSupportActionBar(myToolbar);
 
         drawer = findViewById(R.id.drawer_layout);
+        userPhoto = findViewById(R.id.user_photo);
+        userName = findViewById(R.id.user_name);
+        userEmail = findViewById(R.id.user_email);
+        if (userPhoto==null) {
+            Log.w("TestMyself", "MainActivity.onCreate userPhoto null");
+        }
+        if (userEmail==null) {
+            Log.w("TestMyself", "MainActivity.onCreate userEmail null");
+        }
+        if (userName==null) {
+            Log.w("TestMyself", "MainActivity.onCreate userName null");
+        }
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -84,7 +99,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-        userPhoto = findViewById(R.id.user_photo);
         Log.i("TestPlace", "startSignInActivity()");
         startSignInActivity();
     }
@@ -218,6 +232,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     if (user.getPhotoUrl() != null) {
                         userPhoto = findViewById(R.id.user_photo);
                         Picasso.with(this).load(user.getPhotoUrl()).into(userPhoto);
+                    }
+                    userName = findViewById(R.id.user_name);
+                    userEmail = findViewById(R.id.user_email);
+                    if ((userName==null) || (userEmail==null)) {
+                        Log.w("TestMyself", "init pas faite!");
+                    } else {
+                        Log.w("TestMyself", "init pas faite!");
+                        userName.setText(user.getDisplayName());
+                        userEmail.setText(user.getEmail());
                     }
                 }
  //               initializeNotification();

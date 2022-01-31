@@ -30,6 +30,7 @@
         <entry key="..\:/Users/vjray/StudioProjects/Go4Lunch/app/src/main/res/drawable/ic_search_black_24dp.xml" value="0.34427083333333336" />
         <entry key="..\:/Users/vjray/StudioProjects/Go4Lunch/app/src/main/res/layout/activity_display_restaurant.xml" value="0.1" />
         <entry key="..\:/Users/vjray/StudioProjects/Go4Lunch/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="..\:/Users/vjray/StudioProjects/Go4Lunch/app/src/main/res/layout/blank_fragment.xml" value="0.328125" />
         <entry key="..\:/Users/vjray/StudioProjects/Go4Lunch/app/src/main/res/layout/fragment_joined_workmate.xml" value="0.23324275362318841" />
         <entry key="..\:/Users/vjray/StudioProjects/Go4Lunch/app/src/main/res/layout/fragment_joined_workmate_list.xml" value="0.23324275362318841" />
         <entry key="..\:/Users/vjray/StudioProjects/Go4Lunch/app/src/main/res/layout/fragment_maps.xml" value="0.1580547112462006" />
@@ -38,7 +39,7 @@
         <entry key="..\:/Users/vjray/StudioProjects/Go4Lunch/app/src/main/res/layout/fragment_workmate.xml" value="0.1" />
         <entry key="..\:/Users/vjray/StudioProjects/Go4Lunch/app/src/main/res/layout/fragment_workmate_list.xml" value="0.328125" />
         <entry key="..\:/Users/vjray/StudioProjects/Go4Lunch/app/src/main/res/layout/joined_workmate.xml" value="0.1580547112462006" />
-        <entry key="..\:/Users/vjray/StudioProjects/Go4Lunch/app/src/main/res/layout/nav_header.xml" value="0.23333333333333334" />
+        <entry key="..\:/Users/vjray/StudioProjects/Go4Lunch/app/src/main/res/layout/nav_header.xml" value="0.1" />
         <entry key="..\:/Users/vjray/StudioProjects/Go4Lunch/app/src/main/res/layout/nav_tab.xml" value="0.328125" />
         <entry key="..\:/Users/vjray/StudioProjects/Go4Lunch/app/src/main/res/layout/toolbat.xml" value="0.1595744680851064" />
         <entry key="..\:/Users/vjray/StudioProjects/Go4Lunch/app/src/main/res/menu/login_menu.xml" value="0.2490740740740741" />
