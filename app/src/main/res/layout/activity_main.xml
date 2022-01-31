@@ -18,7 +18,7 @@
             android:id="@+id/my_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/colorPrimary"
+            android:background="@color/red"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             android:elevation="4dp"/>
@@ -46,25 +46,26 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:theme="@style/Theme.Go4Lunch"
-            app:tabSelectedTextColor="@color/colorPrimary"
+            app:tabSelectedTextColor="@color/red"
+            app:tabIndicatorColor="@color/custom_tab_icon"
+            app:tabIconTint="@color/custom_tab_icon"
+            app:tabMode="fixed"
+            app:tabGravity="fill"
             app:tabTextColor="@color/black">
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:icon="@drawable/ic_baseline_map_24"
                 android:text="@string/map_view" />
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:icon="@drawable/ic_baseline_view_list_24"
                 android:text="@string/list_view" />
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:icon="@drawable/ic_baseline_people_24"
                 android:text="@string/workmates" />
         </com.google.android.material.tabs.TabLayout>
 

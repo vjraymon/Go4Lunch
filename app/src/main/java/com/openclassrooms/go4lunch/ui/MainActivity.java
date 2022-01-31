@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         data.add(getApplicationContext().getString(R.string.list_view));
         data.add(getApplicationContext().getString(R.string.workmates));
         setContentView(R.layout.activity_main);
+
         Toolbar myToolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 

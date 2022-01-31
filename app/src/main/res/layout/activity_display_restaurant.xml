@@ -21,13 +21,55 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/display_restaurant_opening_hours"
+        <Button
+            android:id="@+id/display_restaurant_join"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/join"
+            android:layout_marginEnd="@dimen/text_margin"
+            android:layout_marginTop="-20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/display_restaurant_bitmap"
+            />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/display_details_restaurant"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/display_restaurant_bitmap" />
+            app:layout_constraintTop_toBottomOf="@+id/display_restaurant_bitmap"
+            android:background="@color/red"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/display_restaurant_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/red"
+                android:textColor="@color/white"
+                android:layout_marginStart="@dimen/text_margin"
+                android:layout_marginTop="40dp"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+            <TextView
+                android:id="@+id/display_restaurant_opening_hours"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/red"
+                android:textColor="@color/white"
+                android:layout_margin="@dimen/text_margin"
+                app:layout_constraintTop_toBottomOf="@+id/display_restaurant_name"/>
+
+            <TextView
+                android:id="@+id/display_restaurant_dummy_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/red"
+                android:textColor="@color/white"
+                app:layout_constraintTop_toBottomOf="@+id/display_restaurant_opening_hours"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <Button
             android:id="@+id/display_restaurant_website_uri"
@@ -35,7 +77,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/display_restaurant_opening_hours" />
+            app:layout_constraintTop_toBottomOf="@+id/display_details_restaurant" />
 
         <Button
             android:id="@+id/display_restaurant_phone_number"
@@ -45,28 +87,10 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/display_restaurant_website_uri" />
 
-        <TextView
-            android:id="@+id/display_restaurant_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.304"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/display_restaurant_phone_number" />
-
-        <Button
-            android:id="@+id/display_restaurant_join"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/join"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/display_restaurant_name" />
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@+id/display_restaurant_join">
+            app:layout_constraintTop_toBottomOf="@+id/display_restaurant_phone_number">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/listJoinWorkmate"
