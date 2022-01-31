@@ -1,5 +1,8 @@
 package com.openclassrooms.go4lunch.ui;
 
+import static androidx.core.content.res.TypedArrayUtils.getString;
+
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,9 +12,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.openclassrooms.go4lunch.R;
 import com.openclassrooms.go4lunch.databinding.FragmentWorkmateBinding;
 import com.openclassrooms.go4lunch.events.DisplayRestaurantEvent;
 import com.openclassrooms.go4lunch.model.Restaurant;
@@ -55,18 +60,26 @@ public class MyWorkmateRecyclerViewAdapter extends RecyclerView.Adapter<MyWorkma
         Restaurant restaurant = null;
         String s;
         if (id == null) {
-            s = String.format("%s haven't chosen yet", workmates.get(position).getName());
+            s = String.format(holder.mName.getResources().getString(R.string.has_not_decided_yet), workmates.get(position).getName());
+            holder.mName.setText(s);
+            holder.mName.setTypeface(holder.mName.getTypeface(), Typeface.ITALIC);
+            holder.mName.setTextColor(ContextCompat.getColor(holder.mName.getContext(),R.color.quantum_grey));
         } else {
             Log.i("TestWork", "MyWorkmateRecyclerViewAdapter: onBindViewHolder: ");
             restaurant = myViewModel.getRestaurantById(id);
             if (restaurant == null) {
-                s = "unknown";
+                s = holder.mName.getResources().getString(R.string.restaurant_unknown);
+                holder.mName.setText(s);
+                holder.mName.setTypeface(holder.mName.getTypeface(), Typeface.ITALIC);
+                holder.mName.setTextColor(ContextCompat.getColor(holder.mName.getContext(),R.color.quantum_grey));
             } else {
-                s = String.format("%s have chosen %s", workmates.get(position).getName(), restaurant.getName());
+                s = String.format(holder.mName.getResources().getString(R.string.is_eating_in), workmates.get(position).getName(), restaurant.getName());
+                holder.mName.setText(s);
+                holder.mName.setTypeface(holder.mName.getTypeface(), Typeface.NORMAL);
+                holder.mName.setTextColor(ContextCompat.getColor(holder.mName.getContext(),R.color.black));
             }
         }
         holder.restaurant = restaurant;
-        holder.mName.setText(s);
     }
 
     @Override

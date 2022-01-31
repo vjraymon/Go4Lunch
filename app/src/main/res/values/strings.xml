@@ -34,18 +34,21 @@
     <!-- [END fcm_default_icon_string] -->
     <string name="msg_subscribe_failed">Failed to subscribe to weather topic</string>
     <string name="fcm_message">FCM Message</string>
-    <string name="has_joined">\" has joined\"</string>
+    <string name="has_joined">%s is joining</string>
     <string name="your_lunch">your lunch</string>
     <string name="settings">settings</string>
     <string name="logout">logout</string>
     <string name="name_of_the_user">Name of the user</string>
     <string name="email_of_the_user">Email of the user</string>
-    <string name="tiltle_of_the_drawer">Go4Lunch</string>
+    <string name="title_of_the_drawer">Go4Lunch</string>
     <string name="call">CALL</string>
     <string name="like">LIKE</string>
     <string name="website">WEBSITE</string>
     <string name="workmate_fragment_title">Available workmates</string>
     <string name="map_fragment_title">I\'m Hungry!</string>
     <string name="restaurant_fragment_title">I\'m Hungry!</string>
+    <string name="has_not_decided_yet">%s hasn\'t decided yet</string>
+    <string name="restaurant_unknown">unknown</string>
+    <string name="is_eating_in">%s is eating in %s</string>
 
 </resources>

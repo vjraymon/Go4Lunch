@@ -18,7 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="@string/tiltle_of_the_drawer"
+            android:text="@string/title_of_the_drawer"
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="32sp"

@@ -67,8 +67,8 @@ public class MyJoinedWorkmateRecyclerViewAdapter extends RecyclerView.Adapter<My
     public void onBindViewHolder(final ViewHolder holder, int position) {
         Log.i("TestJoinedList", "MyJoinedWorkmateRecyclerViewAdapter.onBindViewHolder position = " + position + " : " + workmates.get(position).getName());
         holder.workmate = workmates.get(position);
-        holder.mName.setText(workmates.get(position).getName());
-        holder.mRestaurant.setText(R.string.has_joined);
+        holder.mName.setText(String.format(holder.mName.getResources().getString(R.string.has_joined), workmates.get(position).getName()));
+//        holder.mRestaurant.setText(R.string.has_joined);
 
         String p = workmates.get(position).getPhotoUrl();
         if (p != null) {
