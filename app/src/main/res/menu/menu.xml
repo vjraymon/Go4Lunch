@@ -7,12 +7,15 @@
     <!-- Settings, should always be in the overflow -->
     <item
         android:id="@+id/action_yourLunch"
+        android:icon="@drawable/ic_baseline_local_dining_24"
         android:title="@string/your_lunch" />
     <item
         android:id="@+id/action_settings"
+        android:icon="@drawable/ic_baseline_settings_24"
         android:title="@string/settings" />
     <item
         android:id="@+id/action_logout"
+        android:icon="@drawable/ic_baseline_power_settings_new_24"
         android:title="@string/logout" />
 
 </menu>

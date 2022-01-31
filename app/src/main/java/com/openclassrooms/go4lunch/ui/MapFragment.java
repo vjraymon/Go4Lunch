@@ -256,11 +256,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         if ((currentWorkmateList == null) || currentWorkmateList.isEmpty()) {
             Log.i("TestMarker", "MapsFragment.initializeMarker red " + restaurant.getName());
             color = BitmapDescriptorFactory.HUE_RED;
-            pinRestaurant = R.drawable.ic_pin_restaurant;
+            pinRestaurant = R.drawable.ic_pin_restaurant2_orange;
         } else {
             Log.i("TestMarker", "MapsFragment.initializeMarker green " + restaurant.getName());
             color = BitmapDescriptorFactory.HUE_GREEN;
-            pinRestaurant = R.drawable.ic_pin_restaurant_green;
+            pinRestaurant = R.drawable.ic_pin_restaurant2_green;
         }
 
         Marker marker = map.addMarker(new MarkerOptions()
