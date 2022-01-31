@@ -44,5 +44,8 @@
     <string name="call">CALL</string>
     <string name="like">LIKE</string>
     <string name="website">WEBSITE</string>
+    <string name="workmate_fragment_title">Available workmates</string>
+    <string name="map_fragment_title">I\'m Hungry!</string>
+    <string name="restaurant_fragment_title">I\'m Hungry!</string>
 
 </resources>

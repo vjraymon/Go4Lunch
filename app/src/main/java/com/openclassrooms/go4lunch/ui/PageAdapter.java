@@ -8,13 +8,18 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
+import com.openclassrooms.go4lunch.R;
+
 public class
 PageAdapter extends FragmentStateAdapter {
 
     private final String [] data = {"A", "B", "C"};
 
+    FragmentActivity activity;
+
     public PageAdapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);
+        activity = fragmentActivity;
     }
 
     @Override

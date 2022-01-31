@@ -49,6 +49,7 @@ import org.greenrobot.eventbus.Subscribe;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private final ArrayList<String> data = new ArrayList<>();
@@ -67,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        initializeNotification();
+//        initializeNotification();
 
         data.add(getApplicationContext().getString(R.string.map_view));
         data.add(getApplicationContext().getString(R.string.list_view));
@@ -105,49 +106,51 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_yourLunch:
-                // User chose the "Settings" item, show the app settings UI...
-                if (myViewModel == null) {
-                    Log.i("TestYourLunch", "myViewModel null");
-                    return true;
-                }
-                myViewModel.getWorkmates();
-                myViewModel.getRestaurants();
-                Workmate w = myViewModel.getMyself();
-                if (w == null) {
-                    Log.i("TestYourLunch", "myViewModel.getMyself() null");
-                    return true;
-                }
-                String i = w.getIdRestaurant();
-                if (i == null) {
-                    Log.i("TestYourLunch", "no restaurant joined");
-                    return true;
-                }
-                Restaurant restaurant = myViewModel.getRestaurantById(i);
-                if (restaurant == null) {
-                    Log.i("TestYourLunch", "restaurant not founded");
-                    return true;
-                }
-                DisplayRestaurantActivity.navigate(this, restaurant);
+        if (item.getItemId() == R.id.action_yourLunch) {
+            // User chose the "Your Lunch" item, show the current restaurant chosen
+            if (myViewModel == null) {
+                Log.i("TestYourLunch", "myViewModel null");
                 return true;
-
-            case R.id.action_settings:
-                // User chose the "Settings" item, show the app settings UI...
+            }
+            myViewModel.getWorkmates();
+            myViewModel.getRestaurants();
+            Workmate w = myViewModel.getMyself();
+            if (w == null) {
+                Log.i("TestYourLunch", "myViewModel.getMyself() null");
                 return true;
-
-            case R.id.action_logout:
-                // User chose the "Favorite" action, mark the current item
-                // as a favorite...
-                drawer.closeDrawer(GravityCompat.START);
-
-                startSignOutActivity();
+            }
+            String i = w.getIdRestaurant();
+            if (i == null) {
+                Log.i("TestYourLunch", "no restaurant joined");
                 return true;
-
-            default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
+            }
+            Restaurant restaurant = myViewModel.getRestaurantById(i);
+            if (restaurant == null) {
+                Log.i("TestYourLunch", "restaurant not founded");
                 return true;
+            }
+
+            drawer.closeDrawer(GravityCompat.START);
+
+            DisplayRestaurantActivity.navigate(this, restaurant);
+            return true;
+
+        } else if (item.getItemId() == R.id.action_settings) {
+            // User chose the "Settings" item, show the app settings UI...
+            // TODO
+            return true;
+
+        } else if (item.getItemId() == R.id.action_logout) {
+            // User chose the "Logout" action, restart the authentification
+            drawer.closeDrawer(GravityCompat.START);
+
+            startSignOutActivity();
+            return true;
+
+        } else {
+            // If we got here, the user's action was not recognized.
+            // TODO ? Invoke the superclass to handle it.
+            return true;
 
         }
     }
@@ -253,7 +256,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             finish();
         }
     }
-
+/*
     private void initializeNotification() {
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(new OnCompleteListener<String>() {
@@ -354,7 +357,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void sendRegistrationToServer(String token) {}
-
+*/
     private void configureViewPager(){
         ViewPager2 page = findViewById(R.id.activity_main_viewpager);
         TabLayout blankTabLayout = findViewById(R.id.blank_tabLayout);
@@ -372,6 +375,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //                    tab.setIcon(R.drawable.ic_launcher_foreground);
                 }
         ).attach();
+
+        setTitle(getString(R.string.map_fragment_title));
+        blankTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                if (Objects.equals(tab.getText(), data.get(0))) {
+                    setTitle(getString(R.string.map_fragment_title));
+                } else if (Objects.equals(tab.getText(), data.get(1))) {
+                    setTitle(getString(R.string.restaurant_fragment_title));
+                } else if (Objects.equals(tab.getText(), data.get(2))) {
+                    setTitle(getString(R.string.workmate_fragment_title));
+                }
+            }
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {}
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {}
+        });
     }
 
     @Override
