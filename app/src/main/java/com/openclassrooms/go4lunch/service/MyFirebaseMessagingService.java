@@ -31,6 +31,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
+        Log.i("MyFirebaseMsgService", "tto");
         String title = remoteMessage.getNotification().getTitle();
         String text = remoteMessage.getNotification().getBody();
         final String CHANNEL_ID = "HEADS_UP_NOTIFICATION";
@@ -43,8 +44,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             );
             getSystemService(NotificationManager.class).createNotificationChannel(channel);
             Notification.Builder notification = new Notification.Builder(this, CHANNEL_ID)
-                    .setContentTitle(title)
-                    .setContentText(text)
+                    .setContentTitle(title + "cmoi!")
+                    .setContentText(text + "essai")
                     .setSmallIcon(R.drawable.ic_launcher_background)
                     .setAutoCancel(true);
             NotificationManagerCompat.from(this).notify(1, notification.build());

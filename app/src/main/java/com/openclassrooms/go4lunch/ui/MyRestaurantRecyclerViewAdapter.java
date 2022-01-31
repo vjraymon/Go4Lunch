@@ -75,7 +75,10 @@ public class MyRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<MyRest
 
     @Override
     public int getItemCount() {
-        if (restaurants==null) return 0;
+        if (restaurants==null) {
+            Log.w("TestRestaurantList", "MyRestaurantRecyclerViewAdapter.getItemCount restaurants null");
+            return 0;
+        }
         return restaurants.size();
     }
 
@@ -99,10 +102,10 @@ public class MyRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<MyRest
             mNumberWorkmate = binding.restaurantNumberWorkmate;
             mView = binding.getRoot();
             mView.setOnClickListener(v -> {
-                Log.i("TestPlace", "click on an element");
-//                    v.setEnabled(false);
+                Log.w("TestRestaurantList", "MyRestaurantRecyclerViewAdapter.ViewHolder click on an element");
+                    v.setEnabled(false);
                     EventBus.getDefault().post(new DisplayRestaurantEvent(restaurant));
-                Log.i("TestPlace", "id = (" + restaurant.getLatLng().latitude + "," + restaurant.getLatLng().longitude + ")");
+                Log.i("TestRestaurantList", "id = (" + restaurant.getLatLng().latitude + "," + restaurant.getLatLng().longitude + ")");
             });
         }
 

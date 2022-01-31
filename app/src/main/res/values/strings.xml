@@ -41,5 +41,8 @@
     <string name="name_of_the_user">Name of the user</string>
     <string name="email_of_the_user">Email of the user</string>
     <string name="tiltle_of_the_drawer">Go4Lunch</string>
+    <string name="call">CALL</string>
+    <string name="like">LIKE</string>
+    <string name="website">WEBSITE</string>
 
 </resources>

@@ -72,20 +72,44 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <Button
-            android:id="@+id/display_restaurant_website_uri"
+            android:id="@+id/display_restaurant_phone_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_margin="@dimen/text_margin"
+            android:text="@string/call"
+            android:drawableTop="@drawable/ic_baseline_call_24"
+            android:backgroundTint="@color/white"
+            android:textColor="@color/red"
+            android:drawableTint="@color/red"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/display_details_restaurant" />
 
         <Button
-            android:id="@+id/display_restaurant_phone_number"
+            android:id="@+id/display_restaurant_like"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="@dimen/text_margin"
+            android:text="@string/like"
+            android:drawableTop="@drawable/ic_baseline_public_24"
+            android:backgroundTint="@color/white"
+            android:textColor="@color/red"
+            android:drawableTint="@color/red"
+            app:layout_constraintStart_toEndOf="@+id/display_restaurant_phone_number"
+            app:layout_constraintEnd_toStartOf="@+id/display_restaurant_website_uri"
+            app:layout_constraintTop_toBottomOf="@+id/display_details_restaurant" />
+
+        <Button
+            android:id="@+id/display_restaurant_website_uri"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/text_margin"
+            android:text="@string/website"
+            android:drawableTop="@drawable/ic_baseline_public_24"
+            android:backgroundTint="@color/white"
+            android:textColor="@color/red"
+            android:drawableTint="@color/red"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/display_restaurant_website_uri" />
+            app:layout_constraintTop_toBottomOf="@+id/display_details_restaurant" />
 
         <RelativeLayout
             android:layout_width="match_parent"
