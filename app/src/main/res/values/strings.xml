@@ -35,6 +35,8 @@
     <string name="msg_subscribe_failed">Failed to subscribe to weather topic</string>
     <string name="fcm_message">FCM Message</string>
     <string name="has_joined">\" has joined\"</string>
-    <string name="display_distance" translatable="false">%dm</string>
+    <string name="your_lunch">your lunch</string>
+    <string name="settings">settings</string>
+    <string name="logout">logout</string>
 
 </resources>

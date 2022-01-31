@@ -29,7 +29,7 @@ import java.util.List;
 public class MyRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<MyRestaurantRecyclerViewAdapter.ViewHolder> {
 
     private final List<Restaurant> restaurants;
-    private MyViewModel myViewModel;
+    final private MyViewModel myViewModel;
 
     public MyRestaurantRecyclerViewAdapter(List<Restaurant> restaurants, MyViewModel myViewModel) {
         this.restaurants = restaurants;
@@ -51,12 +51,7 @@ public class MyRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<MyRest
         if (holder.restaurant.getBitmap() != null) {
             holder.mPhoto.setImageBitmap(holder.restaurant.getBitmap());
         }
- /*
-        if (restaurants.get(position).getIconUrl()!=null) {
-            Uri uri = Uri.parse(restaurants.get(position).getIconUrl());
-            Picasso.with(holder.mPhoto.getContext()).load(uri).into(holder.mPhoto);
-        }
- */
+
         double distance = 0;
         if ((MapFragment.getLastKnownLocation() != null) && (holder.restaurant.getLatLng() != null)) {
             float[] results = new float[1];

@@ -222,19 +222,19 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private void updateRestaurantsList(List<Restaurant> restaurants) {
         Log.i("TestMarker", "MapsFragment.updateRestaurantsList");
         this.restaurants = restaurants;
-//        isRestaurantsInitialized = true;
-//        if (isWorkmatesInitialized) {
+        isRestaurantsInitialized = true;
+        if (isWorkmatesInitialized) {
             initializeMarkers();
-//        }
+        }
     }
 
     private void updateWorkmatesList(List<Workmate> workmates) {
         Log.i("TestMarker", "MapsFragment.updateWorkmatesList");
         this.workmates = workmates;
-//        isWorkmatesInitialized = true;
-//        if (isRestaurantsInitialized) {
+        isWorkmatesInitialized = true;
+        if (isRestaurantsInitialized) {
             initializeMarkers();
-//        }
+        }
     }
 
     private void initializeMarkers() {

@@ -27,7 +27,23 @@ public class MyViewModel extends AndroidViewModel {
     private final RestaurantRepository restaurantRepository;
     private final WorkmateRepository workmateRepository;
 
-    private final Workmate myself;
+    private Workmate myself;
+
+    public Workmate getMyself() {
+        List<Workmate> workmates = workmatesLiveData.getValue();
+        if (workmates == null) {
+            Log.i("TestYourLunch","MyViewModel: getMyself: workmates null");
+            return myself; // return the current value
+        }
+        Log.i("TestYourLunch","MyViewModel: getMyself: ");
+        for (Workmate i: workmates) {
+            if (i.getEmail().equals(myself.getEmail())) {
+                Log.i("TestJoin","MyViewModel: getMyself: found workmate");
+                myself = i; // override all
+            }
+        }
+        return myself;
+    }
 
     public MyViewModel(Application application) {
         super(application);
@@ -41,29 +57,29 @@ public class MyViewModel extends AndroidViewModel {
             Log.i("TestMySelf", "MyViewModel.init name = " + user.getDisplayName());
             Log.i("TestMySelf", "MyViewModel.init email = " + user.getEmail());
             myself = new Workmate(user.getEmail(),
-                    user.getDisplayName(),
-                    user.getPhotoUrl(),
-                    null);
+                        user.getDisplayName(),
+                        (user.getPhotoUrl() == null) ? null : user.getPhotoUrl().toString(),
+                        null);
         }
         restaurantRepository = RestaurantRepository.getRestaurantRepository(application.getApplicationContext());
         workmateRepository = WorkmateRepository.getWorkmateRepository();
-        workmateRepository.addWorkmate(myself);
+        workmateRepository.addWorkmate(myself); // adds only if it isn't registered yet
     }
 
     public void initForTest() {
         Log.i("TestsJoin", "MyViewModel.initForTest()");
 
         workmateRepository.addWorkmate(new Workmate("Caroline@gmail.com", "Caroline",
-                Uri.parse("https://lh3.googleusercontent.com/a/AATXAJy5CJheMr1OSP2ef-jbhmBfNHRMc0XnYTnlrfj-=s96-c"),
+                "https://lh3.googleusercontent.com/a/AATXAJy5CJheMr1OSP2ef-jbhmBfNHRMc0XnYTnlrfj-=s96-c",
                 restaurantRepository.getRestaurants().getValue().get(1).getId()));
         workmateRepository.addWorkmate(new Workmate("Jack@gmail.com", "Jack",
-                Uri.parse("https://lh3.googleusercontent.com/a/AATXAJy5CJheMr1OSP2ef-jbhmBfNHRMc0XnYTnlrfj-=s96-c"),
+                "https://lh3.googleusercontent.com/a/AATXAJy5CJheMr1OSP2ef-jbhmBfNHRMc0XnYTnlrfj-=s96-c",
                 null));
         workmateRepository.addWorkmate(new Workmate("Emilie@gmail.com", "Emilie",
-                Uri.parse("https://lh3.googleusercontent.com/a/AATXAJy5CJheMr1OSP2ef-jbhmBfNHRMc0XnYTnlrfj-=s96-c"),
+                "https://lh3.googleusercontent.com/a/AATXAJy5CJheMr1OSP2ef-jbhmBfNHRMc0XnYTnlrfj-=s96-c",
                 restaurantRepository.getRestaurants().getValue().get(0).getId()));
         workmateRepository.addWorkmate(new Workmate("Albert@gmail.com", "Albert",
-                Uri.parse("https://lh3.googleusercontent.com/a/AATXAJy5CJheMr1OSP2ef-jbhmBfNHRMc0XnYTnlrfj-=s96-c"),
+                null,
                 restaurantRepository.getRestaurants().getValue().get(1).getId()));
 
     }
@@ -116,42 +132,7 @@ public class MyViewModel extends AndroidViewModel {
         Log.i("TestJoin","MyViewModel: getRestaurantById: restaurant not found");
         return null;
     }
- /*
-    public LatLng getRestaurant(Workmate w) {
-        if (w.getHasJoined()) return new LatLng(w.getLatitude(), w.getLongitude());
-        return null;
-    }
 
-    List<Workmate> workmatesByLatLng;
-    public List<Workmate> getWorkmatesByLatLng(LatLng id) {
-        List<Workmate> workmates = workmatesLiveData.getValue();
-        workmatesByLatLng = new ArrayList<>();
-        if ((workmates == null) || (id == null)) {
-            if (workmates == null)
-            {
-                Log.i("TestJoin","MyViewModel: getWorkmatesByLatLng: restaurants null");
-            }
-            if (id == null) {
-                Log.i("TestJoin", "MyViewModel: getWorkmatesByLatLng: id null");
-            }
-            return null;
-        }
-        Log.i("TestJoinedList","MyViewModel: getWorkmatesByLatLng: " + id.latitude + "," + id.longitude);
-        for (Workmate i: workmates) {
-            Log.i("TestJoinedList","MyViewModel: getWorkmatesByLatLng: " + i.getName());
-            Log.i("TestJoinedList","MyViewModel: getWorkmatesByLatLng: " + i.getLatitude() + "," + i.getLongitude());
-            if (getRestaurant(i) == null) {
-                Log.i("TestPlace","MyViewModel: getWorkmatesByLatLng: " + i.getName() + " without LatLng");
-            } else if (id.equals(getRestaurant(i))) {
-                Log.i("TestJoin","MyViewModel: getWorkmatesByLatLng: found restaurant");
-                workmatesByLatLng.add(i);
-            } else {
-                Log.i("TestJoin","MyViewModel: getWorkmatesByLatLng: differents restaurant");
-            }
-        }
-        return workmatesByLatLng;
-    }
-*/
     List<Workmate> workmatesByIdRestaurant;
     public List<Workmate> getWorkmatesByIdRestaurant(String id) {
         List<Workmate> workmates = workmatesLiveData.getValue();
@@ -186,7 +167,9 @@ public class MyViewModel extends AndroidViewModel {
         // depending on the action, do necessary business logic calls and update the
         // userLiveData.
         Log.i("TestJoin","click on join restaurant (MyViewModel)");
-        workmateRepository.setRestaurant(myself, restaurant);
+        if (restaurant != null) {
+            workmateRepository.setRestaurant(myself, restaurant);
+        }
     }
 
     public LiveData<List<Workmate>> getWorkmates() {

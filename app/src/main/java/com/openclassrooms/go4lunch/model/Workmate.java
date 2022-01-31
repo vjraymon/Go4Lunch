@@ -12,10 +12,10 @@ public class Workmate {
 
     public Workmate() {}
 
-    public Workmate(String email, String name, Uri photoUri, String idRestaurant) {
+    public Workmate(String email, String name, String photoUrl, String idRestaurant) {
         this.email = email;
         this.name = name;
-        this.photoUrl = photoUri.toString();
+        this.photoUrl = photoUrl;
         this.idRestaurant = idRestaurant;
     }
 

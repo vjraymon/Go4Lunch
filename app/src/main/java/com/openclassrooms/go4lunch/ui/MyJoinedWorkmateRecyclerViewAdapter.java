@@ -69,8 +69,12 @@ public class MyJoinedWorkmateRecyclerViewAdapter extends RecyclerView.Adapter<My
         holder.workmate = workmates.get(position);
         holder.mName.setText(workmates.get(position).getName());
         holder.mRestaurant.setText(R.string.has_joined);
-        Uri uri = Uri.parse(workmates.get(position).getPhotoUrl());
-        Picasso.with(holder.mPhoto.getContext()).load(uri).into(holder.mPhoto);
+
+        String p = workmates.get(position).getPhotoUrl();
+        if (p != null) {
+            Uri uri = Uri.parse(p);
+            Picasso.with(holder.mPhoto.getContext()).load(uri).into(holder.mPhoto);
+        }
     }
 
     @Override

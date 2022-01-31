@@ -7,12 +7,12 @@
     <!-- Settings, should always be in the overflow -->
     <item
         android:id="@+id/action_yourLunch"
-        android:title="your lunch" />
+        android:title="@string/your_lunch" />
     <item
         android:id="@+id/action_settings"
-        android:title="settings" />
+        android:title="@string/settings" />
     <item
         android:id="@+id/action_logout"
-        android:title="logout" />
+        android:title="@string/logout" />
 
 </menu>

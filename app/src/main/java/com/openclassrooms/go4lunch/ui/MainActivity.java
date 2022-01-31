@@ -19,11 +19,13 @@ import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
@@ -35,6 +37,9 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.openclassrooms.go4lunch.R;
 import com.openclassrooms.go4lunch.databinding.ActivityMainBinding;
 import com.openclassrooms.go4lunch.events.DisplayRestaurantEvent;
+import com.openclassrooms.go4lunch.model.Restaurant;
+import com.openclassrooms.go4lunch.model.Workmate;
+import com.openclassrooms.go4lunch.viewmodel.MyViewModel;
 import com.squareup.picasso.Picasso;
 
 import org.greenrobot.eventbus.EventBus;
@@ -52,6 +57,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private ImageView userPhoto;
     FirebaseUser myself;
+
+    MyViewModel myViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +94,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (item.getItemId()) {
             case R.id.action_yourLunch:
                 // User chose the "Settings" item, show the app settings UI...
+                if (myViewModel == null) {
+                    Log.i("TestYourLunch", "myViewModel null");
+                    return true;
+                }
+                myViewModel.getWorkmates();
+                myViewModel.getRestaurants();
+                Workmate w = myViewModel.getMyself();
+                if (w == null) {
+                    Log.i("TestYourLunch", "myViewModel.getMyself() null");
+                    return true;
+                }
+                String i = w.getIdRestaurant();
+                if (i == null) {
+                    Log.i("TestYourLunch", "no restaurant joined");
+                    return true;
+                }
+                Restaurant restaurant = myViewModel.getRestaurantById(i);
+                if (restaurant == null) {
+                    Log.i("TestYourLunch", "restaurant not founded");
+                    return true;
+                }
+                DisplayRestaurantActivity.navigate(this, restaurant);
                 return true;
 
             case R.id.action_settings:
@@ -186,11 +215,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     Log.i("TestMySelf", "MainActivity.onSignInResult myself.getPhotoUrl() null");
                 } else {
                     Log.i("TestMySelf", "MainActivity.onSignInResult myself.getPhotoUrl()" + user.getPhotoUrl().toString());
-                    userPhoto = findViewById(R.id.user_photo);
-                    Picasso.with(this).load(user.getPhotoUrl()).into(userPhoto);
+                    if (user.getPhotoUrl() != null) {
+                        userPhoto = findViewById(R.id.user_photo);
+                        Picasso.with(this).load(user.getPhotoUrl()).into(userPhoto);
+                    }
                 }
  //               initializeNotification();
             }
+            myViewModel = new ViewModelProvider(this).get(MyViewModel.class);
+
             //3 - Configure ViewPager
             this.configureViewPager();
         } else {
