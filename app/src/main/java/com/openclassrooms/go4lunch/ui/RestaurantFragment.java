@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.openclassrooms.go4lunch.R;
 import com.openclassrooms.go4lunch.model.Restaurant;
+import com.openclassrooms.go4lunch.model.RestaurantLike;
 import com.openclassrooms.go4lunch.model.Workmate;
 import com.openclassrooms.go4lunch.viewmodel.MyViewModel;
 
@@ -56,6 +57,7 @@ public class RestaurantFragment extends Fragment {
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
             myViewModel.getWorkmates().observe(getViewLifecycleOwner(), this::updateWorkmatesList);
             myViewModel.getRestaurants().observe(getViewLifecycleOwner(), this::updateRestaurantsList);
+            myViewModel.getRestaurantLikes().observe(getViewLifecycleOwner(), this::updateRestaurantLikesList);
         }
         return view;
     }
@@ -70,7 +72,11 @@ public class RestaurantFragment extends Fragment {
         recyclerView.setAdapter(new MyRestaurantRecyclerViewAdapter(restaurants, myViewModel));
     }
     private void updateWorkmatesList(List<Workmate> workmates) {
-        Log.i("TestWork", "WorkmateFragment: updateWorkmatesList");
+        Log.i("TestWork", "RestaurantFragment: updateWorkmatesList");
+        recyclerView.setAdapter(new MyRestaurantRecyclerViewAdapter(restaurants, myViewModel));
+    }
+    private void updateRestaurantLikesList(List<RestaurantLike> unused) {
+        Log.i("TestLike", "RestaurantFragment: updateRestaurantLikesList");
         recyclerView.setAdapter(new MyRestaurantRecyclerViewAdapter(restaurants, myViewModel));
     }
 

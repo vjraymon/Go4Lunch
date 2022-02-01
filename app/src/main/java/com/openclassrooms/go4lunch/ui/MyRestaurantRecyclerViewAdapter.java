@@ -71,6 +71,12 @@ public class MyRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<MyRest
             holder.mNumberWorkmate.setVisibility(View.VISIBLE);
             holder.mNumberWorkmate.setText(String.format("(%s)", w.size()));
         }
+
+        Log.i("TestLike", "onBindViewHolder call getLikeById");
+        int rate = myViewModel.getLikeById(holder.restaurant.getId());
+        Log.i("TestLike", "onBindViewHolder display getLikeById");
+        holder.mNumberStars.setText(String.format("(%s)", rate));
+
     }
 
     @Override
@@ -90,6 +96,7 @@ public class MyRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<MyRest
         public final ImageView mPhoto;
         public final TextView mDistance;
         public final TextView mNumberWorkmate;
+        public final TextView mNumberStars;
         public Restaurant restaurant;
 
         public ViewHolder(@NonNull FragmentRestaurantBinding binding) {
@@ -100,6 +107,7 @@ public class MyRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<MyRest
             mPhoto = binding.restaurantBitmap;
             mDistance = binding.restaurantDistance;
             mNumberWorkmate = binding.restaurantNumberWorkmate;
+            mNumberStars = binding.restaurantNumberStars;
             mView = binding.getRoot();
             mView.setOnClickListener(v -> {
                 Log.w("TestRestaurantList", "MyRestaurantRecyclerViewAdapter.ViewHolder click on an element");

@@ -12,7 +12,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.openclassrooms.go4lunch.model.Restaurant;
+import com.openclassrooms.go4lunch.model.RestaurantLike;
 import com.openclassrooms.go4lunch.model.Workmate;
+import com.openclassrooms.go4lunch.repository.RestaurantLikeRepository;
 import com.openclassrooms.go4lunch.repository.RestaurantRepository;
 import com.openclassrooms.go4lunch.repository.WorkmateRepository;
 
@@ -21,11 +23,15 @@ import java.util.List;
 
 public class MyViewModel extends AndroidViewModel {
 
+    private final String TAG_LIKE = "TestLike";
+
     private LiveData<List<Restaurant>> restaurantsLiveData = new MutableLiveData<>();
     private LiveData<List<Workmate>> workmatesLiveData = new MutableLiveData<>();
+    private LiveData<List<RestaurantLike>> restaurantLikesLiveData = new MutableLiveData<>();
 
     private final RestaurantRepository restaurantRepository;
     private final WorkmateRepository workmateRepository;
+    private final RestaurantLikeRepository restaurantLikeRepository;
 
     private Workmate myself;
 
@@ -63,25 +69,27 @@ public class MyViewModel extends AndroidViewModel {
         }
         restaurantRepository = RestaurantRepository.getRestaurantRepository(application.getApplicationContext());
         workmateRepository = WorkmateRepository.getWorkmateRepository();
+        restaurantLikeRepository = RestaurantLikeRepository.getRestaurantLikeRepository();
         workmateRepository.addWorkmate(myself); // adds only if it isn't registered yet
     }
 
     public void initForTest() {
         Log.i("TestsJoin", "MyViewModel.initForTest()");
 
-        workmateRepository.addWorkmate(new Workmate("Caroline@gmail.com", "Caroline",
-                "https://lh3.googleusercontent.com/a/AATXAJy5CJheMr1OSP2ef-jbhmBfNHRMc0XnYTnlrfj-=s96-c",
-                restaurantRepository.getRestaurants().getValue().get(1).getId()));
-        workmateRepository.addWorkmate(new Workmate("Jack@gmail.com", "Jack",
-                "https://lh3.googleusercontent.com/a/AATXAJy5CJheMr1OSP2ef-jbhmBfNHRMc0XnYTnlrfj-=s96-c",
-                null));
-        workmateRepository.addWorkmate(new Workmate("Emilie@gmail.com", "Emilie",
-                "https://lh3.googleusercontent.com/a/AATXAJy5CJheMr1OSP2ef-jbhmBfNHRMc0XnYTnlrfj-=s96-c",
-                restaurantRepository.getRestaurants().getValue().get(0).getId()));
-        workmateRepository.addWorkmate(new Workmate("Albert@gmail.com", "Albert",
-                null,
-                restaurantRepository.getRestaurants().getValue().get(1).getId()));
-
+        if ((restaurantRepository.getRestaurants().getValue() != null) && (restaurantRepository.getRestaurants().getValue().size() >= 2)) {
+            workmateRepository.addWorkmate(new Workmate("Caroline@gmail.com", "Caroline",
+                    "https://lh3.googleusercontent.com/a/AATXAJy5CJheMr1OSP2ef-jbhmBfNHRMc0XnYTnlrfj-=s96-c",
+                    restaurantRepository.getRestaurants().getValue().get(1).getId()));
+            workmateRepository.addWorkmate(new Workmate("Jack@gmail.com", "Jack",
+                    "https://lh3.googleusercontent.com/a/AATXAJy5CJheMr1OSP2ef-jbhmBfNHRMc0XnYTnlrfj-=s96-c",
+                    null));
+            workmateRepository.addWorkmate(new Workmate("Emilie@gmail.com", "Emilie",
+                    "https://lh3.googleusercontent.com/a/AATXAJy5CJheMr1OSP2ef-jbhmBfNHRMc0XnYTnlrfj-=s96-c",
+                    restaurantRepository.getRestaurants().getValue().get(0).getId()));
+            workmateRepository.addWorkmate(new Workmate("Albert@gmail.com", "Albert",
+                    null,
+                    restaurantRepository.getRestaurants().getValue().get(1).getId()));
+        }
     }
 
     public Restaurant getRestaurantByLatLng(LatLng id) {
@@ -108,7 +116,6 @@ public class MyViewModel extends AndroidViewModel {
         return null;
     }
 
-
     public Restaurant getRestaurantById(String id) {
         List<Restaurant> restaurants = restaurantsLiveData.getValue();
         if ((restaurants == null) || (id == null)) {
@@ -131,6 +138,74 @@ public class MyViewModel extends AndroidViewModel {
         }
         Log.i("TestJoin","MyViewModel: getRestaurantById: restaurant not found");
         return null;
+    }
+
+    public void incLike(String id) {
+        List<RestaurantLike> restaurantLikes = restaurantLikesLiveData.getValue();
+        if ((restaurantLikes == null) || (id == null)) {
+            if (restaurantLikes == null)
+            {
+                Log.i(TAG_LIKE,"MyViewModel: incLike: restaurantLikes null");
+            }
+            if (id == null) {
+                Log.i(TAG_LIKE, "MyViewModel: incLike: id null");
+            }
+            return;
+        }
+        String idLike = id + myself.getEmail();
+        for (RestaurantLike i: restaurantLikes) {
+            if (i.getId() == null) {
+                Log.i(TAG_LIKE,"MyViewModel: incLike: " + i.getName() + " without Id");
+            } else if ((i.getId()).equals(idLike)) {
+                Log.i(TAG_LIKE,"MyViewModel: incLike: found restaurant");
+                restaurantLikeRepository.updateLike(i, i.getLike()+1);
+                return;
+            }
+        }
+        Log.i(TAG_LIKE,"MyViewModel: incLike: restaurant not found");
+        Restaurant restaurant = getRestaurantById(id);
+        if (restaurant == null) return;
+        RestaurantLike restaurantLike = new RestaurantLike(idLike, restaurant.getName(), 1);
+        restaurantLikeRepository.addRestaurantLike(restaurantLike);
+    }
+
+    public int getLikeById(String id) {
+        if (restaurantLikesLiveData == null) {
+            Log.i(TAG_LIKE,"MyViewModel: getLikeById: restaurantLikesLiveData null");
+            return 1;
+        }
+        List<RestaurantLike> restaurantLikes = restaurantLikesLiveData.getValue();
+        if ((restaurantLikes == null) || (id == null)) {
+            if (restaurantLikes == null)
+            {
+                Log.i(TAG_LIKE,"MyViewModel: getLikeById: restaurantLikes null");
+            }
+            if (id == null) {
+                Log.i(TAG_LIKE, "MyViewModel: getLikeById: id null");
+            }
+            return 1;
+        }
+        double sum = 0;
+        double maxSum = 0;
+        for (RestaurantLike i: restaurantLikes) {
+            if (i == null) {
+                Log.i(TAG_LIKE, "MyViewModel: getLikeById: element null");
+            } else if (i.getId() == null) {
+                Log.i(TAG_LIKE,"MyViewModel: getLikeById: " + i.getName() + " without Id");
+            } else {
+                if ((i.getId()).contains(id)) {
+                    Log.i(TAG_LIKE,"MyViewModel: getLikeById: found restaurant");
+                    sum = sum + i.getLike();
+                }
+                maxSum = maxSum + i.getLike();
+            }
+        }
+        if ((restaurantsLiveData.getValue() == null) || (restaurantsLiveData.getValue().size() <= 0)) return 1;
+        double averageSum = maxSum / restaurantsLiveData.getValue().size();
+        double rate = (averageSum==0) ? 1 : Math.round(sum/averageSum) + 1;
+        Log.i(TAG_LIKE,"MyViewModel: getLikeById: end of loop on restaurantsLikes sum = " + sum + " maxSum = " + maxSum + " averageSum = " + averageSum + " rate = " + rate);
+        rate = Math.min(3, Math.max(1, rate));
+        return (int)rate;
     }
 
     List<Workmate> workmatesByIdRestaurant;
@@ -188,5 +263,14 @@ public class MyViewModel extends AndroidViewModel {
         }
         restaurantsLiveData = restaurantRepository.getRestaurants();
         return restaurantsLiveData;
+    }
+
+    public LiveData<List<RestaurantLike>> getRestaurantLikes() {
+        if (restaurantLikeRepository == null) {
+            Log.i(TAG_LIKE,"Error restaurantLikeRepository null in MyViewModel");
+            return null;
+        }
+        restaurantLikesLiveData = restaurantLikeRepository.getRestaurantLikes();
+        return restaurantLikesLiveData;
     }
 }

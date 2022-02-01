@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -44,11 +45,12 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
     private List<Workmate> workmates;
     private boolean workmateInitialized = false;
     private boolean restaurantInitialized = false;
-    Button buttonRestaurantJoin;
+    ImageButton buttonRestaurantJoin;
     TextView textRestaurantName;
     TextView textRestaurantOpeningHours;
     Button buttonRestaurantWebsiteUri;
     Button buttonRestaurantPhoneNumber;
+    Button buttonRestaurantLike;
     ImageView imageRestaurant;
 
     RecyclerView recyclerView;
@@ -70,6 +72,7 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
         myViewModel = new ViewModelProvider(this).get(MyViewModel.class);
         myViewModel.getRestaurants().observe(this, this::updateRestaurantsList);
         myViewModel.getWorkmates().observe(this, this::updateWorkmatesList);
+        myViewModel.getRestaurantLikes();
 
         currentId = getIntent().getStringExtra("keyId");
         Log.i("TestPlace", "DisplayRestaurantActivity.onCreate id = " + currentId);
@@ -77,6 +80,7 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
         textRestaurantOpeningHours = findViewById(R.id.display_restaurant_opening_hours);
         buttonRestaurantWebsiteUri = findViewById(R.id.display_restaurant_website_uri);
         buttonRestaurantPhoneNumber = findViewById(R.id.display_restaurant_phone_number);
+        buttonRestaurantLike = findViewById(R.id.display_restaurant_like);
         buttonRestaurantJoin = findViewById(R.id.display_restaurant_join);
         imageRestaurant = findViewById(R.id.display_restaurant_bitmap);
         buttonRestaurantJoin.setEnabled(false);
@@ -106,43 +110,43 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
         if (this.restaurant == null) {
             return;
         }
-        if (restaurant.getId() == null) {
-            textRestaurantName.setText(restaurant.getName() + " null");
+        textRestaurantName.setText(restaurant.getName());
+        textRestaurantOpeningHours.setText(restaurant.getOpeningHours());
+
+        if (restaurant.getWebsiteUri() == null) {
+            buttonRestaurantWebsiteUri.setVisibility(View.INVISIBLE);
         } else {
-            textRestaurantName.setText(restaurant.getName()
-                        + " " + restaurant.getId());
-            textRestaurantOpeningHours.setText(restaurant.getOpeningHours());
-
-            if (restaurant.getWebsiteUri() == null) {
-                buttonRestaurantWebsiteUri.setVisibility(View.INVISIBLE);
-            } else {
-                buttonRestaurantWebsiteUri.setVisibility(View.VISIBLE);
+            buttonRestaurantWebsiteUri.setVisibility(View.VISIBLE);
 //            buttonRestaurantWebsiteUri.setText(restaurant.getWebsiteUri());
-                buttonRestaurantWebsiteUri.setOnClickListener(v -> {
-                    Log.i("TestJoin", "DisplayRestaurantActivity: clicked on Website" + restaurant.getWebsiteUri());
-                    Uri uri = Uri.parse(restaurant.getWebsiteUri());
-                    Intent webIntent = new Intent(Intent.ACTION_VIEW, uri);
-                    startActivity(webIntent);
-                });
-            }
-
-            if (restaurant.getPhoneNumber() == null) {
-                buttonRestaurantPhoneNumber.setVisibility(View.INVISIBLE);
-            } else {
-                buttonRestaurantPhoneNumber.setVisibility(View.VISIBLE);
-//            buttonRestaurantPhoneNumber.setText(restaurant.getPhoneNumber());
-                buttonRestaurantPhoneNumber.setOnClickListener(v -> {
-                    Log.i("TestJoin", "DisplayRestaurantActivity: clicked on Call" + restaurant.getPhoneNumber());
-                    Intent callIntent = new Intent(Intent.ACTION_CALL);
-                    callIntent.setData(Uri.parse("tel:" + restaurant.getPhoneNumber()));
-                    startActivity(callIntent);
-                });
-            }
-
-            if (this.restaurant.getBitmap() != null) {
-                imageRestaurant.setImageBitmap(this.restaurant.getBitmap());
-            }
+            buttonRestaurantWebsiteUri.setOnClickListener(v -> {
+                Log.i("TestJoin", "DisplayRestaurantActivity: clicked on Website" + restaurant.getWebsiteUri());
+                Uri uri = Uri.parse(restaurant.getWebsiteUri());
+                Intent webIntent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(webIntent);
+            });
         }
+
+        if (restaurant.getPhoneNumber() == null) {
+            buttonRestaurantPhoneNumber.setVisibility(View.INVISIBLE);
+        } else {
+            buttonRestaurantPhoneNumber.setVisibility(View.VISIBLE);
+//            buttonRestaurantPhoneNumber.setText(restaurant.getPhoneNumber());
+            buttonRestaurantPhoneNumber.setOnClickListener(v -> {
+                Log.i("TestJoin", "DisplayRestaurantActivity: clicked on Call" + restaurant.getPhoneNumber());
+                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                callIntent.setData(Uri.parse("tel:" + restaurant.getPhoneNumber()));
+                startActivity(callIntent);
+            });
+        }
+
+        if (this.restaurant.getBitmap() != null) {
+            imageRestaurant.setImageBitmap(this.restaurant.getBitmap());
+        }
+
+        buttonRestaurantLike.setOnClickListener(v -> {
+            Log.i("TestLike", "DisplayRestaurantActivity: clicked on Like" + restaurant.getName());
+            myViewModel.incLike(restaurant.getId());
+        });
 
         Log.i("TestJoin", "DisplayRestaurantActivity: updateRestaurantsList call setDisplayJoin");
         restaurantInitialized = true;

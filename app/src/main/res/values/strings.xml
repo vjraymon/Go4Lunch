@@ -50,5 +50,6 @@
     <string name="has_not_decided_yet">%s hasn\'t decided yet</string>
     <string name="restaurant_unknown">unknown</string>
     <string name="is_eating_in">%s is eating in %s</string>
+    <string name="button_restaurant_join">Button restaurant join</string>
 
 </resources>

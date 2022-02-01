@@ -12,26 +12,6 @@
         android:layout_height="wrap_content"
         tools:context=".ui.DisplayRestaurantActivity">
 
-        <ImageView
-            android:id="@+id/display_restaurant_bitmap"
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:contentDescription="@string/restaurant_bitmap"
-            android:scaleType="centerCrop"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
-            android:id="@+id/display_restaurant_join"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-20dp"
-            android:layout_marginEnd="@dimen/text_margin"
-            android:text="@string/join"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/display_restaurant_bitmap" />
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/display_details_restaurant"
             android:layout_width="match_parent"
@@ -40,17 +20,45 @@
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/display_restaurant_bitmap">
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/display_restaurant_bitmap"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:contentDescription="@string/restaurant_bitmap"
+                android:scaleType="centerCrop"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/display_restaurant_join"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/button_restaurant_join"
+                android:layout_marginTop="-25dp"
+                android:layout_marginEnd="30dp"
+                android:background="@drawable/ic_baseline_circle_24"
+                android:backgroundTint="@color/white"
+                android:padding="10dp"
+                android:src="@drawable/ic_baseline_check_circle_24"
+                app:tint="@android:color/holo_green_light"
+                android:tintMode="src_atop"
+                android:scaleX="2"
+                android:scaleY="2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/display_restaurant_bitmap"/>
 
             <TextView
                 android:id="@+id/display_restaurant_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/text_margin"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="@dimen/text_margin"
                 android:background="@color/red"
                 android:textColor="@color/white"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@+id/display_restaurant_join" />
 
             <TextView
                 android:id="@+id/display_restaurant_opening_hours"
@@ -74,7 +82,8 @@
             android:id="@+id/display_restaurant_phone_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin"
+            android:layout_marginStart="@dimen/text_margin"
+            android:layout_marginEnd="@dimen/text_margin"
             android:backgroundTint="@color/white"
             android:drawableTop="@drawable/ic_baseline_call_24"
             android:text="@string/call"
@@ -86,7 +95,8 @@
             android:id="@+id/display_restaurant_like"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin"
+            android:layout_marginStart="@dimen/text_margin"
+            android:layout_marginEnd="@dimen/text_margin"
             android:backgroundTint="@color/white"
             android:drawableTop="@drawable/ic_baseline_public_24"
             android:text="@string/like"
@@ -99,7 +109,8 @@
             android:id="@+id/display_restaurant_website_uri"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin"
+            android:layout_marginStart="@dimen/text_margin"
+            android:layout_marginEnd="@dimen/text_margin"
             android:backgroundTint="@color/white"
             android:drawableTop="@drawable/ic_baseline_public_24"
             android:text="@string/website"

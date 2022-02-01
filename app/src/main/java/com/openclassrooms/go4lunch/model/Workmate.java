@@ -10,6 +10,7 @@ public class Workmate {
     private String photoUrl;
     private String idRestaurant;
 
+    // Mandatory for FireStore
     public Workmate() {}
 
     public Workmate(String email, String name, String photoUrl, String idRestaurant) {

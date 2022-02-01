@@ -40,7 +40,7 @@
         android:layout_margin="@dimen/text_margin"
         app:drawableStartCompat="@drawable/ic_baseline_person_outline_24"
         android:textAppearance="?attr/textAppearanceListItem"
-        app:layout_constraintStart_toEndOf="@+id/restaurant_address"
+        app:layout_constraintEnd_toStartOf="@+id/restaurant_bitmap"
         app:layout_constraintTop_toBottomOf="@+id/restaurant_distance" />
 
     <TextView
@@ -51,6 +51,17 @@
         android:textAppearance="?attr/textAppearanceListItem"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/restaurant_address"/>
+
+    <TextView
+        android:id="@+id/restaurant_number_stars"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/text_margin"
+        app:drawableStartCompat="@drawable/ic_baseline_star_outline_24"
+
+        android:textAppearance="?attr/textAppearanceListItem"
+        app:layout_constraintEnd_toStartOf="@+id/restaurant_bitmap"
+        app:layout_constraintTop_toBottomOf="@+id/restaurant_number_workmate" />
 
     <ImageView
         android:layout_width="100dp"
