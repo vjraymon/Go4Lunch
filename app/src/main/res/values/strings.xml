@@ -51,5 +51,6 @@
     <string name="restaurant_unknown">unknown</string>
     <string name="is_eating_in">%s is eating in %s</string>
     <string name="button_restaurant_join">Button restaurant join</string>
+    <string name="star">Star</string>
 
 </resources>

@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.maps.model.LatLng;
 import com.openclassrooms.go4lunch.R;
 import com.openclassrooms.go4lunch.model.Restaurant;
+import com.openclassrooms.go4lunch.model.RestaurantLike;
 import com.openclassrooms.go4lunch.model.Workmate;
 import com.openclassrooms.go4lunch.viewmodel.MyViewModel;
 
@@ -45,9 +46,12 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
     private List<Workmate> workmates;
     private boolean workmateInitialized = false;
     private boolean restaurantInitialized = false;
-    ImageButton buttonRestaurantJoin;
-    TextView textRestaurantName;
-    TextView textRestaurantOpeningHours;
+    private ImageButton buttonRestaurantJoin;
+    private TextView textRestaurantName;
+    private ImageView mStar1;
+    private ImageView mStar2;
+    private ImageView mStar3;
+    TextView textRestaurantAddress;
     Button buttonRestaurantWebsiteUri;
     Button buttonRestaurantPhoneNumber;
     Button buttonRestaurantLike;
@@ -72,12 +76,15 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
         myViewModel = new ViewModelProvider(this).get(MyViewModel.class);
         myViewModel.getRestaurants().observe(this, this::updateRestaurantsList);
         myViewModel.getWorkmates().observe(this, this::updateWorkmatesList);
-        myViewModel.getRestaurantLikes();
+        myViewModel.getRestaurantLikes().observe(this, this::updateRestaurantLikesList);
 
         currentId = getIntent().getStringExtra("keyId");
         Log.i("TestPlace", "DisplayRestaurantActivity.onCreate id = " + currentId);
         textRestaurantName = findViewById(R.id.display_restaurant_name);
-        textRestaurantOpeningHours = findViewById(R.id.display_restaurant_opening_hours);
+        mStar1 = findViewById(R.id.display_restaurant_number_stars1);
+        mStar2 = findViewById(R.id.display_restaurant_number_stars2);
+        mStar3 = findViewById(R.id.display_restaurant_number_stars3);
+        textRestaurantAddress = findViewById(R.id.display_restaurant_address);
         buttonRestaurantWebsiteUri = findViewById(R.id.display_restaurant_website_uri);
         buttonRestaurantPhoneNumber = findViewById(R.id.display_restaurant_phone_number);
         buttonRestaurantLike = findViewById(R.id.display_restaurant_like);
@@ -111,7 +118,7 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
             return;
         }
         textRestaurantName.setText(restaurant.getName());
-        textRestaurantOpeningHours.setText(restaurant.getOpeningHours());
+        textRestaurantAddress.setText(restaurant.getAddress());
 
         if (restaurant.getWebsiteUri() == null) {
             buttonRestaurantWebsiteUri.setVisibility(View.INVISIBLE);
@@ -151,6 +158,7 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
         Log.i("TestJoin", "DisplayRestaurantActivity: updateRestaurantsList call setDisplayJoin");
         restaurantInitialized = true;
         setDisplayJoin();
+        updateStars(); // a change in the list of restaurants could change the number of stars
     }
 
     private void updateWorkmatesList(List<Workmate> workmates) {
@@ -163,6 +171,11 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
         workmateInitialized = true;
         setDisplayJoin();
         this.refresh(currentId);
+    }
+
+    private void updateRestaurantLikesList(List<RestaurantLike> unused) {
+        Log.i("TestLike", "DisplayRestaurantActivity: updateRestaurantLikesList");
+        updateStars();
     }
 
     private void setDisplayJoin() {
@@ -183,5 +196,22 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
             joinedWorkmates = myViewModel.getWorkmatesByIdRestaurant(mIdRestaurant);
         }
         recyclerView.setAdapter(new MyJoinedWorkmateRecyclerViewAdapter(joinedWorkmates));
+    }
+
+    private void updateStars() {
+        Log.i("TestLike", "DisplayRestaurantActivity.onBindViewHolder call getLikeById");
+        int rate = myViewModel.getLikeById(restaurant.getId());
+        Log.i("TestLike", "DisplayRestaurantActivity.onBindViewHolder display getLikeById (rate = " + rate + ")");
+        mStar1.setVisibility(View.VISIBLE);
+        if (rate > 1) {
+            mStar2.setVisibility(View.VISIBLE);
+        } else {
+            mStar2.setVisibility(View.INVISIBLE);
+        }
+        if (rate > 2) {
+            mStar3.setVisibility(View.VISIBLE);
+        } else {
+            mStar3.setVisibility(View.INVISIBLE);
+        }
     }
 }

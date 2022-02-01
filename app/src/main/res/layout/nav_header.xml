@@ -29,7 +29,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/workmate_cardview"
+            android:id="@+id/user_workmate_cardview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
@@ -55,7 +55,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/workmate_cardview"
+            app:layout_constraintStart_toEndOf="@+id/user_workmate_cardview"
             app:layout_constraintTop_toBottomOf="@+id/user_title">
 
             <TextView

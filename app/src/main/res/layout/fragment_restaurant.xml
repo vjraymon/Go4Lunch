@@ -52,15 +52,57 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/restaurant_address"/>
 
-    <TextView
-        android:id="@+id/restaurant_number_stars"
+    <ImageView
+        android:id="@+id/restaurant_number_stars1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
-        app:drawableStartCompat="@drawable/ic_baseline_star_outline_24"
-
-        android:textAppearance="?attr/textAppearanceListItem"
+        android:layout_marginEnd="1dp"
+        android:layout_marginStart="-15dp"
+        android:layout_marginTop="@dimen/text_margin"
+        android:scaleX="0.6"
+        android:scaleY="0.6"
+        android:contentDescription="@string/star"
+        android:background="@drawable/ic_baseline_star_rate_24"
+        android:backgroundTint="@color/black"
+        android:padding="5dp"
+        android:src="@drawable/ic_baseline_star_rate_24"
+        app:tint="@android:color/holo_orange_light"
+        android:tintMode="src_atop"
         app:layout_constraintEnd_toStartOf="@+id/restaurant_bitmap"
+        app:layout_constraintTop_toBottomOf="@+id/restaurant_number_workmate" />
+    <ImageView
+        android:id="@+id/restaurant_number_stars2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="-15dp"
+        android:layout_marginTop="@dimen/text_margin"
+        android:scaleX="0.6"
+        android:scaleY="0.6"
+        android:contentDescription="@string/star"
+        android:background="@drawable/ic_baseline_star_rate_24"
+        android:backgroundTint="@color/black"
+        android:padding="5dp"
+        android:src="@drawable/ic_baseline_star_rate_24"
+        app:tint="@android:color/holo_orange_light"
+        android:tintMode="src_atop"
+        app:layout_constraintEnd_toStartOf="@+id/restaurant_number_stars1"
+        app:layout_constraintTop_toBottomOf="@+id/restaurant_number_workmate" />
+    <ImageView
+        android:id="@+id/restaurant_number_stars3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="-15dp"
+        android:layout_marginTop="@dimen/text_margin"
+        android:scaleX="0.6"
+        android:scaleY="0.6"
+        android:contentDescription="@string/star"
+        android:background="@drawable/ic_baseline_star_rate_24"
+        android:backgroundTint="@color/black"
+        android:padding="5dp"
+        android:src="@drawable/ic_baseline_star_rate_24"
+        app:tint="@android:color/holo_orange_light"
+        android:tintMode="src_atop"
+        app:layout_constraintEnd_toStartOf="@+id/restaurant_number_stars2"
         app:layout_constraintTop_toBottomOf="@+id/restaurant_number_workmate" />
 
     <ImageView

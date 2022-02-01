@@ -52,21 +52,74 @@
 
             <TextView
                 android:id="@+id/display_restaurant_name"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/text_margin"
                 android:layout_marginTop="@dimen/text_margin"
                 android:background="@color/red"
                 android:textColor="@color/white"
+                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/display_restaurant_join" />
 
+            <ImageView
+                android:id="@+id/display_restaurant_number_stars1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="-15dp"
+                android:layout_marginTop="-5dp"
+                android:scaleX="0.6"
+                android:scaleY="0.6"
+                android:contentDescription="@string/star"
+                android:background="@drawable/ic_baseline_star_rate_24"
+                android:backgroundTint="@color/black"
+                android:padding="5dp"
+                android:src="@drawable/ic_baseline_star_rate_24"
+                app:tint="@android:color/holo_orange_light"
+                android:tintMode="src_atop"
+                app:layout_constraintStart_toEndOf="@+id/display_restaurant_name"
+                app:layout_constraintTop_toTopOf="@+id/display_restaurant_name" />
+            <ImageView
+                android:id="@+id/display_restaurant_number_stars2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="-15dp"
+                android:scaleX="0.6"
+                android:scaleY="0.6"
+                android:contentDescription="@string/star"
+                android:background="@drawable/ic_baseline_star_rate_24"
+                android:backgroundTint="@color/black"
+                android:padding="5dp"
+                android:src="@drawable/ic_baseline_star_rate_24"
+                app:tint="@android:color/holo_orange_light"
+                android:tintMode="src_atop"
+                app:layout_constraintStart_toEndOf="@+id/display_restaurant_number_stars1"
+                app:layout_constraintTop_toTopOf="@+id/display_restaurant_number_stars1" />
+            <ImageView
+                android:id="@+id/display_restaurant_number_stars3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="-15dp"
+                android:scaleX="0.6"
+                android:scaleY="0.6"
+                android:contentDescription="@string/star"
+                android:background="@drawable/ic_baseline_star_rate_24"
+                android:backgroundTint="@color/black"
+                android:padding="5dp"
+                android:src="@drawable/ic_baseline_star_rate_24"
+                app:tint="@android:color/holo_orange_light"
+                android:tintMode="src_atop"
+                app:layout_constraintStart_toEndOf="@+id/display_restaurant_number_stars2"
+                app:layout_constraintTop_toTopOf="@+id/display_restaurant_number_stars1" />
+
             <TextView
-                android:id="@+id/display_restaurant_opening_hours"
-                android:layout_width="match_parent"
+                android:id="@+id/display_restaurant_address"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/text_margin"
                 android:background="@color/red"
                 android:textColor="@color/white"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/display_restaurant_name" />
 
             <TextView
@@ -75,7 +128,7 @@
                 android:layout_height="wrap_content"
                 android:background="@color/red"
                 android:textColor="@color/white"
-                app:layout_constraintTop_toBottomOf="@+id/display_restaurant_opening_hours" />
+                app:layout_constraintTop_toBottomOf="@+id/display_restaurant_address" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <Button
@@ -98,7 +151,7 @@
             android:layout_marginStart="@dimen/text_margin"
             android:layout_marginEnd="@dimen/text_margin"
             android:backgroundTint="@color/white"
-            android:drawableTop="@drawable/ic_baseline_public_24"
+            android:drawableTop="@drawable/ic_baseline_star_rate_24"
             android:text="@string/like"
             android:textColor="@color/red"
             app:layout_constraintEnd_toStartOf="@+id/display_restaurant_website_uri"

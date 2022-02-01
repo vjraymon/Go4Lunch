@@ -72,10 +72,20 @@ public class MyRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<MyRest
             holder.mNumberWorkmate.setText(String.format("(%s)", w.size()));
         }
 
-        Log.i("TestLike", "onBindViewHolder call getLikeById");
+        Log.i("TestLike", "MyRestaurantRecyclerViewAdapter.onBindViewHolder call getLikeById");
         int rate = myViewModel.getLikeById(holder.restaurant.getId());
-        Log.i("TestLike", "onBindViewHolder display getLikeById");
-        holder.mNumberStars.setText(String.format("(%s)", rate));
+        Log.i("TestLike", "MyRestaurantRecyclerViewAdapter.onBindViewHolder display getLikeById (rate = " + rate + ")");
+        holder.mStar1.setVisibility(View.VISIBLE);
+        if (rate > 1) {
+            holder.mStar2.setVisibility(View.VISIBLE);
+        } else {
+            holder.mStar2.setVisibility(View.INVISIBLE);
+        }
+        if (rate > 2) {
+            holder.mStar3.setVisibility(View.VISIBLE);
+        } else {
+            holder.mStar3.setVisibility(View.INVISIBLE);
+        }
 
     }
 
@@ -96,7 +106,9 @@ public class MyRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<MyRest
         public final ImageView mPhoto;
         public final TextView mDistance;
         public final TextView mNumberWorkmate;
-        public final TextView mNumberStars;
+        public final ImageView mStar1;
+        public final ImageView mStar2;
+        public final ImageView mStar3;
         public Restaurant restaurant;
 
         public ViewHolder(@NonNull FragmentRestaurantBinding binding) {
@@ -107,7 +119,9 @@ public class MyRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<MyRest
             mPhoto = binding.restaurantBitmap;
             mDistance = binding.restaurantDistance;
             mNumberWorkmate = binding.restaurantNumberWorkmate;
-            mNumberStars = binding.restaurantNumberStars;
+            mStar1 = binding.restaurantNumberStars1;
+            mStar2 = binding.restaurantNumberStars2;
+            mStar3 = binding.restaurantNumberStars3;
             mView = binding.getRoot();
             mView.setOnClickListener(v -> {
                 Log.w("TestRestaurantList", "MyRestaurantRecyclerViewAdapter.ViewHolder click on an element");
