@@ -1,7 +1,6 @@
 package com.openclassrooms.go4lunch.viewmodel;
 
 import android.app.Application;
-import android.net.Uri;
 import android.util.Log;
 
 import androidx.lifecycle.AndroidViewModel;
@@ -50,9 +49,10 @@ public class MyViewModel extends AndroidViewModel {
         }
         return myself;
     }
-
+    private final Application application;
     public MyViewModel(Application application) {
         super(application);
+        this.application = application;
         // trigger user load.
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null)
@@ -76,19 +76,26 @@ public class MyViewModel extends AndroidViewModel {
     public void initForTest() {
         Log.i("TestsJoin", "MyViewModel.initForTest()");
 
-        if ((restaurantRepository.getRestaurants().getValue() != null) && (restaurantRepository.getRestaurants().getValue().size() >= 2)) {
-            workmateRepository.addWorkmate(new Workmate("Caroline@gmail.com", "Caroline",
-                    "https://lh3.googleusercontent.com/a/AATXAJy5CJheMr1OSP2ef-jbhmBfNHRMc0XnYTnlrfj-=s96-c",
-                    restaurantRepository.getRestaurants().getValue().get(1).getId()));
-            workmateRepository.addWorkmate(new Workmate("Jack@gmail.com", "Jack",
-                    "https://lh3.googleusercontent.com/a/AATXAJy5CJheMr1OSP2ef-jbhmBfNHRMc0XnYTnlrfj-=s96-c",
-                    null));
-            workmateRepository.addWorkmate(new Workmate("Emilie@gmail.com", "Emilie",
-                    "https://lh3.googleusercontent.com/a/AATXAJy5CJheMr1OSP2ef-jbhmBfNHRMc0XnYTnlrfj-=s96-c",
-                    restaurantRepository.getRestaurants().getValue().get(0).getId()));
-            workmateRepository.addWorkmate(new Workmate("Albert@gmail.com", "Albert",
-                    null,
-                    restaurantRepository.getRestaurants().getValue().get(1).getId()));
+        try {
+            List<Restaurant> restaurants = restaurantRepository.getRestaurants(application.getApplicationContext()).getValue();
+            if (restaurants == null) return;
+            Restaurant restaurant0 = restaurants.get(0);
+            Restaurant restaurant1 = restaurants.get(1);
+            if ((restaurant0 == null) || (restaurant1 == null)) return;
+                workmateRepository.addWorkmate(new Workmate("Caroline@gmail.com", "Caroline",
+                        "https://lh3.googleusercontent.com/a/AATXAJy5CJheMr1OSP2ef-jbhmBfNHRMc0XnYTnlrfj-=s96-c",
+                        restaurant1.getId()));
+                workmateRepository.addWorkmate(new Workmate("Jack@gmail.com", "Jack",
+                        "https://lh3.googleusercontent.com/a/AATXAJy5CJheMr1OSP2ef-jbhmBfNHRMc0XnYTnlrfj-=s96-c",
+                        null));
+                workmateRepository.addWorkmate(new Workmate("Emilie@gmail.com", "Emilie",
+                        "https://lh3.googleusercontent.com/a/AATXAJy5CJheMr1OSP2ef-jbhmBfNHRMc0XnYTnlrfj-=s96-c",
+                        restaurant0.getId()));
+                workmateRepository.addWorkmate(new Workmate("Albert@gmail.com", "Albert",
+                        null,
+                        restaurant1.getId()));
+        } catch (Exception e) {
+            Log.e("Test","MyViewModel.initForTest exception " + e.getMessage());
         }
     }
 
@@ -208,10 +215,10 @@ public class MyViewModel extends AndroidViewModel {
         return (int)rate;
     }
 
-    List<Workmate> workmatesByIdRestaurant;
+//    List<Workmate> workmatesByIdRestaurant;
     public List<Workmate> getWorkmatesByIdRestaurant(String id) {
         List<Workmate> workmates = workmatesLiveData.getValue();
-        workmatesByIdRestaurant = new ArrayList<>();
+        List<Workmate> workmatesByIdRestaurant = new ArrayList<>();
         if ((workmates == null) || (id == null)) {
             if (workmates == null)
             {
@@ -239,8 +246,6 @@ public class MyViewModel extends AndroidViewModel {
     }
 
     public void joinRestaurant(Restaurant restaurant) {
-        // depending on the action, do necessary business logic calls and update the
-        // userLiveData.
         Log.i("TestJoin","click on join restaurant (MyViewModel)");
         if (restaurant != null) {
             workmateRepository.setRestaurant(myself, restaurant);
@@ -261,7 +266,7 @@ public class MyViewModel extends AndroidViewModel {
             Log.i("TestPlace","Error restaurantRepository null in MyViewModel");
             return null;
         }
-        restaurantsLiveData = restaurantRepository.getRestaurants();
+        restaurantsLiveData = restaurantRepository.getRestaurants(application.getApplicationContext());
         return restaurantsLiveData;
     }
 

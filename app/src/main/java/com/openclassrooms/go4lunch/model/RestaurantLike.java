@@ -1,8 +1,5 @@
 package com.openclassrooms.go4lunch.model;
 
-import android.graphics.Bitmap;
-
-import com.google.android.gms.maps.model.LatLng;
 
 public class RestaurantLike {
     private String name;

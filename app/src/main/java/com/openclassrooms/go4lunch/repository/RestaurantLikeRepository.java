@@ -9,7 +9,6 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.openclassrooms.go4lunch.model.RestaurantLike;
-import com.openclassrooms.go4lunch.model.Workmate;
 
 import java.util.ArrayList;
 import java.util.List;

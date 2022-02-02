@@ -2,11 +2,14 @@ package com.openclassrooms.go4lunch.repository;
 
 import static com.google.android.libraries.places.api.model.Place.Type.RESTAURANT;
 
-import android.annotation.SuppressLint;
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -31,6 +34,8 @@ import java.util.List;
 import java.util.Objects;
 
 public class RestaurantRepository {
+    private final String TAG_PLACE = "TestPlace";
+
     private static RestaurantRepository service;
 
     /**
@@ -43,22 +48,31 @@ public class RestaurantRepository {
         return service;
     }
 
-    private final PlacesClient placesClient;
-    private static final int M_MAX_ENTRIES = 10;
+    private static final int INIT_TODO = 0;
+    private static final int INIT_ONGOING = 1;
+    private static final int INIT_FAILED = 2;
+    private static final int INIT_DONE = 3;
+    private static int initRestaurantsStatus = INIT_TODO;
+    private static int counter_request_ongoing = 0;
 
-    public RestaurantRepository(Context context) {
-        Log.i("TestPlace", "Places.initialize");
-        Places.initialize(Objects.requireNonNull(context), context.getString(R.string.google_maps_key));
-        Log.i("TestPlace", "Places.createClient");
+    private final PlacesClient placesClient;
+    private static final int M_MAX_ENTRIES = 20;
+
+    public RestaurantRepository(@NonNull Context context) {
+        Log.i(TAG_PLACE, "RestaurantRepository.RestaurantRepository Places.initialize");
+        Places.initialize(context, context.getString(R.string.google_maps_key));
+        Log.i(TAG_PLACE, "RestaurantRepository.RestaurantRepository Places.createClient");
         placesClient = Places.createClient(Objects.requireNonNull(context));
-        getRestaurantsFromGooglePlace();
+        getRestaurantsFromGooglePlace(context);
     }
 
     private final MutableLiveData<List<Restaurant>> restaurants = new MutableLiveData<>();
 
     public void select(List<Restaurant> item) { restaurants.setValue(item); }
 
-    public LiveData<List<Restaurant>> getRestaurants() {
+    public LiveData<List<Restaurant>> getRestaurants(Context context) {
+        Log.i(TAG_PLACE, "RestaurantRepository.getRestaurants retry getRestaurantsFromGooglePlace");
+        getRestaurantsFromGooglePlace(context);
         return this.restaurants;
     }
 
@@ -73,15 +87,23 @@ public class RestaurantRepository {
                 Place.Field.PHONE_NUMBER,
                 Place.Field.WEBSITE_URI,
                 Place.Field.PHOTO_METADATAS,
-                Place.Field.ICON_URL,
                 Place.Field.LAT_LNG
         );
 
         // Construct a request object, passing the place ID and fields array.
+        counter_request_ongoing = counter_request_ongoing +1;
         final FetchPlaceRequest request = FetchPlaceRequest.newInstance(placeId, placeFields);
 
         placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
             final Place place = response.getPlace();
+
+            Log.i("TestDetailedPlace", "Place NAME found: " + place.getName());
+            Log.i("TestDetailedPlace", "Place ADDRESS found: " + place.getAddress());
+            Log.i("TestDetailedPlace", "Place OPENING_HOURS found: " + place.getOpeningHours());
+            Log.i("TestDetailedPlace", "Place PHONE_NUMBER found: " + place.getPhoneNumber());
+            Log.i("TestDetailedPlace", "Place WEBSITE_URI found: " + place.getWebsiteUri());
+            Log.i("TestDetailedPlace", "Place PLUS_CODE found: " + place.getPlusCode());
+
             Calendar calendar = Calendar.getInstance();
             int day = calendar.get(Calendar.DAY_OF_WEEK);
             Log.i("TestDetailedPlace", "Place DAY found: " + day);
@@ -96,14 +118,11 @@ public class RestaurantRepository {
                 case Calendar.SATURDAY:  index = 5; break;
             }
             final String oh = (place.getOpeningHours()==null) ? null : place.getOpeningHours().getWeekdayText().get(index);
+
             final String ws = (place.getWebsiteUri()==null) ? null : place.getWebsiteUri().toString();
 
-            Log.i("TestDetailedPlace", "Place NAME found: " + place.getName());
-            Log.i("TestDetailedPlace", "Place ADDRESS found: " + place.getAddress());
-            Log.i("TestDetailedPlace", "Place OPENING_HOURS found: " + place.getOpeningHours());
-            Log.i("TestDetailedPlace", "Place PHONE_NUMBER found: " + place.getPhoneNumber());
-            Log.i("TestDetailedPlace", "Place WEBSITE_URI found: " + place.getWebsiteUri());
-            Log.i("TestDetailedPlace", "Place PLUS_CODE found: " + place.getPlusCode());
+            final String address = (place.getAddress()==null) ? null : place.getAddress().split(",")[0];
+
             // Get the photo metadata.
             final List<PhotoMetadata> metadata = place.getPhotoMetadatas();
             if (metadata == null || metadata.isEmpty()) {
@@ -111,66 +130,63 @@ public class RestaurantRepository {
                 Restaurant restaurant = new Restaurant(
                         placeId,
                         place.getName(),
-                        Objects.requireNonNull(place.getAddress()).split(",")[0],
+                        address,
                         place.getLatLng(),
                         oh,
                         ws,
                         null,
-                        null,
-                        "+33 1 77 46 51 77"
-                        //             place.getPhoneNumber()
+                        place.getPhoneNumber()
                 );
                 restaurantList.add(restaurant);
+                counter_request_ongoing = counter_request_ongoing - 1;
+                if (counter_request_ongoing <= 0) initRestaurantsStatus = INIT_DONE;
                 select(restaurantList);
                 return;
             }
             final PhotoMetadata photoMetadata = metadata.get(0);
-
-            // Get the attribution text.
-            final String attributions = photoMetadata.getAttributions();
-
             // Create a FetchPhotoRequest.
+            counter_request_ongoing = counter_request_ongoing + 1;
             final FetchPhotoRequest photoRequest = FetchPhotoRequest.builder(photoMetadata)
-//                    .setMaxWidth(500) // Optional.
-//                    .setMaxHeight(300) // Optional.
+                    .setMaxWidth(500) // Optional.
+                    .setMaxHeight(300) // Optional.
                     .build();
             placesClient.fetchPhoto(photoRequest).addOnSuccessListener((fetchPhotoResponse) -> {
                 Bitmap bitmap = fetchPhotoResponse.getBitmap();
                 Restaurant restaurant = new Restaurant(
                     placeId,
                     place.getName(),
-                    Objects.requireNonNull(place.getAddress()).split(",")[0],
+                    address,
                     place.getLatLng(),
                     oh,
                     ws,
                     bitmap,
-                    place.getIconUrl(),
-                    "+33 1 77 46 51 77"
-                    //             place.getPhoneNumber()
+                    place.getPhoneNumber()
                 );
                 restaurantList.add(restaurant);
+                counter_request_ongoing = counter_request_ongoing - 1;
+                if (counter_request_ongoing <= 0) initRestaurantsStatus = INIT_DONE;
                 select(restaurantList);
-//                imageView.setImageBitmap(bitmap);
             }).addOnFailureListener((exception) -> {
                 if (exception instanceof ApiException) {
                     final ApiException apiException = (ApiException) exception;
-                    Log.e("TestDetailedPlace", "Place not found: " + exception.getMessage());
-                    final int statusCode = apiException.getStatusCode();
-                    // TODO: Handle error with given status code.
+                    Log.e(TAG_PLACE, "RestaurantRepository.getRestaurantByIdFromGooglePlace Photo not found: " + exception.getMessage());
+                    initRestaurantsStatus = INIT_FAILED;
                 }
             });
         }).addOnFailureListener((exception) -> {
             if (exception instanceof ApiException) {
                 final ApiException apiException = (ApiException) exception;
-                Log.e("TestDetailedPlace", "Place not found: " + exception.getMessage());
-                final int statusCode = apiException.getStatusCode();
-                // TODO: Handle error with given status code.
+                Log.e(TAG_PLACE, "RestaurantRepository.getRestaurantByIdFromGooglePlace Place not found: " + exception.getMessage());
+                initRestaurantsStatus = INIT_FAILED;
             }
         });
     }
 
 
-    private void getRestaurantsFromGooglePlace() {
+    private void getRestaurantsFromGooglePlace(Context context) {
+        Log.i(TAG_PLACE, "RestaurantRepository.getRestaurantsFromGooglePlace");
+        if ((initRestaurantsStatus == INIT_ONGOING) || (initRestaurantsStatus == INIT_DONE)) return;
+
         List<Place.Field> placeFields = Arrays.asList(
                 Place.Field.ID,
                 Place.Field.TYPES
@@ -179,8 +195,12 @@ public class RestaurantRepository {
         restaurantList = new ArrayList<>();
 
         FindCurrentPlaceRequest request = FindCurrentPlaceRequest.newInstance(placeFields);
-        Log.i("TestPlace", "placesClient.findCurrentPlace");
-        @SuppressLint("MissingPermission")
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Log.i(TAG_PLACE, "RestaurantRepository.getRestaurants location not permitted");
+            return;
+        }
+        Log.i(TAG_PLACE, "RestaurantRepository.getRestaurantsFromGooglePlace: INIT_ONGOING");
+        initRestaurantsStatus = INIT_ONGOING;
         final Task<FindCurrentPlaceResponse> placeResult = placesClient.findCurrentPlace(request);
         placeResult.addOnCompleteListener(
                 (response) -> {
@@ -188,25 +208,34 @@ public class RestaurantRepository {
                         FindCurrentPlaceResponse likelyPlaces = response.getResult();
                         int count = Math.min(likelyPlaces.getPlaceLikelihoods().size(), M_MAX_ENTRIES);
                         int i=0;
+                        counter_request_ongoing = 0;
                         for (PlaceLikelihood placeLikelihood : likelyPlaces.getPlaceLikelihoods()) {
-                            if (Objects.requireNonNull(placeLikelihood.getPlace().getTypes()).contains(RESTAURANT)) {
+                            if ((placeLikelihood.getPlace().getTypes() != null) &&(placeLikelihood.getPlace().getTypes().contains(RESTAURANT))) {
                                 i++;
                                 if (i>count) {
                                     break;
                                 }
-                                Log.i("TestPlace", "location i = " + i + " : " + placeLikelihood.getPlace().getName());
+                                Log.i("TestDetailedPlace", "RestaurantRepository.getRestaurantsFromGooglePlace location i = " + i + " : " + placeLikelihood.getPlace().getId());
                                 getRestaurantByIdFromGooglePlace(placeLikelihood.getPlace().getId());
                                 Log.i("TestDetailedPlace", "Place TYPES found: " + placeLikelihood.getPlace().getTypes());
                             }
                         }
-                        select(restaurantList);
+                        if (i == 0) {
+                            Log.i(TAG_PLACE, "RestaurantRepository.getRestaurantsFromGooglePlace: no restaurant found");
+                            initRestaurantsStatus = INIT_DONE;
+                            select(restaurantList); //no restaurant found
+                        }
                     } else {
-                        Log.i("TestPlace", "incorrect response");
+                        Log.i(TAG_PLACE, "RestaurantRepository.getRestaurantsFromGooglePlace incorrect response on FindCurrentPlaceResponse");
+                        initRestaurantsStatus = INIT_FAILED;
                     }
-                }
-        );
+                }).addOnFailureListener((exception) -> {
+                    if (exception instanceof ApiException) {
+                        final ApiException apiException = (ApiException) exception;
+                        Log.e(TAG_PLACE, "RestaurantRepository.getRestaurantsFromGooglePlace Error on FindCurrentPlaceResponse" + exception.getMessage());
+                        final int statusCode = apiException.getStatusCode();
+                        initRestaurantsStatus = INIT_FAILED;
+                    }
+                });
     }
-
-
-
 }

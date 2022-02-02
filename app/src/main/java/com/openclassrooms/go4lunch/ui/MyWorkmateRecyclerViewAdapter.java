@@ -1,7 +1,5 @@
 package com.openclassrooms.go4lunch.ui;
 
-import static androidx.core.content.res.TypedArrayUtils.getString;
-
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.util.Log;
@@ -15,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.openclassrooms.go4lunch.R;
 import com.openclassrooms.go4lunch.databinding.FragmentWorkmateBinding;
 import com.openclassrooms.go4lunch.events.DisplayRestaurantEvent;

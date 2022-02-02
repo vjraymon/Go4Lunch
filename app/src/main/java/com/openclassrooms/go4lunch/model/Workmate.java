@@ -1,9 +1,5 @@
 package com.openclassrooms.go4lunch.model;
 
-import android.net.Uri;
-
-import com.google.android.gms.maps.model.LatLng;
-
 public class Workmate {
     private String name;
     private String email;

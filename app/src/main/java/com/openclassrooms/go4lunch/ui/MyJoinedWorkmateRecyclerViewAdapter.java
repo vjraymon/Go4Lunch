@@ -12,8 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.openclassrooms.go4lunch.R;
-import com.openclassrooms.go4lunch.databinding.FragmentWorkmateBinding;
-import com.openclassrooms.go4lunch.databinding.JoinedWorkmateBinding;
 import com.openclassrooms.go4lunch.model.Workmate;
 import com.squareup.picasso.Picasso;
 

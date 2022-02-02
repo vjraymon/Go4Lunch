@@ -108,6 +108,7 @@
     <ImageView
         android:layout_width="100dp"
         android:layout_height="100dp"
+        android:layout_marginEnd="@dimen/text_margin"
         android:scaleType="centerCrop"
         android:id="@+id/restaurant_bitmap"
         android:contentDescription="@string/restaurant_bitmap"

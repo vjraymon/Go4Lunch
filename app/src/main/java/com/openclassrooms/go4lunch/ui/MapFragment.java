@@ -57,7 +57,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private static final int DEFAULT_ZOOM = 17;
 
     private boolean locationPermissionGranted = false;
-    private static final int PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1;
 
 //    private RestaurantRepository restaurantRepository;
 
@@ -251,15 +250,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
         Log.i("TestMarker", "MapsFragment.initializeMarker restaurant = " + restaurant.getName() + " " + restaurant.getId());
         List<Workmate> currentWorkmateList = myViewModel.getWorkmatesByIdRestaurant(restaurant.getId());
-        float color;
+//        float color;
         int pinRestaurant;
         if ((currentWorkmateList == null) || currentWorkmateList.isEmpty()) {
             Log.i("TestMarker", "MapsFragment.initializeMarker red " + restaurant.getName());
-            color = BitmapDescriptorFactory.HUE_RED;
+//            color = BitmapDescriptorFactory.HUE_RED;
             pinRestaurant = R.drawable.ic_pin_restaurant2_orange;
         } else {
             Log.i("TestMarker", "MapsFragment.initializeMarker green " + restaurant.getName());
-            color = BitmapDescriptorFactory.HUE_GREEN;
+//            color = BitmapDescriptorFactory.HUE_GREEN;
             pinRestaurant = R.drawable.ic_pin_restaurant2_green;
         }
 
