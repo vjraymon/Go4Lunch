@@ -60,9 +60,9 @@ public class RestaurantRepository {
 
     public RestaurantRepository(@NonNull Context context) {
         Log.i(TAG_PLACE, "RestaurantRepository.RestaurantRepository Places.initialize");
-        Places.initialize(context, context.getString(R.string.google_maps_key));
+        if (!Places.isInitialized()) Places.initialize(context, context.getString(R.string.google_maps_key));
         Log.i(TAG_PLACE, "RestaurantRepository.RestaurantRepository Places.createClient");
-        placesClient = Places.createClient(Objects.requireNonNull(context));
+        placesClient = Places.createClient(context);
         getRestaurantsFromGooglePlace(context);
     }
 
@@ -78,7 +78,7 @@ public class RestaurantRepository {
 
     List<Restaurant> restaurantList = new ArrayList<>();
 
-    private void getRestaurantByIdFromGooglePlace(String placeId) {
+    public void getRestaurantByIdFromGooglePlace(String placeId) {
         // Specify the fields to return.
         final List<Place.Field> placeFields = Arrays.asList(
                 Place.Field.NAME,
