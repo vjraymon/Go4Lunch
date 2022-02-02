@@ -1,6 +1,7 @@
 package com.openclassrooms.go4lunch.viewmodel;
 
 import android.app.Application;
+import android.content.Context;
 import android.util.Log;
 
 import androidx.lifecycle.AndroidViewModel;
@@ -74,7 +75,7 @@ public class MyViewModel extends AndroidViewModel {
         workmateRepository.addWorkmate(myself); // adds only if it isn't registered yet
     }
 
-    public void initializationNotification() {
+    public Context initializationNotification() {
         Restaurant restaurant = null;
         List<Workmate> workmates = null;
         myself = getMyself(); // updating
@@ -88,6 +89,7 @@ public class MyViewModel extends AndroidViewModel {
         Log.i("Fire", "MyViewModel.initializationNotification: " + myself
                 + " restaurant = " + ((restaurant == null) ? "null" : restaurant.getName())
                 + " attendees = " + ((workmates == null) ? "null" : workmates.size()));
+        return application.getApplicationContext();
     }
 
     public void initForTest() {

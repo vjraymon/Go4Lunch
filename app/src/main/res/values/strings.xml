@@ -51,5 +51,8 @@
     <string name="is_eating_in">%s is eating in %s</string>
     <string name="button_restaurant_join">Button restaurant join</string>
     <string name="star">Star</string>
-
+    <string name="notification_restaurant_line1">You are attended to the restaurant %s</string>
+    <string name="notification_title">Dear %s it\'s time to lunch!</string>
+    <string name="notification_attendees_line1">\n Other attendees:</string>
+    <string name="notification_attendees_line2">\n       %s</string>
 </resources>

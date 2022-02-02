@@ -1,9 +1,11 @@
 package com.openclassrooms.go4lunch.ui;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.openclassrooms.go4lunch.R;
 import com.openclassrooms.go4lunch.model.Restaurant;
 import com.openclassrooms.go4lunch.model.Workmate;
 import com.openclassrooms.go4lunch.viewmodel.MyViewModel;
@@ -51,14 +53,15 @@ public class MySettings {
     public String getTitle() {
         setMyself();
         if (myself == null) return null;
-        return String.format("Dear %s it's time to lunch!", myself);
+        Context context = myViewModel.initializationNotification();
+        return String.format(context.getString(R.string.notification_title), myself);
     }
 
     public String getBody() {
         setMyself();
         if (myself == null) return null;
         if (myViewModel == null) return null;
-        myViewModel.initializationNotification();
+        Context context = myViewModel.initializationNotification();
         Log.i(TAG, "MySettings.getBody: " + myself
         + " restaurant = " + ((restaurant == null) ? "null" : restaurant.getName())
         + " attendees = " + ((attendees == null) ? "null" : attendees.size()));
@@ -66,17 +69,17 @@ public class MySettings {
         StringBuilder attendeesText = null;
         if (restaurant == null) return null;
 
-        restaurantText = String.format("You are attended to the restaurant %s", restaurant.getName() );
+        restaurantText = String.format(context.getString(R.string.notification_restaurant_line1), restaurant.getName() );
         if (attendees !=null) {
             int sum = 0;
             for (Workmate w : attendees) {
                 if ((w != null) && !w.getName().equals(myself)) sum = sum + 1;
             }
             if (sum > 0) {
-                attendeesText = new StringBuilder("\n Other attendees:");
+                attendeesText = new StringBuilder(context.getString(R.string.notification_attendees_line1));
                 for (Workmate w : attendees) {
                     if ((w != null) && !w.getName().equals(myself)) {
-                        attendeesText.append(String.format("\n    %s", w.getName()));
+                        attendeesText.append(String.format(context.getString(R.string.notification_attendees_line2), w.getName()));
                     }
                 }
             }
