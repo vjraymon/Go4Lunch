@@ -2,13 +2,19 @@ package com.openclassrooms.go4lunch.repository;
 
 import android.util.Log;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.openclassrooms.go4lunch.model.RestaurantLike;
+import com.openclassrooms.go4lunch.model.Workmate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +38,7 @@ public class RestaurantLikeRepository {
     public final CollectionReference restaurantLikesRef = db.collection("restaurants");
 
     public RestaurantLikeRepository() {
-        // Default Restaurant like list for test
+        initializeSnapshot();
     }
 
     private final MutableLiveData<List<RestaurantLike>> restaurantLikes = new MutableLiveData<>();
@@ -145,6 +151,29 @@ public class RestaurantLikeRepository {
         }).addOnFailureListener(e -> {
             //handle error
             Log.i(TAG, "RestaurantLikeRepository.updateLike Error failure listener ", e);
+        });
+    }
+
+    private void initializeSnapshot() {
+        Log.i(TAG, "WorkmateRepository.initializeSnapshot");
+        restaurantLikesRef.addSnapshotListener((documentSnapshot, e) -> {
+            Log.i(TAG, "WorkmateRepository.initializeSnapshot onEvent");
+            if (e != null) {
+                Log.w(TAG, "WorkmateRepository.initializeSnapshot Listen failed.", e);
+                return;
+            }
+
+            freelances = new ArrayList<>();
+            assert documentSnapshot != null;
+            for (DocumentSnapshot snapshot : documentSnapshot.getDocuments()) {
+                // Snapshot of the changed document
+                RestaurantLike i = snapshot.toObject(RestaurantLike.class);
+                if (i != null) {
+                    freelances.add(i);
+                    Log.i(TAG,"WorkmateRepository.initializeSnapshot name = " + i.getName() + " idRestaurant = " + i.getId());
+                }
+            }
+            restaurantLikes.setValue(freelances);
         });
     }
 }
