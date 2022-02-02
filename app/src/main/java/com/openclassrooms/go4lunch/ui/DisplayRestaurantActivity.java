@@ -164,7 +164,7 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
         Log.i("TestJoin", "DisplayRestaurantActivity: updateWorkmatesList");
         this.workmates = workmates;
         for (Workmate workmate : workmates) {
-                Log.i("TestPlace", "DisplayRestaurantActivity: updateWorkmatesListlocation list retrieved = " + workmate.getName() + " " + workmate.getIdRestaurant());
+                Log.i("TestPlace", "DisplayRestaurantActivity: updateWorkmatesList location list retrieved = " + workmate.getName() + " " + workmate.getIdRestaurant());
         }
         Log.i("TestJoin", "DisplayRestaurantActivity: updateWorkmatesList call setDisplayJoin");
         workmateInitialized = true;

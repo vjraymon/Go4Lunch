@@ -13,7 +13,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -184,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private final static String TAG = "TestSearch";
 
-    ActivityResultLauncher<Intent> autoCompleteResultLauncher = registerForActivityResult(
+    private final ActivityResultLauncher<Intent> autoCompleteResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 int resultCode = result.getResultCode();
@@ -281,14 +280,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     userName = findViewById(R.id.user_name);
                     userEmail = findViewById(R.id.user_email);
                     if ((userName==null) || (userEmail==null)) {
-                        Log.w("TestMyself", "init pas faite!");
+                        Log.w("TestMyself", "MainActivity.onSignInResult initialization not done!");
                     } else {
-                        Log.w("TestMyself", "init pas faite!");
+                        Log.w("TestMyself", "MainActivity.onSignInResult initialization not done!");
                         userName.setText(user.getDisplayName());
                         userEmail.setText(user.getEmail());
                     }
                 }
- //               initializeNotification();
             }
 
             //3 - Configure ViewPager

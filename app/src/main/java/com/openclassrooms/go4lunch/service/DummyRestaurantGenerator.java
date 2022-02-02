@@ -13,7 +13,7 @@ public abstract class DummyRestaurantGenerator {
                     "8h-20h","toto","0177465177"),
             new Restaurant("Chez Jack", "https://i.pravatar.cc/150?u=a042581f4e29026704d", new LatLng(-34, 151),
                     "8h-20h","toto","0177465177"),
-            new Restaurant("La Tour d'Argent", "https://i.pravatar.cc/150?u=a042581f4e29026704d", Bitnew LatLng(-34, 151),
+            new Restaurant("La Tour d'Argent", "https://i.pravatar.cc/150?u=a042581f4e29026704d", new LatLng(-34, 151),
                     "8h-20h","toto","0177465177")
 */
     );

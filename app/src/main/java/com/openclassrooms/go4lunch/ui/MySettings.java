@@ -62,8 +62,8 @@ public class MySettings {
         Log.i(TAG, "MySettings.getBody: " + myself
         + " restaurant = " + ((restaurant == null) ? "null" : restaurant.getName())
         + " attendees = " + ((attendees == null) ? "null" : attendees.size()));
-        String restaurantText = null;
-        String attendeesText = null;
+        String restaurantText;
+        StringBuilder attendeesText = null;
         if (restaurant == null) return null;
 
         restaurantText = String.format("You are attended to the restaurant %s", restaurant.getName() );
@@ -73,10 +73,10 @@ public class MySettings {
                 if ((w != null) && !w.getName().equals(myself)) sum = sum + 1;
             }
             if (sum > 0) {
-                attendeesText = "\n Other attendees:";
+                attendeesText = new StringBuilder("\n Other attendees:");
                 for (Workmate w : attendees) {
                     if ((w != null) && !w.getName().equals(myself)) {
-                        attendeesText = attendeesText + String.format("\n    %s", w.getName());
+                        attendeesText.append(String.format("\n    %s", w.getName()));
                     }
                 }
             }

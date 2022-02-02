@@ -277,7 +277,7 @@ public class MyViewModel extends AndroidViewModel {
                 Log.i("TestJoin","MyViewModel: getWorkmatesByIdRestaurant: found restaurant");
                 workmatesByIdRestaurant.add(i);
             } else {
-                Log.i("TestJoin","MyViewModel: getWorkmatesByIdRestaurant: differents restaurant");
+                Log.i("TestJoin","MyViewModel: getWorkmatesByIdRestaurant: different restaurant");
             }
         }
         return workmatesByIdRestaurant;
