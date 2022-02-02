@@ -1,13 +1,11 @@
 package com.openclassrooms.go4lunch.ui;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.openclassrooms.go4lunch.model.Restaurant;
 import com.openclassrooms.go4lunch.model.Workmate;
-import com.openclassrooms.go4lunch.repository.RestaurantRepository;
 import com.openclassrooms.go4lunch.viewmodel.MyViewModel;
 
 import java.util.List;

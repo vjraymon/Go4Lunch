@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Objects;
 
 public class RestaurantRepository {
     private final String TAG_PLACE = "TestPlace";
