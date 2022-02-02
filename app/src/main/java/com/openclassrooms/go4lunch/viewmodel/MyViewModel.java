@@ -16,6 +16,7 @@ import com.openclassrooms.go4lunch.model.Workmate;
 import com.openclassrooms.go4lunch.repository.RestaurantLikeRepository;
 import com.openclassrooms.go4lunch.repository.RestaurantRepository;
 import com.openclassrooms.go4lunch.repository.WorkmateRepository;
+import com.openclassrooms.go4lunch.ui.MySettings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,6 +72,22 @@ public class MyViewModel extends AndroidViewModel {
         workmateRepository = WorkmateRepository.getWorkmateRepository();
         restaurantLikeRepository = RestaurantLikeRepository.getRestaurantLikeRepository();
         workmateRepository.addWorkmate(myself); // adds only if it isn't registered yet
+    }
+
+    public void initializationNotification() {
+        Restaurant restaurant = null;
+        List<Workmate> workmates = null;
+        myself = getMyself(); // updating
+        if (myself != null) {
+            restaurant = getRestaurantById(myself.getIdRestaurant());
+            workmates = getWorkmatesByIdRestaurant(myself.getIdRestaurant());
+        }
+        MySettings mySettings = MySettings.getMySettings();
+        mySettings.setRestaurant(restaurant);
+        mySettings.setAttendees(workmates);
+        Log.i("Fire", "MyViewModel.initializationNotification: " + myself
+                + " restaurant = " + ((restaurant == null) ? "null" : restaurant.getName())
+                + " attendees = " + ((workmates == null) ? "null" : workmates.size()));
     }
 
     public void initForTest() {
@@ -145,6 +162,27 @@ public class MyViewModel extends AndroidViewModel {
         }
         Log.i("TestJoin","MyViewModel: getRestaurantById: restaurant not found");
         return null;
+    }
+
+    public void addRestaurantById(String id) {
+        List<Restaurant> restaurants = restaurantsLiveData.getValue();
+        if (id == null) {
+            Log.i("TestJoin", "MyViewModel: addRestaurantById: id null");
+            return;
+        }
+        boolean found = false;
+        if (restaurants != null) for (Restaurant i: restaurants) {
+            if (i.getId() == null) {
+                Log.i("TestPlace","MyViewModel: addRestaurantById: " + i.getName() + " without Id");
+            } else if (id.equals(i.getId())) {
+                Log.i("TestJoin","MyViewModel: addRestaurantById: found restaurant");
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            restaurantRepository.getRestaurantByIdFromGooglePlace(id);
+        }
     }
 
     public void incLike(String id) {
@@ -250,6 +288,7 @@ public class MyViewModel extends AndroidViewModel {
         if (restaurant != null) {
             workmateRepository.setRestaurant(myself, restaurant);
         }
+        initializationNotification();
     }
 
     public LiveData<List<Workmate>> getWorkmates() {
