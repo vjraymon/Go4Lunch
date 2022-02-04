@@ -9,6 +9,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.openclassrooms.go4lunch.model.Restaurant;
@@ -52,11 +53,14 @@ public class MyViewModel extends AndroidViewModel {
         return myself;
     }
     private final Application application;
-    public MyViewModel(Application application) {
+    public MyViewModel(Application application,
+                       FirebaseUser user,
+                       RestaurantRepository restaurantRepository,
+                       WorkmateRepository workmateRepository,
+                       RestaurantLikeRepository restaurantLikeRepository) {
         super(application);
         this.application = application;
         // trigger user load.
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null)
         {
             Log.i("TestMySelf", "MyViewModel.init user null");
@@ -69,9 +73,10 @@ public class MyViewModel extends AndroidViewModel {
                         (user.getPhotoUrl() == null) ? null : user.getPhotoUrl().toString(),
                         null);
         }
-        restaurantRepository = RestaurantRepository.getRestaurantRepository(application.getApplicationContext());
-        workmateRepository = WorkmateRepository.getWorkmateRepository();
-        restaurantLikeRepository = RestaurantLikeRepository.getRestaurantLikeRepository();
+
+        this.restaurantRepository = restaurantRepository;
+        this.workmateRepository = workmateRepository;
+        this.restaurantLikeRepository = restaurantLikeRepository;
         workmateRepository.addWorkmate(myself); // adds only if it isn't registered yet
     }
 

@@ -17,8 +17,10 @@ import com.openclassrooms.go4lunch.model.Restaurant;
 import com.openclassrooms.go4lunch.model.RestaurantLike;
 import com.openclassrooms.go4lunch.model.Workmate;
 import com.openclassrooms.go4lunch.viewmodel.MyViewModel;
+import com.openclassrooms.go4lunch.viewmodel.MyViewModelFactory;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A fragment representing a list of Items.
@@ -42,7 +44,7 @@ public class RestaurantFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        myViewModel = new ViewModelProvider(this).get(MyViewModel.class);
+        myViewModel = new ViewModelProvider(this, new MyViewModelFactory(Objects.requireNonNull(this.getActivity()).getApplication())).get(MyViewModel.class);
     }
 
     RecyclerView recyclerView;

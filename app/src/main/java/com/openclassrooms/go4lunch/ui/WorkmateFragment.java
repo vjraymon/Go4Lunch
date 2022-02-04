@@ -17,8 +17,10 @@ import com.openclassrooms.go4lunch.R;
 import com.openclassrooms.go4lunch.model.Restaurant;
 import com.openclassrooms.go4lunch.model.Workmate;
 import com.openclassrooms.go4lunch.viewmodel.MyViewModel;
+import com.openclassrooms.go4lunch.viewmodel.MyViewModelFactory;
 
 import java.util.List;
+import java.util.Objects;
 
 public class WorkmateFragment extends Fragment {
 
@@ -59,7 +61,7 @@ public class WorkmateFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        myViewModel = new ViewModelProvider(this).get(MyViewModel.class);
+        myViewModel = new ViewModelProvider(this, new MyViewModelFactory(Objects.requireNonNull(this.getActivity()).getApplication())).get(MyViewModel.class);
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }

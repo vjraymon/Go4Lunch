@@ -39,6 +39,7 @@ import com.openclassrooms.go4lunch.events.DisplayRestaurantEvent;
 import com.openclassrooms.go4lunch.model.Restaurant;
 import com.openclassrooms.go4lunch.model.Workmate;
 import com.openclassrooms.go4lunch.viewmodel.MyViewModel;
+import com.openclassrooms.go4lunch.viewmodel.MyViewModelFactory;
 import com.squareup.picasso.Picasso;
 
 import org.greenrobot.eventbus.EventBus;
@@ -291,7 +292,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             //3 - Configure ViewPager
             this.configureViewPager();
-            myViewModel = new ViewModelProvider(this).get(MyViewModel.class);
+            myViewModel = new ViewModelProvider(this, new MyViewModelFactory(this.getApplication())).get(MyViewModel.class);
             myViewModel.getWorkmates();
             myViewModel.getRestaurants();
             MySettings.getMySettings().setMyViewModel(myViewModel);

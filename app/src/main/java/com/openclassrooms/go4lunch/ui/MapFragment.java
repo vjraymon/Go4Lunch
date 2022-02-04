@@ -35,6 +35,7 @@ import com.openclassrooms.go4lunch.events.DisplayRestaurantEvent;
 import com.openclassrooms.go4lunch.model.Restaurant;
 import com.openclassrooms.go4lunch.model.Workmate;
 import com.openclassrooms.go4lunch.viewmodel.MyViewModel;
+import com.openclassrooms.go4lunch.viewmodel.MyViewModelFactory;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -180,7 +181,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        myViewModel = new ViewModelProvider(this).get(MyViewModel.class);
+        myViewModel = new ViewModelProvider(this, new MyViewModelFactory(Objects.requireNonNull(this.getActivity()).getApplication())).get(MyViewModel.class);
 
         Log.i("TestPlace", "add fragment");
         SupportMapFragment mapFragment =

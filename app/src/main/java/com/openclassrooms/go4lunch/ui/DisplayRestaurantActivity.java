@@ -25,6 +25,7 @@ import com.openclassrooms.go4lunch.model.Restaurant;
 import com.openclassrooms.go4lunch.model.RestaurantLike;
 import com.openclassrooms.go4lunch.model.Workmate;
 import com.openclassrooms.go4lunch.viewmodel.MyViewModel;
+import com.openclassrooms.go4lunch.viewmodel.MyViewModelFactory;
 
 import java.util.List;
 
@@ -72,7 +73,7 @@ public class DisplayRestaurantActivity extends AppCompatActivity {
         // finally change the color
         window.setStatusBarColor(ContextCompat.getColor(this,R.color.black));
 
-        myViewModel = new ViewModelProvider(this).get(MyViewModel.class);
+        myViewModel = new ViewModelProvider(this, new MyViewModelFactory(this.getApplication())).get(MyViewModel.class);
         myViewModel.getRestaurants().observe(this, this::updateRestaurantsList);
         myViewModel.getWorkmates().observe(this, this::updateWorkmatesList);
         myViewModel.getRestaurantLikes().observe(this, this::updateRestaurantLikesList);
