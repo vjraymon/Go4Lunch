@@ -36,7 +36,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 //        body = remoteMessage.getNotification().getBody();
 
         final String CHANNEL_ID = "HEADS_UP_NOTIFICATION";
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+ //       if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
                     CHANNEL_ID,
                     "Heads_Up_Notification",
@@ -55,7 +55,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             notification.setStyle(bigTextStyle);
 
             NotificationManagerCompat.from(this).notify(1, notification.build());
-        }
+ //       }
         super.onMessageReceived(remoteMessage);
     }
 
