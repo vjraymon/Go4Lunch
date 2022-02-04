@@ -260,7 +260,6 @@ public class MyViewModel extends AndroidViewModel {
         return (int)rate;
     }
 
-//    List<Workmate> workmatesByIdRestaurant;
     public List<Workmate> getWorkmatesByIdRestaurant(String id) {
         List<Workmate> workmates = workmatesLiveData.getValue();
         List<Workmate> workmatesByIdRestaurant = new ArrayList<>();

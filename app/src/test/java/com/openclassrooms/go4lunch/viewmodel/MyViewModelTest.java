@@ -26,6 +26,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.FirebaseUserMetadata;
 import com.openclassrooms.go4lunch.model.Restaurant;
+import com.openclassrooms.go4lunch.model.RestaurantLike;
 import com.openclassrooms.go4lunch.model.Workmate;
 import com.openclassrooms.go4lunch.repository.RestaurantLikeRepository;
 import com.openclassrooms.go4lunch.repository.RestaurantRepository;
@@ -415,6 +416,212 @@ public class MyViewModelTest {
         GetRestaurants2Records();
         t.addRestaurantById("Unknown");
         verify(restaurantRepository).getRestaurantByIdFromGooglePlace(ArgumentMatchers.eq("Unknown"));
+    }
+
+    //
+    // Tests related to Restaurant likes
+    //
+    @Test
+    public void GetRestaurantLikessNotInitialized() {
+        AuthentificationGranted();
+        when(restaurantLikeRepository.getRestaurantLikes()).thenReturn(new MutableLiveData<>());
+        LiveData<List<RestaurantLike>> restaurantLikes = t.getRestaurantLikes();
+        assertNotNull(restaurantLikes);
+        assertNull(restaurantLikes.getValue());
+    }
+
+    @Test
+    public void GetRestaurantLikesEmpty() {
+        AuthentificationGranted();
+        when(restaurantLikeRepository.getRestaurantLikes()).thenReturn(new MutableLiveData<>());
+        List<RestaurantLike> restaurantLikeList = new ArrayList<>();
+        MutableLiveData<List<RestaurantLike>> restaurantLikeReceived = new MutableLiveData<>();
+        restaurantLikeReceived.setValue(restaurantLikeList);
+        when(restaurantLikeRepository.getRestaurantLikes()).thenReturn(restaurantLikeReceived);
+        LiveData<List<RestaurantLike>> restaurantLikes = t.getRestaurantLikes();
+        assertNotNull(restaurantLikes);
+        assertNotNull(restaurantLikes.getValue());
+        assertTrue(restaurantLikes.getValue().isEmpty());
+    }
+
+    @Test
+    public void GetRestaurantLikes3records() {
+        AuthentificationGranted();
+        when(restaurantLikeRepository.getRestaurantLikes()).thenReturn(new MutableLiveData<>());
+        List<RestaurantLike> restaurantLikeList = new ArrayList<>();
+        restaurantLikeList.add(new RestaurantLike(
+                "IdGoogleMap0vjraymon@gmail.com",
+                "La Scala",
+                2
+        ));
+        restaurantLikeList.add(new RestaurantLike(
+                "IdGoogleMap1vjraymon@gmail.com",
+                "Pizza Hut",
+                1
+        ));
+        restaurantLikeList.add(new RestaurantLike(
+                "IdGoogleMap1vagnes@gmail.com",
+                "Pizza Hut",
+                4
+        ));
+        MutableLiveData<List<RestaurantLike>> restaurantLikeReceived = new MutableLiveData<>();
+        restaurantLikeReceived.setValue(restaurantLikeList);
+        when(restaurantLikeRepository.getRestaurantLikes()).thenReturn(restaurantLikeReceived);
+        LiveData<List<RestaurantLike>> restaurantLikes = t.getRestaurantLikes();
+        assertNotNull(restaurantLikes);
+        assertNotNull(restaurantLikes.getValue());
+        assertEquals(3, restaurantLikes.getValue().size());
+        assertEquals("IdGoogleMap0vjraymon@gmail.com", restaurantLikes.getValue().get(0).getId());
+        assertEquals("La Scala", restaurantLikes.getValue().get(0).getName());
+        assertEquals(2, restaurantLikes.getValue().get(0).getLike());
+        assertEquals("IdGoogleMap1vjraymon@gmail.com", restaurantLikes.getValue().get(1).getId());
+        assertEquals("Pizza Hut", restaurantLikes.getValue().get(1).getName());
+        assertEquals(1, restaurantLikes.getValue().get(1).getLike());
+        assertEquals("IdGoogleMap1vagnes@gmail.com", restaurantLikes.getValue().get(2).getId());
+        assertEquals("Pizza Hut", restaurantLikes.getValue().get(2).getName());
+        assertEquals(4, restaurantLikes.getValue().get(2).getLike());
+    }
+
+    @Test
+    public void GetLikesByIdUnknown() {
+        GetRestaurantLikes3records();
+        int likeStar;
+        likeStar = t.getLikeById("unknown");
+        assertEquals(1, likeStar);
+    }
+
+    @Test
+    public void GetLikesById() {
+        GetRestaurantLikes3records();
+        int likeNumber;
+        likeNumber = t.getLikeById("IdGoogleMap0");
+        assertEquals(1, likeNumber);
+        likeNumber = t.getLikeById("IdGoogleMap1");
+        assertEquals(1, likeNumber);
+    }
+
+    @Test
+    public void IncLikeWithIdUnknown() {
+        GetRestaurantLikes3records();
+        t.incLike("unknown");
+        int likeNumber;
+        likeNumber = t.getLikeById("unknown");
+        assertEquals(1, likeNumber);
+    }
+
+    @Captor
+    ArgumentCaptor<RestaurantLike> restaurantLikeCaptor;
+
+    @Test
+    public void IncLikeWithLikeUnknownAndRestaurantKnown() {
+        GetRestaurantLikes3records();
+        // Set the new restaurant updated
+        when(restaurantRepository.getRestaurants(myApplication.getApplicationContext())).thenReturn(new MutableLiveData<>());
+        List<Restaurant> restaurantList = new ArrayList<>();
+        restaurantList.add(new Restaurant(
+                "unknown",
+                "Chez Tintin",
+                "9 rue du general Leclerc",
+                new LatLng(10.1,12.2),
+                "Until 2.00 AM",
+                "www.vjraymon.com",
+                null,
+                "01 77 46 51 77"
+        ));
+        MutableLiveData<List<Restaurant>> restaurantReceived = new MutableLiveData<>();
+        restaurantReceived.setValue(restaurantList);
+        when(restaurantRepository.getRestaurants(myApplication.getApplicationContext())).thenReturn(restaurantReceived);
+        LiveData<List<Restaurant>> restaurants = t.getRestaurants();
+        // trigger the incrementation
+        t.incLike("unknown");
+        verify(restaurantLikeRepository).addRestaurantLike(restaurantLikeCaptor.capture());
+        assertEquals("unknownvjraymon@gmail.com", restaurantLikeCaptor.getValue().getId());
+        assertEquals("Chez Tintin", restaurantLikeCaptor.getValue().getName());
+        assertEquals(1, restaurantLikeCaptor.getValue().getLike());
+        int likeNumber;
+        likeNumber = t.getLikeById("unknown");
+        assertEquals(1, likeNumber);
+    }
+
+    @Test
+    public void IncLike() {
+        GetRestaurantLikes3records();
+        // Set the new restaurant updated
+        when(restaurantRepository.getRestaurants(myApplication.getApplicationContext())).thenReturn(new MutableLiveData<>());
+        List<Restaurant> restaurantList = new ArrayList<>();
+        restaurantList.add(new Restaurant(
+                "IdGoogleMap0",
+                "La Scala",
+                "9 rue du general Leclerc",
+                new LatLng(10.1,12.2),
+                "Until 2.00 AM",
+                "www.vjraymon.com",
+                null,
+                "01 77 46 51 77"
+        ));
+        MutableLiveData<List<Restaurant>> restaurantReceived = new MutableLiveData<>();
+        restaurantReceived.setValue(restaurantList);
+        when(restaurantRepository.getRestaurants(myApplication.getApplicationContext())).thenReturn(restaurantReceived);
+        LiveData<List<Restaurant>> restaurants = t.getRestaurants();
+        // trigger the incrementation
+        t.incLike("IdGoogleMap0");
+        verify(restaurantLikeRepository).updateLike(restaurantLikeCaptor.capture(), ArgumentMatchers.eq(3));
+        assertEquals("IdGoogleMap0vjraymon@gmail.com", restaurantLikeCaptor.getValue().getId());
+        assertEquals("La Scala", restaurantLikeCaptor.getValue().getName());
+        assertEquals(2, restaurantLikeCaptor.getValue().getLike());
+        int likeNumber;
+        likeNumber = t.getLikeById("unknown");
+        assertEquals(1, likeNumber);
+    }
+
+    private void OneIncrement(int receivedLike) {
+        when(restaurantLikeRepository.getRestaurantLikes()).thenReturn(new MutableLiveData<>());
+        List<RestaurantLike> restaurantLikeList = new ArrayList<>();
+        restaurantLikeList.add(new RestaurantLike(
+                "IdGoogleMap0vjraymon@gmail.com",
+                "La Scala",
+                receivedLike
+        ));
+        restaurantLikeList.add(new RestaurantLike(
+                "IdGoogleMap1vjraymon@gmail.com",
+                "Pizza Hut",
+                1
+        ));
+        restaurantLikeList.add(new RestaurantLike(
+                "IdGoogleMap1vagnes@gmail.com",
+                "Pizza Hut",
+                4
+        ));
+        MutableLiveData<List<RestaurantLike>> restaurantLikeReceived = new MutableLiveData<>();
+        restaurantLikeReceived.setValue(restaurantLikeList);
+        when(restaurantLikeRepository.getRestaurantLikes()).thenReturn(restaurantLikeReceived);
+        LiveData<List<RestaurantLike>> restaurantLikes = t.getRestaurantLikes();
+    }
+
+    @Test
+    public void IncLikeCheckNumberOfStars() {
+        // at least one restaurant should be registered
+        GetRestaurants2Records();
+        // trigger the incrementation untill likeNumber reaches 2 or the number of incrementation exceed 20
+        int count = 0;
+        int likeNumber;
+        int receivedLike = 0;
+        do {
+            OneIncrement(receivedLike);
+            likeNumber = t.getLikeById("IdGoogleMap0");
+            count = count+1;
+            receivedLike = receivedLike+1;
+        } while ((count <= 20) && (likeNumber < 2));
+        assertEquals(2, likeNumber);
+        // trigger the incrementation untill likeNumber reaches 3 or the number of incrementation exceed 20
+        count = 0;
+        do {
+            OneIncrement(receivedLike);
+            likeNumber = t.getLikeById("IdGoogleMap0");
+            count = count+1;
+            receivedLike = receivedLike+1;
+        } while ((count <= 20) && (likeNumber < 3));
+        assertEquals(3, likeNumber);
     }
 
 }
