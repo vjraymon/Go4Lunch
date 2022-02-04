@@ -36,26 +36,24 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 //        body = remoteMessage.getNotification().getBody();
 
         final String CHANNEL_ID = "HEADS_UP_NOTIFICATION";
- //       if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(
-                    CHANNEL_ID,
-                    "Heads_Up_Notification",
-                    NotificationManager.IMPORTANCE_HIGH
-            );
-            getSystemService(NotificationManager.class).createNotificationChannel(channel);
-            Notification.Builder notification = new Notification.Builder(this, CHANNEL_ID)
-                    .setSmallIcon(R.drawable.ic_launcher_background)
-                    .setAutoCancel(true);
+        NotificationChannel channel = new NotificationChannel(
+                CHANNEL_ID,
+                "Heads_Up_Notification",
+                NotificationManager.IMPORTANCE_HIGH
+        );
+        getSystemService(NotificationManager.class).createNotificationChannel(channel);
+        Notification.Builder notification = new Notification.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setAutoCancel(true);
 
-            mySettings = MySettings.getMySettings();
-            Notification.BigTextStyle bigTextStyle = new Notification.BigTextStyle();
-            bigTextStyle.setBigContentTitle(mySettings.getTitle());
-            bigTextStyle.bigText(mySettings.getBody());
+        mySettings = MySettings.getMySettings();
+        Notification.BigTextStyle bigTextStyle = new Notification.BigTextStyle();
+        bigTextStyle.setBigContentTitle(mySettings.getTitle());
+        bigTextStyle.bigText(mySettings.getBody());
 
-            notification.setStyle(bigTextStyle);
+        notification.setStyle(bigTextStyle);
 
-            NotificationManagerCompat.from(this).notify(1, notification.build());
- //       }
+        NotificationManagerCompat.from(this).notify(1, notification.build());
         super.onMessageReceived(remoteMessage);
     }
 
