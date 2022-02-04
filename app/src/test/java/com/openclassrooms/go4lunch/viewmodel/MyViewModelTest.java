@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -34,6 +36,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -60,6 +63,9 @@ public class MyViewModelTest {
     @Mock
     RestaurantLikeRepository restaurantLikeRepository;
 
+    //
+    // tests related to user
+    //
     @Test
     public void AuthentificationNotGranted() {
         myApplication = new Application();
@@ -91,6 +97,9 @@ public class MyViewModelTest {
         assertNull(workmateCaptor.getValue().getIdRestaurant());
     }
 
+    //
+    // Tests related to Workmates
+    //
     @Test
     public void GetWorkmatesNotInitialized() {
         AuthentificationGranted();
@@ -226,6 +235,186 @@ public class MyViewModelTest {
         assertEquals("Agnes Vieux", workmateList.get(1).getName());
         assertNull(workmateList.get(1).getPhotoUrl());
         assertEquals("IdMyRestaurant", workmateList.get(1).getIdRestaurant());
+    }
+
+    //
+    // Tests related to Restaurants
+    //
+    @Test
+    public void GetRestaurantsNotInitialized() {
+        AuthentificationGranted();
+        when(restaurantRepository.getRestaurants(myApplication.getApplicationContext())).thenReturn(new MutableLiveData<>());
+        LiveData<List<Restaurant>> restaurants = t.getRestaurants();
+        assertNotNull(restaurants);
+        assertNull(restaurants.getValue());
+    }
+
+    @Test
+    public void GetRestaurantsEmpty() {
+        AuthentificationGranted();
+        when(restaurantRepository.getRestaurants(myApplication.getApplicationContext())).thenReturn(new MutableLiveData<>());
+        List<Restaurant> restaurantList = new ArrayList<>();
+        MutableLiveData<List<Restaurant>> restaurantReceived = new MutableLiveData<>();
+        restaurantReceived.setValue(restaurantList);
+        when(restaurantRepository.getRestaurants(myApplication.getApplicationContext())).thenReturn(restaurantReceived);
+        LiveData<List<Restaurant>> restaurants = t.getRestaurants();
+        assertNotNull(restaurants);
+        assertNotNull(restaurants.getValue());
+        assertTrue(restaurants.getValue().isEmpty());
+    }
+
+    @Test
+    public void GetRestaurants1Record() {
+        AuthentificationGranted();
+        when(restaurantRepository.getRestaurants(myApplication.getApplicationContext())).thenReturn(new MutableLiveData<>());
+        List<Restaurant> restaurantList = new ArrayList<>();
+        restaurantList.add(new Restaurant(
+                "IdGoogleMap0",
+                "La Scala",
+                "9 rue du general Leclerc",
+                new LatLng(10.1,12.2),
+                "Until 2.00 AM",
+                "www.vjraymon.com",
+                null,
+                "01 77 46 51 77"
+        ));
+        MutableLiveData<List<Restaurant>> restaurantReceived = new MutableLiveData<>();
+        assertNotNull(restaurantList);
+        assertNotNull(restaurantList);
+        assertEquals(1, restaurantList.size());
+        restaurantReceived.setValue(restaurantList);
+        when(restaurantRepository.getRestaurants(myApplication.getApplicationContext())).thenReturn(restaurantReceived);
+        LiveData<List<Restaurant>> restaurants = t.getRestaurants();
+        assertNotNull(restaurants);
+        assertNotNull(restaurants.getValue());
+        assertEquals(1, restaurants.getValue().size());
+        assertEquals("IdGoogleMap0", restaurants.getValue().get(0).getId());
+        assertEquals("La Scala", restaurants.getValue().get(0).getName());
+        assertEquals("9 rue du general Leclerc", restaurants.getValue().get(0).getAddress());
+        assertNotNull(restaurants.getValue().get(0).getLatLng());
+        assertEquals(10.1, restaurants.getValue().get(0).getLatLng().latitude, 0.0001);
+        assertEquals(12.2, restaurants.getValue().get(0).getLatLng().longitude, 0.0001);
+        assertEquals("Until 2.00 AM", restaurants.getValue().get(0).getOpeningHours());
+        assertEquals("www.vjraymon.com", restaurants.getValue().get(0).getWebsiteUri());
+        assertNull(restaurants.getValue().get(0).getBitmap());
+        assertEquals("01 77 46 51 77", restaurants.getValue().get(0).getPhoneNumber());
+    }
+
+    @Test
+    public void GetRestaurants2Records() {
+        AuthentificationGranted();
+        when(restaurantRepository.getRestaurants(myApplication.getApplicationContext())).thenReturn(new MutableLiveData<>());
+        List<Restaurant> restaurantList = new ArrayList<>();
+        restaurantList.add(new Restaurant(
+                "IdGoogleMap0",
+                "La Scala",
+                "9 rue du general Leclerc",
+                new LatLng(10.1,12.2),
+                "Until 2.00 AM",
+                "www.vjraymon.com",
+                null,
+                "01 77 46 51 77"
+        ));
+        restaurantList.add(new Restaurant(
+                "IdGoogleMap1",
+                "Pizza Hut",
+                "9 rue du general Leclerc",
+                new LatLng(13.3,14.4),
+                "Until 2.00 AM",
+                "www.vjraymon.com",
+                null,
+                "01 77 46 51 77"
+        ));
+        MutableLiveData<List<Restaurant>> restaurantReceived = new MutableLiveData<>();
+        restaurantReceived.setValue(restaurantList);
+        when(restaurantRepository.getRestaurants(myApplication.getApplicationContext())).thenReturn(restaurantReceived);
+        LiveData<List<Restaurant>> restaurants = t.getRestaurants();
+        assertNotNull(restaurants);
+        assertNotNull(restaurants.getValue());
+        assertEquals(2, restaurants.getValue().size());
+        assertEquals("IdGoogleMap0", restaurants.getValue().get(0).getId());
+        assertEquals("La Scala", restaurants.getValue().get(0).getName());
+        assertEquals("9 rue du general Leclerc", restaurants.getValue().get(0).getAddress());
+        assertNotNull(restaurants.getValue().get(0).getLatLng());
+        assertEquals(10.1, restaurants.getValue().get(0).getLatLng().latitude, 0.0001);
+        assertEquals(12.2, restaurants.getValue().get(0).getLatLng().longitude, 0.0001);
+        assertEquals("Until 2.00 AM", restaurants.getValue().get(0).getOpeningHours());
+        assertEquals("www.vjraymon.com", restaurants.getValue().get(0).getWebsiteUri());
+        assertNull(restaurants.getValue().get(0).getBitmap());
+        assertEquals("01 77 46 51 77", restaurants.getValue().get(0).getPhoneNumber());
+        assertEquals("IdGoogleMap1", restaurants.getValue().get(1).getId());
+        assertEquals("Pizza Hut", restaurants.getValue().get(1).getName());
+        assertEquals("9 rue du general Leclerc", restaurants.getValue().get(1).getAddress());
+        assertNotNull(restaurants.getValue().get(1).getLatLng());
+        assertEquals(13.3, restaurants.getValue().get(1).getLatLng().latitude, 0.0001);
+        assertEquals(14.4, restaurants.getValue().get(1).getLatLng().longitude, 0.0001);
+        assertEquals("Until 2.00 AM", restaurants.getValue().get(1).getOpeningHours());
+        assertEquals("www.vjraymon.com", restaurants.getValue().get(1).getWebsiteUri());
+        assertNull(restaurants.getValue().get(1).getBitmap());
+        assertEquals("01 77 46 51 77", restaurants.getValue().get(1).getPhoneNumber());
+    }
+
+    @Test
+    public void GetRestaurantByIdUnknown(){
+        GetRestaurants2Records();
+        Restaurant restaurant = t.getRestaurantById("unknown");
+        assertNull(restaurant);
+    }
+
+    @Test
+    public void GetRestaurantById(){
+        GetRestaurants2Records();
+        Restaurant restaurant = t.getRestaurantById("IdGoogleMap0");
+        assertNotNull(restaurant);
+        assertEquals("IdGoogleMap0", restaurant.getId());
+        assertEquals("La Scala", restaurant.getName());
+        assertEquals("9 rue du general Leclerc", restaurant.getAddress());
+        assertNotNull(restaurant.getLatLng());
+        assertEquals(10.1, restaurant.getLatLng().latitude, 0.0001);
+        assertEquals(12.2, restaurant.getLatLng().longitude, 0.0001);
+        assertEquals("Until 2.00 AM", restaurant.getOpeningHours());
+        assertEquals("www.vjraymon.com", restaurant.getWebsiteUri());
+        assertNull(restaurant.getBitmap());
+        assertEquals("01 77 46 51 77", restaurant.getPhoneNumber());
+    }
+
+    @Test
+    public void GetRestaurantByLatLngUnknown(){
+        GetRestaurants2Records();
+        Restaurant restaurant = t.getRestaurantByLatLng(new LatLng(15.5,16.6));
+        assertNull(restaurant);
+    }
+
+    @Test
+    public void GetRestaurantByLatLng(){
+        GetRestaurants2Records();
+        Restaurant restaurant = t.getRestaurantByLatLng(new LatLng(13.3, 14.4));
+        assertNotNull(restaurant);
+        assertEquals("IdGoogleMap1", restaurant.getId());
+        assertEquals("Pizza Hut", restaurant.getName());
+        assertEquals("9 rue du general Leclerc", restaurant.getAddress());
+        assertNotNull(restaurant.getLatLng());
+        assertEquals(13.3, restaurant.getLatLng().latitude, 0.0001);
+        assertEquals(14.4, restaurant.getLatLng().longitude, 0.0001);
+        assertEquals("Until 2.00 AM", restaurant.getOpeningHours());
+        assertEquals("www.vjraymon.com", restaurant.getWebsiteUri());
+        assertNull(restaurant.getBitmap());
+        assertEquals("01 77 46 51 77", restaurant.getPhoneNumber());
+    }
+
+    @Test
+    public void AddRestaurantAlreadyExisting(){
+        GetRestaurants2Records();
+        t.addRestaurantById("IdGoogleMap0");
+        // check that getRestaurantByIdFromGooglePlace is not called
+        verify(restaurantRepository, never()).getRestaurantByIdFromGooglePlace(anyString());
+    }
+
+    @Test
+    public void AddRestaurantUnknown(){
+        GetRestaurants2Records();
+        t.addRestaurantById("Unknown");
+        verify(restaurantRepository).getRestaurantByIdFromGooglePlace(ArgumentMatchers.eq("Unknown"));
     }
 
 }
