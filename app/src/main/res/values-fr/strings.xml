@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Go4Lunch</string>
+    <string name="hello_blank_fragment">Fragment pour test</string>
+    <string name="map_view">Carte</string>
+    <string name="list_view">Restos</string>
+    <string name="workmates">Collègues</string>
+    <string name="navigation_drawer_open">ouvert</string>
+    <string name="navigation_drawer_close">fermé</string>
+    <string name="search">recherche</string>
+    <string name="user_s_photo">Photo utilisateur</string>
+    <string name="restaurant_bitmap">Image restaurant</string>
+    <string name="workmate_photo">Image collègue</string>
+    <string name="quickstart_message">Click the SUBSCRIBE TO WEATHER button below to subscribe to the         weather topic. Messages sent to the weather topic will be received. The LOG TOKEN button logs the         FCM registration token to logcat.</string>
+    <string name="subscribe_to_weather">S\'inscrire a Go4Lunch</string>
+    <string name="log_token">Log token</string>
+    <string name="msg_subscribed">S\'abonner au sujet Go4Lunch</string>
+    <string name="default_notification_channel_name">Go4Lunch</string>
+    <string name="msg_subscribe_failed">Echec de l\'inscription au sujet Go4Lunch</string>
+    <string name="fcm_message">Message FCM</string>
+    <string name="has_joined">%s se joint au déjeuner</string>
+    <string name="your_lunch">votre déjeuner</string>
+    <string name="settings">paramètres</string>
+    <string name="logout">déconnexion</string>
+    <string name="name_of_the_user">Nom de l\'utilisateur</string>
+    <string name="email_of_the_user">adresse de couriel de l\'utilisateur</string>
+    <string name="call">APPEL</string>
+    <string name="like">J\'AIME</string>
+    <string name="website">SITE</string>
+    <string name="workmate_fragment_title">Liste des collègues</string>
+    <string name="map_fragment_title">J\'ai faim!</string>
+    <string name="restaurant_fragment_title">J\'ai faim!</string>
+    <string name="has_not_decided_yet">%s ne s\'est pas encore décidé(e)</string>
+    <string name="restaurant_unknown">inconnu</string>
+    <string name="is_eating_in">%s déjeune au restaurant %s</string>
+    <string name="button_restaurant_join">Bouton se joindre au restaurant</string>
+    <string name="star">Etoile</string>
+    <string name="notification_restaurant_line1">Vous êtes atendu(e)s au restaurant %s</string>
+    <string name="notification_title">Cher(e) %s il est l\'heure de déjeuner!</string>
+    <string name="notification_attendees_line1">"  Autres collègues attendus:"</string>
+</resources>
