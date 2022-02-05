@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Go4Lunch</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="map_view">Map View</string>
     <string name="list_view">List View</string>
@@ -11,13 +10,6 @@
     <string name="user_s_photo">User\'s photo</string>
     <string name="restaurant_bitmap">Restaurant bitmap</string>
     <string name="workmate_photo">Workmate photo</string>
-    <string name="quickstart_message">Click the SUBSCRIBE TO WEATHER button below to subscribe to the         weather topic. Messages sent to the weather topic will be received. The LOG TOKEN button logs the         FCM registration token to logcat.</string>
-    <string name="subscribe_to_weather">Subscribe To Weather</string>
-    <string name="log_token">Log Token</string>
-    <string name="msg_subscribed">Subscribed to weather topic</string>
-    <string name="default_notification_channel_name">Weather</string>
-    <string name="msg_subscribe_failed">Failed to subscribe to weather topic</string>
-    <string name="fcm_message">FCM Message</string>
     <string name="has_joined">%s is joining</string>
     <string name="your_lunch">your lunch</string>
     <string name="settings">settings</string>

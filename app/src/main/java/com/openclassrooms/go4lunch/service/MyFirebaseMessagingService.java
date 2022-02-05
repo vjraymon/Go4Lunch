@@ -24,16 +24,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
-        Log.i("MyFirebaseMsgService", "onMessageReceived");
-        String title = null;
-        String body = null;
+        Log.i(TAG, "onMessageReceived");
         if (remoteMessage.getNotification() == null) {
-            Log.i("MyFirebaseMsgService", "onMessageReceived unknown message");
+            Log.i(TAG, "onMessageReceived unknown message");
             super.onMessageReceived(remoteMessage);
             return;
         }
-//        title = remoteMessage.getNotification().getTitle();
-//        body = remoteMessage.getNotification().getBody();
+        Log.i(TAG, "onMessageReceived title received = " + remoteMessage.getNotification().getTitle());
+        Log.i(TAG, "onMessageReceived body received = " + remoteMessage.getNotification().getBody());
 
         final String CHANNEL_ID = "HEADS_UP_NOTIFICATION";
         NotificationChannel channel = new NotificationChannel(

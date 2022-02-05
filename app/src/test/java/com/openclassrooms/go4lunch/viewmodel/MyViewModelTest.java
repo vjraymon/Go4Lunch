@@ -10,21 +10,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.app.Application;
-import android.net.Uri;
-import android.util.Log;
 
-import androidx.annotation.Nullable;
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.test.core.app.ApplicationProvider;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.errorprone.annotations.DoNotMock;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.FirebaseUserMetadata;
 import com.openclassrooms.go4lunch.model.Restaurant;
 import com.openclassrooms.go4lunch.model.RestaurantLike;
 import com.openclassrooms.go4lunch.model.Workmate;
@@ -35,7 +27,6 @@ import com.openclassrooms.go4lunch.repository.WorkmateRepository;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Captor;
@@ -43,7 +34,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 //@ExtendWith(MockitoExtension.class)
@@ -224,7 +214,7 @@ public class MyViewModelTest {
         MutableLiveData<List<Workmate>> workmateReceived = new MutableLiveData<>();
         workmateReceived.setValue(workmateList);
         when(workmateRepository.getWorkmates()).thenReturn(workmateReceived);
-        LiveData<List<Workmate>> workmates = t.getWorkmates();
+        t.getWorkmates();
         workmateList = t.getWorkmatesByIdRestaurant("IdMyRestaurant");
         assertNotNull(workmateList);
         assertEquals(2, workmateList.size());
@@ -531,7 +521,7 @@ public class MyViewModelTest {
         MutableLiveData<List<Restaurant>> restaurantReceived = new MutableLiveData<>();
         restaurantReceived.setValue(restaurantList);
         when(restaurantRepository.getRestaurants(myApplication.getApplicationContext())).thenReturn(restaurantReceived);
-        LiveData<List<Restaurant>> restaurants = t.getRestaurants();
+        t.getRestaurants();
         // trigger the incrementation
         t.incLike("unknown");
         verify(restaurantLikeRepository).addRestaurantLike(restaurantLikeCaptor.capture());
@@ -562,7 +552,7 @@ public class MyViewModelTest {
         MutableLiveData<List<Restaurant>> restaurantReceived = new MutableLiveData<>();
         restaurantReceived.setValue(restaurantList);
         when(restaurantRepository.getRestaurants(myApplication.getApplicationContext())).thenReturn(restaurantReceived);
-        LiveData<List<Restaurant>> restaurants = t.getRestaurants();
+        t.getRestaurants();
         // trigger the incrementation
         t.incLike("IdGoogleMap0");
         verify(restaurantLikeRepository).updateLike(restaurantLikeCaptor.capture(), ArgumentMatchers.eq(3));
@@ -595,14 +585,14 @@ public class MyViewModelTest {
         MutableLiveData<List<RestaurantLike>> restaurantLikeReceived = new MutableLiveData<>();
         restaurantLikeReceived.setValue(restaurantLikeList);
         when(restaurantLikeRepository.getRestaurantLikes()).thenReturn(restaurantLikeReceived);
-        LiveData<List<RestaurantLike>> restaurantLikes = t.getRestaurantLikes();
+        t.getRestaurantLikes();
     }
 
     @Test
     public void IncLikeCheckNumberOfStars() {
         // at least one restaurant should be registered
         GetRestaurants2Records();
-        // trigger the incrementation untill likeNumber reaches 2 or the number of incrementation exceed 20
+        // trigger the incrementation until likeNumber reaches 2 or the number of incrementation exceed 20
         int count = 0;
         int likeNumber;
         int receivedLike = 0;
@@ -613,7 +603,7 @@ public class MyViewModelTest {
             receivedLike = receivedLike+1;
         } while ((count <= 20) && (likeNumber < 2));
         assertEquals(2, likeNumber);
-        // trigger the incrementation untill likeNumber reaches 3 or the number of incrementation exceed 20
+        // trigger the incrementation until likeNumber reaches 3 or the number of incrementation exceed 20
         count = 0;
         do {
             OneIncrement(receivedLike);

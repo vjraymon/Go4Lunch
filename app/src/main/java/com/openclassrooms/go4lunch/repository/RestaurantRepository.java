@@ -47,12 +47,13 @@ public class RestaurantRepository {
         return service;
     }
 
-    private static final int INIT_TODO = 0;
-    private static final int INIT_ONGOING = 1;
-    private static final int INIT_FAILED = 2;
-    private static final int INIT_DONE = 3;
-    private static int initRestaurantsStatus = INIT_TODO;
+    public enum InitRestaurantStatus { INIT_TODO, INIT_ONGOING, INIT_FAILED, INIT_DONE }
+    private static InitRestaurantStatus initRestaurantsStatus = InitRestaurantStatus.INIT_TODO;
     private static int counter_request_ongoing = 0;
+    private static int MAX_COUNTER_RETRIES_ON_EXCEPTION = 3;
+    private static int counterRetriesOnException;
+
+    public InitRestaurantStatus getInitRestaurantsStatus() { return initRestaurantsStatus; }
 
     private final PlacesClient placesClient;
     private static final int M_MAX_ENTRIES = 20;
@@ -71,6 +72,7 @@ public class RestaurantRepository {
 
     public LiveData<List<Restaurant>> getRestaurants(Context context) {
         Log.i(TAG_PLACE, "RestaurantRepository.getRestaurants retry getRestaurantsFromGooglePlace");
+        counterRetriesOnException = 0;
         getRestaurantsFromGooglePlace(context);
         return this.restaurants;
     }
@@ -138,7 +140,7 @@ public class RestaurantRepository {
                 );
                 restaurantList.add(restaurant);
                 counter_request_ongoing = counter_request_ongoing - 1;
-                if (counter_request_ongoing <= 0) initRestaurantsStatus = INIT_DONE;
+                if (counter_request_ongoing <= 0) initRestaurantsStatus = InitRestaurantStatus.INIT_DONE;
                 select(restaurantList);
                 return;
             }
@@ -163,20 +165,20 @@ public class RestaurantRepository {
                 );
                 restaurantList.add(restaurant);
                 counter_request_ongoing = counter_request_ongoing - 1;
-                if (counter_request_ongoing <= 0) initRestaurantsStatus = INIT_DONE;
+                if (counter_request_ongoing <= 0) initRestaurantsStatus = InitRestaurantStatus.INIT_DONE;
                 select(restaurantList);
             }).addOnFailureListener((exception) -> {
                 if (exception instanceof ApiException) {
                     final ApiException apiException = (ApiException) exception;
                     Log.e(TAG_PLACE, "RestaurantRepository.getRestaurantByIdFromGooglePlace Photo not found: " + exception.getMessage());
-                    initRestaurantsStatus = INIT_FAILED;
+                    initRestaurantsStatus = InitRestaurantStatus.INIT_FAILED;
                 }
             });
         }).addOnFailureListener((exception) -> {
             if (exception instanceof ApiException) {
                 final ApiException apiException = (ApiException) exception;
                 Log.e(TAG_PLACE, "RestaurantRepository.getRestaurantByIdFromGooglePlace Place not found: " + exception.getMessage());
-                initRestaurantsStatus = INIT_FAILED;
+                initRestaurantsStatus = InitRestaurantStatus.INIT_FAILED;
             }
         });
     }
@@ -184,7 +186,7 @@ public class RestaurantRepository {
 
     private void getRestaurantsFromGooglePlace(Context context) {
         Log.i(TAG_PLACE, "RestaurantRepository.getRestaurantsFromGooglePlace");
-        if ((initRestaurantsStatus == INIT_ONGOING) || (initRestaurantsStatus == INIT_DONE)) return;
+        if ((initRestaurantsStatus == InitRestaurantStatus.INIT_ONGOING) || (initRestaurantsStatus == InitRestaurantStatus.INIT_DONE)) return;
 
         List<Place.Field> placeFields = Arrays.asList(
                 Place.Field.ID,
@@ -199,7 +201,7 @@ public class RestaurantRepository {
             return;
         }
         Log.i(TAG_PLACE, "RestaurantRepository.getRestaurantsFromGooglePlace: INIT_ONGOING");
-        initRestaurantsStatus = INIT_ONGOING;
+        initRestaurantsStatus = InitRestaurantStatus.INIT_ONGOING;
         final Task<FindCurrentPlaceResponse> placeResult = placesClient.findCurrentPlace(request);
         placeResult.addOnCompleteListener(
                 (response) -> {
@@ -221,19 +223,27 @@ public class RestaurantRepository {
                         }
                         if (i == 0) {
                             Log.i(TAG_PLACE, "RestaurantRepository.getRestaurantsFromGooglePlace: no restaurant found");
-                            initRestaurantsStatus = INIT_DONE;
+                            initRestaurantsStatus = InitRestaurantStatus.INIT_DONE;
                             select(restaurantList); //no restaurant found
                         }
                     } else {
                         Log.i(TAG_PLACE, "RestaurantRepository.getRestaurantsFromGooglePlace incorrect response on FindCurrentPlaceResponse");
-                        initRestaurantsStatus = INIT_FAILED;
+                        initRestaurantsStatus = InitRestaurantStatus.INIT_FAILED;
                     }
                 }).addOnFailureListener((exception) -> {
                     if (exception instanceof ApiException) {
                         final ApiException apiException = (ApiException) exception;
                         Log.e(TAG_PLACE, "RestaurantRepository.getRestaurantsFromGooglePlace Error on FindCurrentPlaceResponse" + exception.getMessage());
                         final int statusCode = apiException.getStatusCode();
-                        initRestaurantsStatus = INIT_FAILED;
+                        initRestaurantsStatus = InitRestaurantStatus.INIT_FAILED;
+                        counterRetriesOnException = counterRetriesOnException + 1;
+                        if (counterRetriesOnException < 3) {
+                            Log.e(TAG_PLACE, "RestaurantRepository.getRestaurantsFromGooglePlace retry from restaurantRepository");
+                            getRestaurantsFromGooglePlace(context);
+                        } else {
+                            Log.e(TAG_PLACE, "RestaurantRepository.getRestaurantsFromGooglePlace retry from mapFragment");
+                            select(null); // to trigger the handling of the exception
+                        }
                     }
                 });
     }

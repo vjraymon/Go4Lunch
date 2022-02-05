@@ -9,8 +9,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.openclassrooms.go4lunch.model.Restaurant;
 import com.openclassrooms.go4lunch.model.RestaurantLike;
@@ -123,6 +121,9 @@ public class MyViewModel extends AndroidViewModel {
         }
     }
 
+    public boolean isGetRestaurantsFailure() {
+        return (restaurantRepository.getInitRestaurantsStatus() == RestaurantRepository.InitRestaurantStatus.INIT_FAILED);
+    }
     public Restaurant getRestaurantByLatLng(LatLng id) {
         List<Restaurant> restaurants = restaurantsLiveData.getValue();
         if ((restaurants == null) || (id == null)) {

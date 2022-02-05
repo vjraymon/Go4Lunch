@@ -2,19 +2,14 @@ package com.openclassrooms.go4lunch.repository;
 
 import android.util.Log;
 
-import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.openclassrooms.go4lunch.model.RestaurantLike;
-import com.openclassrooms.go4lunch.model.Workmate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,7 +78,7 @@ public class RestaurantLikeRepository {
                             .document(myself.getId())
                             .set(myself)
                             .addOnSuccessListener(unused -> {
-                                Log.d(TAG, "RestaurantLikeRepository.addWorkmate successfull");
+                                Log.d(TAG, "RestaurantLikeRepository.addWorkmate successful");
                                 this.restaurantLikes.setValue(this.freelances);
                                 if (freelances== null) {
                                     Log.i(TAG, "RestaurantLikeRepository.addWorkmate freelances null");
@@ -131,7 +126,7 @@ public class RestaurantLikeRepository {
                     db.collection("restaurants").document(restaurantLike.getId()).update(
                             "like", like)
                             .addOnSuccessListener(unused -> {
-                                Log.d(TAG, "RestaurantLikeRepository.updateLike successfull");
+                                Log.d(TAG, "RestaurantLikeRepository.updateLike successful");
                                 this.restaurantLikes.setValue(this.freelances);
                                 if (freelances== null) {
                                     Log.i(TAG, "RestaurantLikeRepository.updateLike freelances null");

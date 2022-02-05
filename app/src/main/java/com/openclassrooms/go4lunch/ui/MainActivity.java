@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ImageView userPhoto;
     private TextView userName;
     private TextView userEmail;
-    FirebaseUser myself;
 
     MyViewModel myViewModel;
 

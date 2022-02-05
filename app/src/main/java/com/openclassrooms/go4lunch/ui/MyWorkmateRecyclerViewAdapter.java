@@ -45,8 +45,6 @@ public class MyWorkmateRecyclerViewAdapter extends RecyclerView.Adapter<MyWorkma
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.workmate = workmates.get(position);
-//        holder.mName.setText(workmates.get(position).getName());
-//        holder.mEmail.setText(workmates.get(position).getEmail());
         String p = workmates.get(position).getPhotoUrl();
         if (p != null) {
             Uri uri = Uri.parse(p);
@@ -86,8 +84,6 @@ public class MyWorkmateRecyclerViewAdapter extends RecyclerView.Adapter<MyWorkma
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final TextView mName;
-        public final TextView mEmail;
-        public final TextView mRestaurant;
         public Workmate workmate;
         public final View mView;
         public Restaurant restaurant;
@@ -96,13 +92,11 @@ public class MyWorkmateRecyclerViewAdapter extends RecyclerView.Adapter<MyWorkma
         public ViewHolder(@NonNull FragmentWorkmateBinding binding) {
             super(binding.getRoot());
             mName = binding.workmateName;
-            mEmail = binding.workmateEmail;
-            mRestaurant = binding.workmateRestaurant;
             mPhoto = binding.workmatePhoto;
             mView = binding.getRoot();
             mView.setOnClickListener(v -> {
                 Log.i("TestPlace", "click on an element");
-//                v.setEnabled(false);
+                v.setEnabled(false);
                 EventBus.getDefault().post(new DisplayRestaurantEvent(restaurant));
             });
         }
@@ -110,7 +104,7 @@ public class MyWorkmateRecyclerViewAdapter extends RecyclerView.Adapter<MyWorkma
         @NonNull
         @Override
         public String toString() {
-            return super.toString() + " '" + mEmail.getText() + "'";
+            return super.toString() + " '" + mName.getText() + "'";
         }
     }
 }

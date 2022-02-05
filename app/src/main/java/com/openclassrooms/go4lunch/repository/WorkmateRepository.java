@@ -2,18 +2,13 @@ package com.openclassrooms.go4lunch.repository;
 
 import android.util.Log;
 
-import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.openclassrooms.go4lunch.model.Restaurant;
 import com.openclassrooms.go4lunch.model.Workmate;
 
@@ -82,7 +77,7 @@ public class WorkmateRepository {
                             .document(myself.getEmail())
                             .set(myself)
                             .addOnSuccessListener(unused -> {
-                                Log.d(TAG, "FirebaseHelper.addWorkmate successfull");
+                                Log.d(TAG, "FirebaseHelper.addWorkmate successful");
                                 this.workmates.setValue(this.freelances);
                                 if (freelances== null) {
                                     Log.i(TAG, "FirebaseHelper.addWorkmate freelances null");
@@ -115,7 +110,7 @@ public class WorkmateRepository {
             db.collection("workmates").document(workmate.getEmail()).update(
                 "idRestaurant", idRestaurant)
                 .addOnSuccessListener(unused -> {
-                    Log.d(TAG, "FirebaseHelper.updateIdRestaurant successfull");
+                    Log.d(TAG, "FirebaseHelper.updateIdRestaurant successful");
                     this.workmates.setValue(this.freelances);
                     if (freelances== null) {
                         Log.i(TAG, "FirebaseHelper.updateIdRestaurant freelances null");

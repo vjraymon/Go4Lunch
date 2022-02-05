@@ -44,29 +44,23 @@ public class MyJoinedWorkmateRecyclerViewAdapter extends RecyclerView.Adapter<My
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public final ImageView mPhoto;
         public final TextView mName;
-        public final TextView mRestaurant;
-        public Workmate workmate;
 
         public ViewHolder(View v) {
             super(v);
             mPhoto = v.findViewById(R.id.joined_workmate_photo);
             mName = v.findViewById(R.id.joined_workmate_name);
-            mRestaurant = v.findViewById(R.id.joined_workmate_restaurant);
         }
         @NonNull
         @Override
         public String toString() {
-            return super.toString() + " '" + mRestaurant.getText() + "'";
+            return super.toString() + " '" + mName.getText() + "'";
         }
     }
 
-    // BEGIN_INCLUDE(recyclerViewOnCreateViewHolder)
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         Log.i("TestJoinedList", "MyJoinedWorkmateRecyclerViewAdapter.onBindViewHolder position = " + position + " : " + workmates.get(position).getName());
-        holder.workmate = workmates.get(position);
         holder.mName.setText(String.format(holder.mName.getResources().getString(R.string.has_joined), workmates.get(position).getName()));
-//        holder.mRestaurant.setText(R.string.has_joined);
 
         String p = workmates.get(position).getPhotoUrl();
         if (p != null) {

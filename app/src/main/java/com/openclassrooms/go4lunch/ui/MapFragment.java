@@ -29,7 +29,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.libraries.places.api.net.PlacesClient;
 import com.openclassrooms.go4lunch.R;
 import com.openclassrooms.go4lunch.events.DisplayRestaurantEvent;
 import com.openclassrooms.go4lunch.model.Restaurant;
@@ -47,7 +46,6 @@ import java.util.Objects;
 public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     private GoogleMap map;
-    private PlacesClient placesClient;
 
     MyViewModel myViewModel;
 
@@ -58,8 +56,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private static final int DEFAULT_ZOOM = 17;
 
     private boolean locationPermissionGranted = false;
-
-//    private RestaurantRepository restaurantRepository;
 
     private LocationManager objGps;
     private LocationListener objListener;
@@ -212,8 +208,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 Restaurant restaurant = myViewModel.getRestaurantByLatLng(marker.getPosition());
                 EventBus.getDefault().post(new DisplayRestaurantEvent(restaurant));
                 Log.i("TestMarker", "MapsFragment.showCurrentPlace OnMarkerClickListener " + restaurant.getName() + " " + restaurant.getId());
-//                marker.hideInfoWindow();
-//                marker.showInfoWindow();
                 return false;
             });
         }
@@ -221,6 +215,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     private void updateRestaurantsList(List<Restaurant> restaurants) {
         Log.i("TestMarker", "MapsFragment.updateRestaurantsList");
+        if (myViewModel.isGetRestaurantsFailure()) {
+            Log.e("TestMarker", "MapsFragment.updateWorkmatesList: handle getRestaurants exception");
+            myViewModel.getRestaurants();
+            return;
+        }
         this.restaurants = restaurants;
         isRestaurantsInitialized = true;
         if (isWorkmatesInitialized) {
