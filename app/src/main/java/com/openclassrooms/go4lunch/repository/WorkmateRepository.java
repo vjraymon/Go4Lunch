@@ -60,6 +60,7 @@ public class WorkmateRepository {
     }
 
     public void addWorkmate(Workmate myself) {
+        if ((myself == null) || (myself.getEmail() == null)) return;
         workmatesRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 boolean notAlreadyRegistered = true;
@@ -90,12 +91,12 @@ public class WorkmateRepository {
                             .addOnFailureListener(e -> Log.e(TAG, "FirebaseHelper.addWorkmate exception", e));
                 }
             } else {
-                Log.d(TAG, "FirebaseHelper.addWorkmate Error getting documents: ", task.getException());
+                Log.e(TAG, "FirebaseHelper.addWorkmate Error getting documents: ", task.getException());
 
             }
         }).addOnFailureListener(e -> {
             //handle error
-            Log.i(TAG, "FirebaseHelper.addWorkmate Error failure listener ", e);
+            Log.e(TAG, "FirebaseHelper.addWorkmate Error failure listener ", e);
             this.workmates.postValue(null);
         });
     }
@@ -120,7 +121,7 @@ public class WorkmateRepository {
                         Log.i(TAG, "FirebaseHelper.updateIdRestaurant freelances = " + i.getName() + i.getIdRestaurant());
                     }
                 })
-                .addOnFailureListener(e -> Log.e("TestWork", "FirebaseHelper.updateIdRestaurant exception", e));
+                .addOnFailureListener(e -> Log.e(TAG, "FirebaseHelper.updateIdRestaurant exception", e));
     }
 
     public void setRestaurant(Workmate workmate, Restaurant restaurant) {
@@ -154,11 +155,11 @@ public class WorkmateRepository {
                 }
 
             } else {
-                Log.i(TAG, "WorkmateRepository.setRestaurant Error getting documents: ", task.getException());
+                Log.e(TAG, "WorkmateRepository.setRestaurant Error getting documents: ", task.getException());
             }
         }).addOnFailureListener(e -> {
             //handle error
-            Log.i(TAG, "WorkmateRepository.setRestaurant Error failure listener ", e);
+            Log.e(TAG, "WorkmateRepository.setRestaurant Error failure listener ", e);
 //            this.workmates.setValue(null);
         });
     }
@@ -168,7 +169,7 @@ public class WorkmateRepository {
         workmatesRef.addSnapshotListener((documentSnapshot, e) -> {
             Log.i(TAG, "WorkmateRepository.initializeSnapshot onEvent");
             if (e != null) {
-                Log.w(TAG, "WorkmateRepository.initializeSnapshot Listen failed.", e);
+                Log.e(TAG, "WorkmateRepository.initializeSnapshot Listen failed.", e);
                 return;
             }
 

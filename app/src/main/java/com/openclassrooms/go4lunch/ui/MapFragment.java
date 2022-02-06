@@ -3,6 +3,8 @@ package com.openclassrooms.go4lunch.ui;
 import static android.content.Context.LOCATION_SERVICE;
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -10,6 +12,8 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -21,6 +25,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -29,6 +34,12 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.TypeFilter;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteActivity;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.openclassrooms.go4lunch.R;
 import com.openclassrooms.go4lunch.events.DisplayRestaurantEvent;
 import com.openclassrooms.go4lunch.model.Restaurant;
@@ -39,6 +50,7 @@ import com.openclassrooms.go4lunch.viewmodel.MyViewModelFactory;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -142,6 +154,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         getDeviceLocation();
+        setHasOptionsMenu(true);
+        if ((getContext() != null) && (!Places.isInitialized())) Places.initialize(getContext(), getString(R.string.google_maps_key));
     }
 
     private void updateLocationUI() {
@@ -161,7 +175,77 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             }
         } catch (SecurityException e) {
             Log.i("TestPlace", "exception");
-            Log.i("Exception: %s", e.getMessage());
+            Log.e("Exception: %s", e.getMessage());
+        }
+    }
+
+    private final static String TAG = "TestSearch";
+
+    @Override
+    public void onCreateOptionsMenu(android.view.Menu menu, MenuInflater inflater) {
+        menu.clear();
+        inflater.inflate(R.menu.menu_search, menu);
+
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.app_bar_search) {
+            onSearchCalled();
+            return true;
+        }
+        if (item.getItemId() == android.R.id.home) {
+            if (getActivity() != null) getActivity().finish();
+            return true;
+        }
+        return false;
+    }
+
+    private final ActivityResultLauncher<Intent> autoCompleteResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                int resultCode = result.getResultCode();
+                Intent data = result.getData();
+                if (data == null) return;
+                if (resultCode == Activity.RESULT_OK) {
+                    // There are no request codes
+                    Place place = Autocomplete.getPlaceFromIntent(data);
+                    if (place.getTypes() == null) return;
+                    Log.i(TAG, "MainActivity.autoCompleteResultLauncher Place: " + place.getId());
+                    if (place.getTypes().contains(Place.Type.RESTAURANT)) {
+                        myViewModel.addRestaurantById(place.getId());
+                        Restaurant restaurant = myViewModel.getRestaurantById(place.getId());
+                        // if it is a new restaurant, it will be available on the next search
+                        // but the next load of Go4Lunch will removes it
+                        // TODO: enhance the logic
+                        if (restaurant != null)
+                        {
+                            Log.i("TestPlace", "MainActivity.autoCompleteResultLauncher id = (" + restaurant.getName() + ")");
+                            DisplayRestaurantActivity.navigate(getContext(), restaurant);
+                        }
+                    }
+                } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
+                    // TODO: Handle the error.
+                    Status status = Autocomplete.getStatusFromIntent(data);
+                    Log.i(TAG, "MainActivity.autoCompleteResultLauncher error = " + status.getStatusMessage());
+                } else if (resultCode == AutocompleteActivity.RESULT_CANCELED) {
+                    // The user canceled the operation.
+                    Log.i(TAG, "MainActivity.autoCompleteResultLauncher RESULT_CANCELED");
+                }
+
+            });
+
+    public void onSearchCalled() {
+        Log.i(TAG, "MainActivity.onActivityResult");
+        if (getContext() != null) {
+            // Set the fields to specify which types of place data to return.
+            List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.TYPES);
+            // Start the autocomplete intent.
+            Intent intent = new Autocomplete.IntentBuilder(
+                    AutocompleteActivityMode.FULLSCREEN, fields).setCountry("FR").setTypeFilter(TypeFilter.ESTABLISHMENT)
+                    .build(getContext());
+            autoCompleteResultLauncher.launch(intent);
         }
     }
 

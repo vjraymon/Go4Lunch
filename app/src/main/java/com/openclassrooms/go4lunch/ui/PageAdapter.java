@@ -27,19 +27,18 @@ PageAdapter extends FragmentStateAdapter {
     public Fragment createFragment(int position) {
         Log.i("TestPlace", "createFragment" + position);
 
-        if (position == 0) {
-            Log.i("TestPlace", "return MapsFragment");
-            return new MapFragment();
-        }
+        switch (position) {
+            case 0:
+                Log.i("TestMenu", "return MapsFragment");
+                return new MapFragment();
 
-        if (position == 1) {
-            Log.i("TestPlace", "return RestaurantFragment");
-            return RestaurantFragment.newInstance();
-        }
+            case 1:
+                Log.i("TestMenu", "return RestaurantFragment");
+                return RestaurantFragment.newInstance();
 
-        if (position == 2) {
-            Log.i("TestPlace", "return WorkmateFragment");
-            return WorkmateFragment.newInstance(position);
+            case 2:
+                Log.i("TestMenu", "return WorkmateFragment");
+                return WorkmateFragment.newInstance();
         }
 
         return new BlankFragment(data[position]);

@@ -30,4 +30,7 @@
     <string name="notification_restaurant_line1">Vous êtes attendu(e)s au restaurant %s</string>
     <string name="notification_title">Cher(e) %s il est l\'heure de déjeuner!</string>
     <string name="notification_attendees_line1">"  Autres collègues attendus:"</string>
+    <string name="alphabetical_sort">Tri alphabétique</string>
+    <string name="proximity_sort">Tri par proximité</string>
+    <string name="free_sort">Tri par restaurant</string>
 </resources>

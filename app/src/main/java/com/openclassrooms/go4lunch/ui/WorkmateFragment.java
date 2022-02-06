@@ -1,24 +1,41 @@
 package com.openclassrooms.go4lunch.ui;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.common.api.Status;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.TypeFilter;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteActivity;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.openclassrooms.go4lunch.R;
 import com.openclassrooms.go4lunch.model.Restaurant;
 import com.openclassrooms.go4lunch.model.Workmate;
 import com.openclassrooms.go4lunch.viewmodel.MyViewModel;
 import com.openclassrooms.go4lunch.viewmodel.MyViewModelFactory;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -30,11 +47,9 @@ public class WorkmateFragment extends Fragment {
     private List<Workmate> workmates;
     private List<Restaurant> restaurants;
 
-    // TODO: Customize parameter argument names
-    // As each 3 tabs are specific, these parameters might be irrelevant
-    private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
-    private int mColumnCount = 1;
+
+    private enum SortMode { NONE, NAME, FREE }
+    private SortMode sortMode = SortMode.NONE;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -43,16 +58,8 @@ public class WorkmateFragment extends Fragment {
     public WorkmateFragment() {
     }
 
-    // TODO: Customize parameter initialization
-    // As each 3 tabs are specific, this parameter might be irrelevant
-
-
-    public static WorkmateFragment newInstance(int columnCount) {
-        WorkmateFragment fragment = new WorkmateFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        fragment.setArguments(args);
-        return fragment;
+    public static WorkmateFragment newInstance() {
+        return new WorkmateFragment();
     }
 
     MyViewModel myViewModel;
@@ -61,9 +68,63 @@ public class WorkmateFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setHasOptionsMenu(true);
+        if ((getContext() != null) && (!Places.isInitialized())) Places.initialize(getContext(), getString(R.string.google_maps_key));
         myViewModel = new ViewModelProvider(this, new MyViewModelFactory(Objects.requireNonNull(this.getActivity()).getApplication())).get(MyViewModel.class);
-        if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+    }
+
+    private final static String TAG = "TestSearch";
+
+    @Override
+    public void onCreateOptionsMenu(android.view.Menu menu, MenuInflater inflater) {
+        menu.clear();
+        inflater.inflate(R.menu.menu_sort_workmate, menu);
+
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.workmate_search) {
+            // research on workmate not implemented
+            return true;
+        }
+        if (item.getItemId() == R.id.workmate_alphabetical_sort) {
+            sortMode = refresh(SortMode.NAME);
+            return true;
+        }
+        if (item.getItemId() == R.id.workmate_free_sort) {
+            sortMode = refresh(SortMode.FREE);
+            return true;
+        }
+        if (item.getItemId() == android.R.id.home) {
+            if (getActivity() != null) getActivity().finish();
+            return true;
+        }
+        return false;
+    }
+
+    private class CustomComparatorName implements Comparator<Workmate> {
+        @Override
+        public int compare(Workmate o1, Workmate o2) {
+            return o1.getName().compareTo(o2.getName());
+        }
+    }
+
+    private String getRestaurant(Workmate o) {
+        if ((o == null) || (o.getIdRestaurant() == null) || (myViewModel.getRestaurantById(o.getIdRestaurant()) == null)) return null;
+        return myViewModel.getRestaurantById(o.getIdRestaurant()).getName();
+    }
+
+    private class CustomComparatorFree implements Comparator<Workmate> {
+        @Override
+        public int compare(Workmate o1, Workmate o2) {
+            if (getRestaurant(o1) == null) {
+                if (getRestaurant(o2) == null) return 0;
+                return -1;
+            }
+            if (getRestaurant(o2) == null) return 1;
+            return getRestaurant(o1).compareTo(getRestaurant(o2));
         }
     }
 
@@ -73,15 +134,11 @@ public class WorkmateFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_workmate_list, container, false);
 
-//        restaurants = mApiService.getRestaurants();
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
             recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 2) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+
             myViewModel.getWorkmates().observe(getViewLifecycleOwner(), this::updateWorkmatesList);
             myViewModel.getRestaurants().observe(getViewLifecycleOwner(), this::updateRestaurantsList);
         }
@@ -94,17 +151,29 @@ public class WorkmateFragment extends Fragment {
             Log.i("TestPlace", "location list retrieved = " + workmate.getName());
         }
         Log.i("TestWork", "call recyclerView.setAdapter");
-        this.refresh();
+        this.refresh(sortMode);
     }
     private void updateRestaurantsList(List<Restaurant> restaurants) {
         Log.i("TestWork", "WorkmateFragment: updateRestaurantsList");
         this.restaurants = restaurants;
-        this.refresh();
+        this.refresh(sortMode);
     }
-    private void refresh() {
+
+    private SortMode refresh(SortMode s) {
         if ((workmates != null) && (restaurants != null) && (myViewModel != null)) {
             Log.i("TestWork", "call recyclerView.setAdapter");
+            switch (s) {
+                case NONE:
+                    break;
+                case NAME:
+                    Collections.sort(workmates, new CustomComparatorName());
+                    break;
+                case FREE:
+                    Collections.sort(workmates, new CustomComparatorFree());
+                    break;
+            }
             recyclerView.setAdapter(new MyWorkmateRecyclerViewAdapter(workmates, myViewModel));
         }
+        return s;
     }
 }

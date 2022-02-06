@@ -43,4 +43,7 @@
     <string name="notification_title">Dear %s it\'s time to lunch!</string>
     <string name="notification_attendees_line1">"  Other attendees:"</string>
     <string name="notification_attendees_line2" translatable="false">\n       %s</string>
+    <string name="alphabetical_sort">Alphabetical sort</string>
+    <string name="proximity_sort">Proximity sort</string>
+    <string name="free_sort">Free sort</string>
 </resources>

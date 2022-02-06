@@ -63,7 +63,7 @@ public class MyWorkmateRecyclerViewAdapter extends RecyclerView.Adapter<MyWorkma
             Log.i("TestWork", "MyWorkmateRecyclerViewAdapter: onBindViewHolder: ");
             restaurant = myViewModel.getRestaurantById(id);
             if (restaurant == null) {
-                s = holder.mName.getResources().getString(R.string.restaurant_unknown);
+                s = String.format(holder.mName.getResources().getString(R.string.is_eating_in), workmates.get(position).getName(), holder.mName.getResources().getString(R.string.restaurant_unknown));
                 holder.mName.setText(s);
                 holder.mName.setTypeface(holder.mName.getTypeface(), Typeface.ITALIC);
                 holder.mName.setTextColor(ContextCompat.getColor(holder.mName.getContext(),R.color.quantum_grey));

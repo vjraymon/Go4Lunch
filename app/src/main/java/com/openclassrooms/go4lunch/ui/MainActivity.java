@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -16,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -60,7 +62,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private TextView userName;
     private TextView userEmail;
 
-    MyViewModel myViewModel;
+    private MyViewModel myViewModel;
+    private Menu menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,72 +165,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(android.view.Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_search, menu);
-
-        return super.onCreateOptionsMenu(menu);
-    }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.app_bar_search) {
-            onSearchCalled();
-            return true;
-        }
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-            return true;
-        }
-        return false;
-    }
-
-    private final static String TAG = "TestSearch";
-
-    private final ActivityResultLauncher<Intent> autoCompleteResultLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                int resultCode = result.getResultCode();
-                Intent data = result.getData();
-                if (data == null) return;
-                if (resultCode == Activity.RESULT_OK) {
-                    // There are no request codes
-                    Place place = Autocomplete.getPlaceFromIntent(data);
-                    if (place.getTypes() == null) return;
-                    Log.i(TAG, "MainActivity.autoCompleteResultLauncher Place: " + place.getId());
-                    if (place.getTypes().contains(Place.Type.RESTAURANT)) {
-                        myViewModel.addRestaurantById(place.getId());
-                        Restaurant restaurant = myViewModel.getRestaurantById(place.getId());
-                        // if it is a new restaurant, it will be available on the next search
-                        // but the next load of Go4Lunch will removes it
-                        // TODO: enhance the logic
-                        if (restaurant != null)
-                        {
-                            Log.i("TestPlace", "MainActivity.autoCompleteResultLauncher id = (" + restaurant.getName() + ")");
-                            DisplayRestaurantActivity.navigate(this, restaurant);
-                        }
-                    }
-                } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
-                    // TODO: Handle the error.
-                    Status status = Autocomplete.getStatusFromIntent(data);
-                    Log.i(TAG, "MainActivity.autoCompleteResultLauncher error = " + status.getStatusMessage());
-                } else if (resultCode == RESULT_CANCELED) {
-                    // The user canceled the operation.
-                    Log.i(TAG, "MainActivity.autoCompleteResultLauncher RESULT_CANCELED");
-                }
-
-            });
-
-    public void onSearchCalled() {
-        Log.i(TAG, "MainActivity.onActivityResult");
-        // Set the fields to specify which types of place data to return.
-        List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.TYPES);
-        // Start the autocomplete intent.
-        Intent intent = new Autocomplete.IntentBuilder(
-                AutocompleteActivityMode.FULLSCREEN, fields).setCountry("FR").setTypeFilter(TypeFilter.ESTABLISHMENT)
-                .build(this);
-        autoCompleteResultLauncher.launch(intent);
-    }
-
     private final ActivityResultLauncher<Intent> signInLauncher = registerForActivityResult(
             new FirebaseAuthUIActivityResultContract(),
             this::onSignInResult
@@ -247,7 +184,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         List<AuthUI.IdpConfig> providers = Arrays.asList(
                 new AuthUI.IdpConfig.EmailBuilder().build(),
                 new AuthUI.IdpConfig.GoogleBuilder().build(),
-                new AuthUI.IdpConfig.FacebookBuilder().build());
+                new AuthUI.IdpConfig.FacebookBuilder().build(),
+                new AuthUI.IdpConfig.TwitterBuilder().build());
 
         // Launch the activity
         Intent signInIntent = AuthUI.getInstance()
@@ -295,8 +233,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             myViewModel.getWorkmates();
             myViewModel.getRestaurants();
             MySettings.getMySettings().setMyViewModel(myViewModel);
-            Log.i(TAG, "RestaurantRepository.RestaurantRepository Places.initialize");
-            if (!Places.isInitialized()) Places.initialize(this, getString(R.string.google_maps_key));
         } else {
             finish();
         }
@@ -306,9 +242,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ViewPager2 page = findViewById(R.id.activity_main_viewpager);
         TabLayout blankTabLayout = findViewById(R.id.blank_tabLayout);
         // 1 - Get ViewPager from layout
-        page.setAdapter(
-                new PageAdapter(this)
-        );
+        page.setAdapter(new PageAdapter(this));
+
         page.setUserInputEnabled(false);
         new TabLayoutMediator(
                 blankTabLayout,
@@ -320,6 +255,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
         ).attach();
 
+        // title to be reset on each tab selection (instead on first load of the fragments)
         setTitle(getString(R.string.map_fragment_title));
         blankTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override

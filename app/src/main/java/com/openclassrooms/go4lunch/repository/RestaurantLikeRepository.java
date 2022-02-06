@@ -50,11 +50,11 @@ public class RestaurantLikeRepository {
                 }
                 this.restaurantLikes.setValue(freelances);
             } else {
-                Log.d(TAG, "RestaurantLikeRepository.getRestaurantLikes Error getting documents: ", task.getException());
+                Log.e(TAG, "RestaurantLikeRepository.getRestaurantLikes Error getting documents: ", task.getException());
             }
         }).addOnFailureListener(e -> {
             //handle error
-            Log.i(TAG, "RestaurantLikeRepository.getRestaurantLikes Error failure listener ", e);
+            Log.e(TAG, "RestaurantLikeRepository.getRestaurantLikes Error failure listener ", e);
             this.restaurantLikes.setValue(null);
         });
         return this.restaurantLikes;
@@ -91,12 +91,12 @@ public class RestaurantLikeRepository {
                             .addOnFailureListener(e -> Log.e(TAG, "RestaurantLikeRepository.addWorkmate exception", e));
                 }
             } else {
-                Log.d(TAG, "RestaurantLikeRepository.addWorkmate Error getting documents: ", task.getException());
+                Log.e(TAG, "RestaurantLikeRepository.addWorkmate Error getting documents: ", task.getException());
 
             }
         }).addOnFailureListener(e -> {
             //handle error
-            Log.i(TAG, "RestaurantLikeRepository.addWorkmate Error failure listener ", e);
+            Log.e(TAG, "RestaurantLikeRepository.addWorkmate Error failure listener ", e);
             this.restaurantLikes.postValue(null);
         });
     }
@@ -141,11 +141,11 @@ public class RestaurantLikeRepository {
                 }
 
             } else {
-                Log.i(TAG, "RestaurantLikeRepository.updateLike Error getting documents: ", task.getException());
+                Log.e(TAG, "RestaurantLikeRepository.updateLike Error getting documents: ", task.getException());
             }
         }).addOnFailureListener(e -> {
             //handle error
-            Log.i(TAG, "RestaurantLikeRepository.updateLike Error failure listener ", e);
+            Log.e(TAG, "RestaurantLikeRepository.updateLike Error failure listener ", e);
         });
     }
 
@@ -154,7 +154,7 @@ public class RestaurantLikeRepository {
         restaurantLikesRef.addSnapshotListener((documentSnapshot, e) -> {
             Log.i(TAG, "WorkmateRepository.initializeSnapshot onEvent");
             if (e != null) {
-                Log.w(TAG, "WorkmateRepository.initializeSnapshot Listen failed.", e);
+                Log.e(TAG, "WorkmateRepository.initializeSnapshot Listen failed.", e);
                 return;
             }
 

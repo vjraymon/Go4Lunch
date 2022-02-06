@@ -227,7 +227,7 @@ public class RestaurantRepository {
                             select(restaurantList); //no restaurant found
                         }
                     } else {
-                        Log.i(TAG_PLACE, "RestaurantRepository.getRestaurantsFromGooglePlace incorrect response on FindCurrentPlaceResponse");
+                        Log.e(TAG_PLACE, "RestaurantRepository.getRestaurantsFromGooglePlace incorrect response on FindCurrentPlaceResponse");
                         initRestaurantsStatus = InitRestaurantStatus.INIT_FAILED;
                     }
                 }).addOnFailureListener((exception) -> {

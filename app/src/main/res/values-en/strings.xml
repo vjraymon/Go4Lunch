@@ -30,4 +30,7 @@
     <string name="notification_restaurant_line1">You are attended to the restaurant %s</string>
     <string name="notification_title">Dear %s it\'s time to lunch!</string>
     <string name="notification_attendees_line1">"  Other attendees:"</string>
+    <string name="alphabetical_sort">Alphabetical sort</string>
+    <string name="proximity_sort">Proximity sort</string>
+    <string name="free_sort">Restaurant sort</string>
 </resources>
