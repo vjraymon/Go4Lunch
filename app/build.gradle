@@ -41,7 +41,7 @@ apply plugin: 'com.google.gms.google-services'
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.4.1'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+//    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
@@ -52,12 +52,11 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:18.0.2'
     implementation 'com.google.android.libraries.places:places:2.5.0'
     implementation 'com.google.android.gms:play-services-location:19.0.1'
-    implementation 'androidx.work:work-runtime:2.7.1'
-    implementation 'androidx.test:monitor:1.5.0'
-    implementation 'androidx.test:core:1.4.0'
+//    implementation 'androidx.work:work-runtime:2.7.1'
+//    implementation 'androidx.test:monitor:1.5.0'
+//    implementation 'androidx.test:core:1.4.0'
     testImplementation(platform('org.junit:junit-bom:5.8.2'))
     testImplementation 'junit:junit:4.13.2'
- //   testImplementation('org.junit.jupiter:junit-jupiter')
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     implementation platform('com.google.firebase:firebase-bom:29.0.3')
@@ -75,6 +74,5 @@ dependencies {
     def mockitoversion = "4.3.1"
     testImplementation "org.mockito:mockito-inline:$mockitoversion"
     testImplementation "org.mockito:mockito-junit-jupiter:$mockitoversion"
-//    androidTestImplementation "androidx.arch.core:core-testing:2.1.0"
     testImplementation "androidx.arch.core:core-testing:2.1.0"
 }

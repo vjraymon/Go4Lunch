@@ -14,6 +14,7 @@ import com.openclassrooms.go4lunch.model.Workmate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.LongAdder;
 
 public class WorkmateRepository {
     public final static String TAG = "TestWork";
@@ -22,17 +23,19 @@ public class WorkmateRepository {
     /**
      * Get an instance on WorkmateRepository
      */
-    public static WorkmateRepository getWorkmateRepository() {
+    public static WorkmateRepository getWorkmateRepository(FirebaseFirestore firestore) {
         if (service == null) {
-            service = new WorkmateRepository();
+            service = new WorkmateRepository(firestore);
         }
         return service;
     }
 
-    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
-    public final CollectionReference workmatesRef = db.collection("workmates");
+    private FirebaseFirestore db;
+    public CollectionReference workmatesRef;
 
-    public WorkmateRepository() {
+    public WorkmateRepository(FirebaseFirestore firestore) {
+        db = firestore;
+        workmatesRef = db.collection("workmates");
         initializeSnapshot();
     }
 
@@ -44,7 +47,7 @@ public class WorkmateRepository {
         workmatesRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 freelances = new ArrayList<>();
-                for (QueryDocumentSnapshot document : task.getResult()) {
+                for (DocumentSnapshot document : task.getResult().getDocuments()) {
                     freelances.add(document.toObject(Workmate.class));
                 }
                 this.workmates.setValue(freelances);
@@ -65,16 +68,19 @@ public class WorkmateRepository {
             if (task.isSuccessful()) {
                 boolean notAlreadyRegistered = true;
                 freelances = new ArrayList<>();
-                for (QueryDocumentSnapshot document : task.getResult()) {
-                    freelances.add(document.toObject(Workmate.class));
-                    if (myself.getEmail().equals(document.toObject(Workmate.class).getEmail())) {
-                        notAlreadyRegistered = false;
+                for (DocumentSnapshot document : task.getResult().getDocuments()) {
+                    Workmate i = document.toObject(Workmate.class);
+                    if ((i != null) && (i.getEmail() != null)) {
+                        freelances.add(i);
+                        if (myself.getEmail().equals(i.getEmail())) {
+                            notAlreadyRegistered = false;
+                        }
                     }
                 }
                 if (notAlreadyRegistered) {
                     // Add a new document with email as ID
                     freelances.add(myself);
-                    db.collection("workmates")
+                    workmatesRef
                             .document(myself.getEmail())
                             .set(myself)
                             .addOnSuccessListener(unused -> {
@@ -101,6 +107,7 @@ public class WorkmateRepository {
         });
     }
 
+    // public for tests
     public void updateIdRestaurant(Workmate workmate, String idRestaurant) {
         if (workmate == null) {
             Log.i(TAG, "FirebaseHelper.updateIdRestaurant workmate null");
@@ -108,7 +115,7 @@ public class WorkmateRepository {
         }
         Log.i(TAG, "FirebaseHelper.updateIdRestaurant");
             Log.i(TAG, "FirebaseHelper.updateIdRestaurant name " + workmate.getName() + idRestaurant);
-            db.collection("workmates").document(workmate.getEmail()).update(
+        workmatesRef.document(workmate.getEmail()).update(
                 "idRestaurant", idRestaurant)
                 .addOnSuccessListener(unused -> {
                     Log.d(TAG, "FirebaseHelper.updateIdRestaurant successful");
@@ -139,10 +146,9 @@ public class WorkmateRepository {
             if (task.isSuccessful()) {
                 freelances = new ArrayList<>();
                 Workmate w = null;
-                boolean notAlreadyRegistered = true;
-                for (QueryDocumentSnapshot document : task.getResult()) {
+                for (DocumentSnapshot document : task.getResult().getDocuments()) {
                     Workmate i = document.toObject(Workmate.class);
-                    if (workmate.getEmail().equals(document.toObject(Workmate.class).getEmail())) {
+                    if ((i != null) && (workmate.getEmail().equals(i.getEmail()))) {
                         i.setIdRestaurant(idRestaurant);
                         w = i;
                     }
@@ -150,7 +156,6 @@ public class WorkmateRepository {
                 }
                 if (w != null) {
                     this.updateIdRestaurant(workmate, idRestaurant);
-//                    this.workmates.setValue(this.freelances);
                     Log.i(TAG, "WorkmateRepository.setRestaurant done");
                 }
 
@@ -177,6 +182,7 @@ public class WorkmateRepository {
             assert documentSnapshot != null;
             for (DocumentSnapshot snapshot : documentSnapshot.getDocuments()) {
                 // Snapshot of the changed document
+                Log.i("TestU", "snapshot =" + snapshot);
                 Workmate i = snapshot.toObject(Workmate.class);
                 if (i != null) {
                     freelances.add(i);
