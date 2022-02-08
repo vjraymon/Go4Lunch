@@ -27,7 +27,7 @@ public class MyViewModelFactory implements ViewModelProvider.Factory {
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         restaurantRepository = RestaurantRepository.getRestaurantRepository(application.getApplicationContext());
         workmateRepository = WorkmateRepository.getWorkmateRepository(FirebaseFirestore.getInstance());
-        restaurantLikeRepository = RestaurantLikeRepository.getRestaurantLikeRepository();
+        restaurantLikeRepository = RestaurantLikeRepository.getRestaurantLikeRepository(FirebaseFirestore.getInstance());
     }
 
     @NonNull

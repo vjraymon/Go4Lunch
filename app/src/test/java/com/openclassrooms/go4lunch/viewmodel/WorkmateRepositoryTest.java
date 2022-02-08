@@ -363,7 +363,7 @@ public class WorkmateRepositoryTest {
         verify(taskAdd2).addOnFailureListener(eventGetFailureListenerCaptor2.capture());
         assertNotNull(eventGetListenerCaptor2.getValue());
         assertNotNull(eventGetFailureListenerCaptor2.getValue());
-        eventGetListenerCaptor.getValue().onComplete(taskAdd2);
+        eventGetListenerCaptor2.getValue().onComplete(taskAdd2);
         assertNotNull(workmates);
         assertNotNull(workmates.getValue());
         assertEquals(2, workmates.getValue().size());

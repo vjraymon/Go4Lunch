@@ -22,17 +22,19 @@ public class RestaurantLikeRepository {
     /**
      * Get an instance on WorkmateRepository
      */
-    public static RestaurantLikeRepository getRestaurantLikeRepository() {
+    public static RestaurantLikeRepository getRestaurantLikeRepository(FirebaseFirestore firestore) {
         if (service == null) {
-            service = new RestaurantLikeRepository();
+            service = new RestaurantLikeRepository(firestore);
         }
         return service;
     }
 
-    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
-    public final CollectionReference restaurantLikesRef = db.collection("restaurants");
+    private FirebaseFirestore db;
+    private CollectionReference restaurantLikesRef;
 
-    public RestaurantLikeRepository() {
+    public RestaurantLikeRepository(FirebaseFirestore firestore) {
+        db = firestore;
+        restaurantLikesRef = db.collection("restaurants");
         initializeSnapshot();
     }
 
@@ -45,7 +47,7 @@ public class RestaurantLikeRepository {
         restaurantLikesRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 ArrayList<RestaurantLike> freelances = new ArrayList<>();
-                for (QueryDocumentSnapshot document : task.getResult()) {
+                for (DocumentSnapshot document : task.getResult().getDocuments()) {
                     freelances.add(document.toObject(RestaurantLike.class));
                 }
                 this.restaurantLikes.setValue(freelances);
@@ -65,10 +67,13 @@ public class RestaurantLikeRepository {
             if (task.isSuccessful()) {
                 boolean notAlreadyRegistered = true;
                 freelances = new ArrayList<>();
-                for (QueryDocumentSnapshot document : task.getResult()) {
-                    freelances.add(document.toObject(RestaurantLike.class));
-                    if (myself.getId().equals(document.toObject(RestaurantLike.class).getId())) {
-                        notAlreadyRegistered = false;
+                for (DocumentSnapshot document : task.getResult().getDocuments()) {
+                    RestaurantLike i = document.toObject(RestaurantLike.class);
+                    if ((i != null) && (i.getId() != null)) {
+                        freelances.add(i);
+                        if (myself.getId().equals(i.getId())) {
+                            notAlreadyRegistered = false;
+                        }
                     }
                 }
                 if (notAlreadyRegistered) {
@@ -89,6 +94,8 @@ public class RestaurantLikeRepository {
                                 }
                             })
                             .addOnFailureListener(e -> Log.e(TAG, "RestaurantLikeRepository.addWorkmate exception", e));
+                } else {
+                    this.restaurantLikes.setValue(this.freelances);
                 }
             } else {
                 Log.e(TAG, "RestaurantLikeRepository.addWorkmate Error getting documents: ", task.getException());
@@ -111,14 +118,15 @@ public class RestaurantLikeRepository {
             if (task.isSuccessful()) {
                 freelances = new ArrayList<>();
                 RestaurantLike w = null;
-                boolean notAlreadyRegistered = true;
-                for (QueryDocumentSnapshot document : task.getResult()) {
+                for (DocumentSnapshot document : task.getResult().getDocuments()) {
                     RestaurantLike i = document.toObject(RestaurantLike.class);
-                    if (restaurantLike.getId().equals(document.toObject(RestaurantLike.class).getId())) {
-                        i.setLike(i.getLike()+1);
-                        w = i;
+                    if ((i != null) && (i.getId() != null)) {
+                        if (restaurantLike.getId().equals(i.getId())) {
+                            i.setLike(like);
+                            w = i;
+                        }
+                        freelances.add(i);
                     }
-                    freelances.add(i);
                 }
                 if (w != null) {
                     Log.i(TAG, "RestaurantLikeRepository.updateLike");

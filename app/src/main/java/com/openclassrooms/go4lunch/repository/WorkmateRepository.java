@@ -95,6 +95,8 @@ public class WorkmateRepository {
                                 }
                             })
                             .addOnFailureListener(e -> Log.e(TAG, "FirebaseHelper.addWorkmate exception", e));
+                } else {
+                    this.workmates.setValue(this.freelances);
                 }
             } else {
                 Log.e(TAG, "FirebaseHelper.addWorkmate Error getting documents: ", task.getException());

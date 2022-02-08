@@ -592,7 +592,7 @@ public class MyViewModelTest {
     public void IncLikeCheckNumberOfStars() {
         // at least one restaurant should be registered
         GetRestaurants2Records();
-        // trigger the incrementation until likeNumber reaches 2 or the number of incrementation exceed 20
+        // trigger the incrementation until likeNumber reaches 2 or the number of incrementation exceeds 20
         int count = 0;
         int likeNumber;
         int receivedLike = 0;
@@ -603,7 +603,7 @@ public class MyViewModelTest {
             receivedLike = receivedLike+1;
         } while ((count <= 20) && (likeNumber < 2));
         assertEquals(2, likeNumber);
-        // trigger the incrementation until likeNumber reaches 3 or the number of incrementation exceed 20
+        // trigger the incrementation until likeNumber reaches 3 or the number of incrementation exceeds 20
         count = 0;
         do {
             OneIncrement(receivedLike);
