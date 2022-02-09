@@ -58,7 +58,7 @@ public class MyViewModelTest {
     // tests related to user
     //
     @Test
-    public void AuthentificationNotGranted() {
+    public void AuthenticationNotGranted() {
         myApplication = new Application();
         t = new MyViewModel(myApplication, null, restaurantRepository, workmateRepository, restaurantLikeRepository);
         assertNotNull(t);
@@ -69,7 +69,7 @@ public class MyViewModelTest {
     ArgumentCaptor<Workmate> workmateCaptor;
 
     @Test
-    public void AuthentificationGranted() {
+    public void AuthenticationGranted() {
         myApplication = new Application();
         when(firebaseUser.getEmail()).thenReturn("vjraymon@gmail.com");
         when(firebaseUser.getDisplayName()).thenReturn("Jean-Raymond Vieux");
@@ -93,7 +93,7 @@ public class MyViewModelTest {
     //
     @Test
     public void GetWorkmatesNotInitialized() {
-        AuthentificationGranted();
+        AuthenticationGranted();
         when(workmateRepository.getWorkmates()).thenReturn(new MutableLiveData<>());
         LiveData<List<Workmate>> workmates = t.getWorkmates();
         assertNotNull(workmates);
@@ -102,7 +102,7 @@ public class MyViewModelTest {
 
     @Test
     public void GetWorkmatesEmpty() {
-        AuthentificationGranted();
+        AuthenticationGranted();
         when(workmateRepository.getWorkmates()).thenReturn(new MutableLiveData<>());
         List<Workmate> workmateList = new ArrayList<>();
         MutableLiveData<List<Workmate>> workmateReceived = new MutableLiveData<>();
@@ -116,7 +116,7 @@ public class MyViewModelTest {
 
     @Test
     public void GetWorkmates1Record() {
-        AuthentificationGranted();
+        AuthenticationGranted();
         when(workmateRepository.getWorkmates()).thenReturn(new MutableLiveData<>());
         List<Workmate> workmateList = new ArrayList<>();
         workmateList.add(new Workmate("vjraymon@gmail.com", "Jean-Raymond Vieux", null, null));
@@ -138,7 +138,7 @@ public class MyViewModelTest {
 
     @Test
     public void GetWorkmates2Records() {
-        AuthentificationGranted();
+        AuthenticationGranted();
         when(workmateRepository.getWorkmates()).thenReturn(new MutableLiveData<>());
         List<Workmate> workmateList = new ArrayList<>();
         workmateList.add(new Workmate("vjraymon@gmail.com","Jean-Raymond Vieux",  null, null));
@@ -206,7 +206,7 @@ public class MyViewModelTest {
 
     @Test
     public void GetWorkmatesById2Record() {
-        AuthentificationGranted();
+        AuthenticationGranted();
         when(workmateRepository.getWorkmates()).thenReturn(new MutableLiveData<>());
         List<Workmate> workmateList = new ArrayList<>();
         workmateList.add(new Workmate("vjraymon@gmail.com","Jean-Raymond Vieux",  null, "IdMyRestaurant"));
@@ -233,7 +233,7 @@ public class MyViewModelTest {
     //
     @Test
     public void GetRestaurantsNotInitialized() {
-        AuthentificationGranted();
+        AuthenticationGranted();
         when(restaurantRepository.getRestaurants(myApplication.getApplicationContext())).thenReturn(new MutableLiveData<>());
         LiveData<List<Restaurant>> restaurants = t.getRestaurants();
         assertNotNull(restaurants);
@@ -242,7 +242,7 @@ public class MyViewModelTest {
 
     @Test
     public void GetRestaurantsEmpty() {
-        AuthentificationGranted();
+        AuthenticationGranted();
         when(restaurantRepository.getRestaurants(myApplication.getApplicationContext())).thenReturn(new MutableLiveData<>());
         List<Restaurant> restaurantList = new ArrayList<>();
         MutableLiveData<List<Restaurant>> restaurantReceived = new MutableLiveData<>();
@@ -256,7 +256,7 @@ public class MyViewModelTest {
 
     @Test
     public void GetRestaurants1Record() {
-        AuthentificationGranted();
+        AuthenticationGranted();
         when(restaurantRepository.getRestaurants(myApplication.getApplicationContext())).thenReturn(new MutableLiveData<>());
         List<Restaurant> restaurantList = new ArrayList<>();
         restaurantList.add(new Restaurant(
@@ -293,7 +293,7 @@ public class MyViewModelTest {
 
     @Test
     public void GetRestaurants2Records() {
-        AuthentificationGranted();
+        AuthenticationGranted();
         when(restaurantRepository.getRestaurants(myApplication.getApplicationContext())).thenReturn(new MutableLiveData<>());
         List<Restaurant> restaurantList = new ArrayList<>();
         restaurantList.add(new Restaurant(
@@ -412,8 +412,8 @@ public class MyViewModelTest {
     // Tests related to Restaurant likes
     //
     @Test
-    public void GetRestaurantLikessNotInitialized() {
-        AuthentificationGranted();
+    public void GetRestaurantLikesNotInitialized() {
+        AuthenticationGranted();
         when(restaurantLikeRepository.getRestaurantLikes()).thenReturn(new MutableLiveData<>());
         LiveData<List<RestaurantLike>> restaurantLikes = t.getRestaurantLikes();
         assertNotNull(restaurantLikes);
@@ -422,7 +422,7 @@ public class MyViewModelTest {
 
     @Test
     public void GetRestaurantLikesEmpty() {
-        AuthentificationGranted();
+        AuthenticationGranted();
         when(restaurantLikeRepository.getRestaurantLikes()).thenReturn(new MutableLiveData<>());
         List<RestaurantLike> restaurantLikeList = new ArrayList<>();
         MutableLiveData<List<RestaurantLike>> restaurantLikeReceived = new MutableLiveData<>();
@@ -436,7 +436,7 @@ public class MyViewModelTest {
 
     @Test
     public void GetRestaurantLikes3records() {
-        AuthentificationGranted();
+        AuthenticationGranted();
         when(restaurantLikeRepository.getRestaurantLikes()).thenReturn(new MutableLiveData<>());
         List<RestaurantLike> restaurantLikeList = new ArrayList<>();
         restaurantLikeList.add(new RestaurantLike(

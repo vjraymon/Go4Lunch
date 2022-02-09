@@ -272,7 +272,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     List<Restaurant> restaurants = new ArrayList<>();
-    List<Workmate> workmates = new ArrayList<>();
+//    List<Workmate> workmates = new ArrayList<>();
     boolean isRestaurantsInitialized;
     boolean isWorkmatesInitialized;
 
@@ -286,6 +286,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             isRestaurantsInitialized = false;
             isWorkmatesInitialized = false;
             myViewModel.getRestaurants().observe(this, this::updateRestaurantsList);
+            // Mandatory to color the restaurant pins depending of attendees
             myViewModel.getWorkmates().observe(this, this::updateWorkmatesList);
             map.setOnMarkerClickListener(marker -> {
                 Log.i("TestMarker", "MapsFragment.showCurrentPlace OnMarkerClickListener");
@@ -313,7 +314,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     private void updateWorkmatesList(List<Workmate> workmates) {
         Log.i("TestMarker", "MapsFragment.updateWorkmatesList");
-        this.workmates = workmates;
+//        this.workmates = workmates;
         isWorkmatesInitialized = true;
         if (isRestaurantsInitialized) {
             initializeMarkers();

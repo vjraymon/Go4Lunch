@@ -8,7 +8,6 @@ import androidx.lifecycle.MutableLiveData;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.openclassrooms.go4lunch.model.RestaurantLike;
 
 import java.util.ArrayList;
@@ -29,12 +28,12 @@ public class RestaurantLikeRepository {
         return service;
     }
 
-    private FirebaseFirestore db;
-    private CollectionReference restaurantLikesRef;
+//    private FirebaseFirestore db;
+    private final CollectionReference restaurantLikesRef;
 
     public RestaurantLikeRepository(FirebaseFirestore firestore) {
-        db = firestore;
-        restaurantLikesRef = db.collection("restaurants");
+//        db = firestore;
+        restaurantLikesRef = firestore.collection("restaurants");
         initializeSnapshot();
     }
 
@@ -79,7 +78,7 @@ public class RestaurantLikeRepository {
                 if (notAlreadyRegistered) {
                     // Add a new document with email as ID
                     freelances.add(myself);
-                    db.collection("restaurants")
+                    restaurantLikesRef
                             .document(myself.getId())
                             .set(myself)
                             .addOnSuccessListener(unused -> {
@@ -131,7 +130,7 @@ public class RestaurantLikeRepository {
                 if (w != null) {
                     Log.i(TAG, "RestaurantLikeRepository.updateLike");
                     Log.i(TAG, "RestaurantLikeRepository.updateLike name " + restaurantLike.getName() + " " + like);
-                    db.collection("restaurants").document(restaurantLike.getId()).update(
+                    restaurantLikesRef.document(restaurantLike.getId()).update(
                             "like", like)
                             .addOnSuccessListener(unused -> {
                                 Log.d(TAG, "RestaurantLikeRepository.updateLike successful");

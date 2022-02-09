@@ -8,13 +8,11 @@ import androidx.lifecycle.MutableLiveData;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.openclassrooms.go4lunch.model.Restaurant;
 import com.openclassrooms.go4lunch.model.Workmate;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.LongAdder;
 
 public class WorkmateRepository {
     public final static String TAG = "TestWork";
@@ -30,12 +28,10 @@ public class WorkmateRepository {
         return service;
     }
 
-    private FirebaseFirestore db;
-    public CollectionReference workmatesRef;
+    public final CollectionReference workmatesRef;
 
     public WorkmateRepository(FirebaseFirestore firestore) {
-        db = firestore;
-        workmatesRef = db.collection("workmates");
+        workmatesRef = firestore.collection("workmates");
         initializeSnapshot();
     }
 

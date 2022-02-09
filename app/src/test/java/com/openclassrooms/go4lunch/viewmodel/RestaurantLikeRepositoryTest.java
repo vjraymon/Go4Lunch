@@ -9,8 +9,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import android.app.Application;
-
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.LiveData;
 
@@ -41,7 +39,7 @@ import java.util.List;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RestaurantLikeRepositoryTest {
-    Application myApplication;
+//    Application myApplication;
     RestaurantLikeRepository t;
 
     @Rule // -> allows liveData to work on different thread besides main, must be public!
@@ -55,7 +53,7 @@ public class RestaurantLikeRepositoryTest {
     @Captor
     ArgumentCaptor<EventListener<QuerySnapshot>> eventSnapshotListenerCaptor;
 
-    ListenerRegistration listenerRegistration;
+//    ListenerRegistration listenerRegistration;
 
     @Mock
     QuerySnapshot querySnapshot;
@@ -64,19 +62,16 @@ public class RestaurantLikeRepositoryTest {
 
     @Test
     public void Initialization() {
-        myApplication = new Application();
-        if (t!=null) {
-            t = RestaurantLikeRepository.getRestaurantLikeRepository(firestore);
-        } else {
-            when(firestore.collection("restaurants")).thenReturn(restaurantLikeRef);
-            when(restaurantLikeRef.addSnapshotListener(any())).thenReturn(listenerRegistration);
-            t = new RestaurantLikeRepository(firestore);
-            verify(restaurantLikeRef).addSnapshotListener(eventSnapshotListenerCaptor.capture());
-            assertNotNull(eventSnapshotListenerCaptor.getValue());
-            listDocumentSnapshot = new ArrayList<>();
-            when(querySnapshot.getDocuments()).thenReturn(listDocumentSnapshot);
-            eventSnapshotListenerCaptor.getValue().onEvent(querySnapshot, null);
-        }
+        when(firestore.collection("restaurants")).thenReturn(restaurantLikeRef);
+        // the listenerRegistratuin is never removed
+        when(restaurantLikeRef.addSnapshotListener(any())).thenReturn(null);
+        listDocumentSnapshot = new ArrayList<>();
+        when(querySnapshot.getDocuments()).thenReturn(listDocumentSnapshot);
+//            t = RestaurantLikeRepository.getRestaurantLikeRepository(firestore);
+        t = new RestaurantLikeRepository(firestore);
+        verify(restaurantLikeRef).addSnapshotListener(eventSnapshotListenerCaptor.capture());
+        assertNotNull(eventSnapshotListenerCaptor.getValue());
+        eventSnapshotListenerCaptor.getValue().onEvent(querySnapshot, null);
     }
 
     @Mock
@@ -85,13 +80,14 @@ public class RestaurantLikeRepositoryTest {
     @Test
     public void DbModification() {
         GetRestaurantLikesEmpty();
-        myApplication = new Application();
+//        myApplication = new Application();
         listDocumentSnapshot = new ArrayList<>();
         listDocumentSnapshot.add(document1);
         RestaurantLike restaurantLike1 = new RestaurantLike("LaScalaReferencevjraymon@gmail.com", "LaScala", 1);
         when(document1.toObject(RestaurantLike.class)).thenReturn(restaurantLike1);
         when(querySnapshot.getDocuments()).thenReturn(listDocumentSnapshot);
         eventSnapshotListenerCaptor.getValue().onEvent(querySnapshot, null);
+
         assertNotNull(restaurantLikes);
         assertNotNull(restaurantLikes.getValue());
         assertEquals(1, restaurantLikes.getValue().size());
@@ -118,12 +114,14 @@ public class RestaurantLikeRepositoryTest {
         when(taskGetRestaurantLikesError.addOnCompleteListener(any())).thenReturn(taskGetRestaurantLikesError);
         when(taskGetRestaurantLikesError.addOnFailureListener(any())).thenReturn(taskGetRestaurantLikesError);
         restaurantLikes = t.getRestaurantLikes();
+
         verify(taskGetRestaurantLikesError).addOnCompleteListener(eventGetListenerCaptor.capture());
         verify(taskGetRestaurantLikesError).addOnFailureListener(eventGetFailureListenerCaptor.capture());
         assertNotNull(eventGetListenerCaptor.getValue());
         assertNotNull(eventGetFailureListenerCaptor.getValue());
         when(taskGetRestaurantLikesError.isSuccessful()).thenReturn(false);
         eventGetListenerCaptor.getValue().onComplete(taskGetRestaurantLikesError);
+
         assertNotNull(restaurantLikes);
         assertNotNull(restaurantLikes.getValue());
         assertTrue(restaurantLikes.getValue().isEmpty());
@@ -139,11 +137,13 @@ public class RestaurantLikeRepositoryTest {
         when(taskGetRestaurantLikesException.addOnCompleteListener(any())).thenReturn(taskGetRestaurantLikesException);
         when(taskGetRestaurantLikesException.addOnFailureListener(any())).thenReturn(taskGetRestaurantLikesException);
         restaurantLikes = t.getRestaurantLikes();
+
         verify(taskGetRestaurantLikesException).addOnCompleteListener(eventGetListenerCaptor.capture());
         verify(taskGetRestaurantLikesException).addOnFailureListener(eventGetFailureListenerCaptor.capture());
         assertNotNull(eventGetListenerCaptor.getValue());
         assertNotNull(eventGetFailureListenerCaptor.getValue());
         eventGetFailureListenerCaptor.getValue().onFailure(new Exception("Exception"));
+
         assertNotNull(restaurantLikes);
         assertNull(restaurantLikes.getValue());
     }
@@ -158,6 +158,7 @@ public class RestaurantLikeRepositoryTest {
         when(taskGetRestaurantLikesEmpty.addOnCompleteListener(any())).thenReturn(taskGetRestaurantLikesEmpty);
         when(taskGetRestaurantLikesEmpty.addOnFailureListener(any())).thenReturn(taskGetRestaurantLikesEmpty);
         restaurantLikes = t.getRestaurantLikes();
+
         verify(taskGetRestaurantLikesEmpty).addOnCompleteListener(eventGetListenerCaptor.capture());
         verify(taskGetRestaurantLikesEmpty).addOnFailureListener(eventGetFailureListenerCaptor.capture());
         assertNotNull(eventGetListenerCaptor.getValue());
@@ -167,6 +168,7 @@ public class RestaurantLikeRepositoryTest {
         listDocumentSnapshot = new ArrayList<>();
         when(querySnapshot.getDocuments()).thenReturn(listDocumentSnapshot);
         eventGetListenerCaptor.getValue().onComplete(taskGetRestaurantLikesEmpty);
+
         assertNotNull(restaurantLikes);
         assertNotNull(restaurantLikes.getValue());
         assertTrue(restaurantLikes.getValue().isEmpty());
@@ -182,6 +184,7 @@ public class RestaurantLikeRepositoryTest {
         when(taskGetRestaurantLikes1Record.addOnCompleteListener(any())).thenReturn(taskGetRestaurantLikes1Record);
         when(taskGetRestaurantLikes1Record.addOnFailureListener(any())).thenReturn(taskGetRestaurantLikes1Record);
         restaurantLikes = t.getRestaurantLikes();
+
         verify(taskGetRestaurantLikes1Record).addOnCompleteListener(eventGetListenerCaptor.capture());
         verify(taskGetRestaurantLikes1Record).addOnFailureListener(eventGetFailureListenerCaptor.capture());
         assertNotNull(eventGetListenerCaptor.getValue());
@@ -194,6 +197,7 @@ public class RestaurantLikeRepositoryTest {
         RestaurantLike restaurantLike1 = new RestaurantLike("LaScalaReferencevjraymon@gmail.com", "La Scala", 1);
         when(document1.toObject(RestaurantLike.class)).thenReturn(restaurantLike1);
         eventGetListenerCaptor.getValue().onComplete(taskGetRestaurantLikes1Record);
+
         assertNotNull(restaurantLikes);
         assertNotNull(restaurantLikes.getValue());
         assertEquals(1, restaurantLikes.getValue().size());
@@ -213,6 +217,7 @@ public class RestaurantLikeRepositoryTest {
         when(taskGetRestaurantLikes2Records.addOnCompleteListener(any())).thenReturn(taskGetRestaurantLikes2Records);
         when(taskGetRestaurantLikes2Records.addOnFailureListener(any())).thenReturn(taskGetRestaurantLikes2Records);
         restaurantLikes = t.getRestaurantLikes();
+
         verify(taskGetRestaurantLikes2Records).addOnCompleteListener(eventGetListenerCaptor.capture());
         verify(taskGetRestaurantLikes2Records).addOnFailureListener(eventGetFailureListenerCaptor.capture());
         assertNotNull(eventGetListenerCaptor.getValue());
@@ -228,6 +233,7 @@ public class RestaurantLikeRepositoryTest {
         when(document1.toObject(RestaurantLike.class)).thenReturn(restaurantLike1);
         when(document2.toObject(RestaurantLike.class)).thenReturn(restaurantLike2);
         eventGetListenerCaptor.getValue().onComplete(taskGetRestaurantLikes2Records);
+
         assertNotNull(restaurantLikes);
         assertNotNull(restaurantLikes.getValue());
         assertEquals(2, restaurantLikes.getValue().size());

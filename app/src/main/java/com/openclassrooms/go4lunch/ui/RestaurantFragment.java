@@ -34,7 +34,6 @@ import com.openclassrooms.go4lunch.viewmodel.MyViewModel;
 import com.openclassrooms.go4lunch.viewmodel.MyViewModelFactory;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -148,7 +147,7 @@ public class RestaurantFragment extends Fragment {
         }
     }
 
-    private class CustomComparatorName implements Comparator<Restaurant> {
+    private static class CustomComparatorName implements Comparator<Restaurant> {
         @Override
         public int compare(Restaurant o1, Restaurant o2) {
             return o1.getName().compareTo(o2.getName());

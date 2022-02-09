@@ -13,8 +13,6 @@ import com.openclassrooms.go4lunch.repository.RestaurantLikeRepository;
 import com.openclassrooms.go4lunch.repository.RestaurantRepository;
 import com.openclassrooms.go4lunch.repository.WorkmateRepository;
 
-import kotlin.Suppress;
-
 public class MyViewModelFactory implements ViewModelProvider.Factory {
     private final Application mApplication;
     private final FirebaseUser mFirebaseUser;

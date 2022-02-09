@@ -18,12 +18,12 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
-<!--        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item> -->
         <item name="android:colorPrimary">@color/red</item>
         <item name="colorPrimary">@color/red</item>
         <item name="colorPrimaryVariant">@color/red</item>
         <item name="colorOnPrimary">@color/white</item>
         <item name="android:colorPrimaryDark">@color/red_dark</item>
- <!--       <item name="android:navigationBarColor">@color/red</item> -->
+<!--        <item name="android:navigationBarColor">@color/red</item> -->
+        <item name="android:colorAccent">@color/red</item>
     </style>
 </resources>

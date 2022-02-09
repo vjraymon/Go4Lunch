@@ -50,7 +50,7 @@ public class RestaurantRepository {
     public enum InitRestaurantStatus { INIT_TODO, INIT_ONGOING, INIT_FAILED, INIT_DONE }
     private static InitRestaurantStatus initRestaurantsStatus = InitRestaurantStatus.INIT_TODO;
     private static int counter_request_ongoing = 0;
-    private static int MAX_COUNTER_RETRIES_ON_EXCEPTION = 3;
+    private final static int MAX_COUNTER_RETRIES_ON_EXCEPTION = 3;
     private static int counterRetriesOnException;
 
     public InitRestaurantStatus getInitRestaurantsStatus() { return initRestaurantsStatus; }
@@ -237,7 +237,7 @@ public class RestaurantRepository {
                         final int statusCode = apiException.getStatusCode();
                         initRestaurantsStatus = InitRestaurantStatus.INIT_FAILED;
                         counterRetriesOnException = counterRetriesOnException + 1;
-                        if (counterRetriesOnException < 3) {
+                        if (counterRetriesOnException < MAX_COUNTER_RETRIES_ON_EXCEPTION) {
                             Log.e(TAG_PLACE, "RestaurantRepository.getRestaurantsFromGooglePlace retry from restaurantRepository");
                             getRestaurantsFromGooglePlace(context);
                         } else {

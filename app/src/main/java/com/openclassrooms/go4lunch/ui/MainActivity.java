@@ -1,36 +1,25 @@
 package com.openclassrooms.go4lunch.ui;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
-import com.google.android.gms.common.api.Status;
-import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.model.TypeFilter;
-import com.google.android.libraries.places.widget.Autocomplete;
-import com.google.android.libraries.places.widget.AutocompleteActivity;
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -63,7 +52,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private TextView userEmail;
 
     private MyViewModel myViewModel;
-    private Menu menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             return true;
 
         } else if (item.getItemId() == R.id.action_logout) {
-            // User chose the "Logout" action, restart the authentification
+            // User chose the "Logout" action, restarts the authentication
             drawer.closeDrawer(GravityCompat.START);
 
             startSignOutActivity();
@@ -180,12 +168,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void startSignInActivity() {
-        // Choose authentification providers
+        // Chooses authentication providers
         List<AuthUI.IdpConfig> providers = Arrays.asList(
-                new AuthUI.IdpConfig.EmailBuilder().build(),
+//                new AuthUI.IdpConfig.EmailBuilder().build(),
                 new AuthUI.IdpConfig.GoogleBuilder().build(),
-                new AuthUI.IdpConfig.FacebookBuilder().build(),
-                new AuthUI.IdpConfig.TwitterBuilder().build());
+                new AuthUI.IdpConfig.FacebookBuilder().build()//*,
+ //               new AuthUI.IdpConfig.TwitterBuilder().build()
+                );
 
         // Launch the activity
         Intent signInIntent = AuthUI.getInstance()

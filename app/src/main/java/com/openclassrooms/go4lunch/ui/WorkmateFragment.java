@@ -1,9 +1,6 @@
 package com.openclassrooms.go4lunch.ui;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,28 +9,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.common.api.Status;
 import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.model.TypeFilter;
-import com.google.android.libraries.places.widget.Autocomplete;
-import com.google.android.libraries.places.widget.AutocompleteActivity;
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.openclassrooms.go4lunch.R;
 import com.openclassrooms.go4lunch.model.Restaurant;
 import com.openclassrooms.go4lunch.model.Workmate;
 import com.openclassrooms.go4lunch.viewmodel.MyViewModel;
 import com.openclassrooms.go4lunch.viewmodel.MyViewModelFactory;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -43,7 +30,6 @@ public class WorkmateFragment extends Fragment {
 
 //    private WorkmateRepository workmateRepository;
 
-    //    private RestaurantApiService mApiService;
     private List<Workmate> workmates;
     private List<Restaurant> restaurants;
 
@@ -72,8 +58,6 @@ public class WorkmateFragment extends Fragment {
         if ((getContext() != null) && (!Places.isInitialized())) Places.initialize(getContext(), getString(R.string.google_maps_key));
         myViewModel = new ViewModelProvider(this, new MyViewModelFactory(Objects.requireNonNull(this.getActivity()).getApplication())).get(MyViewModel.class);
     }
-
-    private final static String TAG = "TestSearch";
 
     @Override
     public void onCreateOptionsMenu(android.view.Menu menu, MenuInflater inflater) {
@@ -104,7 +88,7 @@ public class WorkmateFragment extends Fragment {
         return false;
     }
 
-    private class CustomComparatorName implements Comparator<Workmate> {
+    private static class CustomComparatorName implements Comparator<Workmate> {
         @Override
         public int compare(Workmate o1, Workmate o2) {
             return o1.getName().compareTo(o2.getName());

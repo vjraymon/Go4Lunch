@@ -1,4 +1,4 @@
-//TODO rename the packege
+//TODO rename the package
 package com.openclassrooms.go4lunch.viewmodel;
 
 
@@ -7,14 +7,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import android.app.Application;
-
-import androidx.annotation.Nullable;
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.LiveData;
 
@@ -29,11 +24,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.core.ViewSnapshot;
-import com.google.firebase.firestore.model.DocumentKey;
 import com.openclassrooms.go4lunch.model.Restaurant;
 import com.openclassrooms.go4lunch.model.Workmate;
 import com.openclassrooms.go4lunch.repository.WorkmateRepository;
@@ -42,7 +33,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -50,10 +40,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.ArrayList;
 import java.util.List;
 
-//@ExtendWith(MockitoExtension.class)
 @RunWith(MockitoJUnitRunner.class)
 public class WorkmateRepositoryTest {
-    Application myApplication;
     WorkmateRepository t;
 
     @Rule // -> allows liveData to work on different thread besides main, must be public!
@@ -67,39 +55,33 @@ public class WorkmateRepositoryTest {
     @Captor
     ArgumentCaptor<EventListener<QuerySnapshot>> eventSnapshotListenerCaptor;
 
-    ListenerRegistration listenerRegistration;
-
     @Mock
     QuerySnapshot querySnapshot;
 
     List<DocumentSnapshot> listDocumentSnapshot = new ArrayList<>();
 
+    @Mock
+    DocumentSnapshot document1, document2;
+
     @Test
     public void Initialization() {
-        myApplication = new Application();
-        if (t!=null) {
-            t = WorkmateRepository.getWorkmateRepository(firestore);
-        } else {
-            when(firestore.collection("workmates")).thenReturn(workmateRef);
-            when(workmateRef.addSnapshotListener(any())).thenReturn(listenerRegistration);
-            t = new WorkmateRepository(firestore);
-            verify(workmateRef).addSnapshotListener(eventSnapshotListenerCaptor.capture());
-            assertNotNull(eventSnapshotListenerCaptor.getValue());
-            listDocumentSnapshot = new ArrayList<>();
-            when(querySnapshot.getDocuments()).thenReturn(listDocumentSnapshot);
-            eventSnapshotListenerCaptor.getValue().onEvent(querySnapshot, null);
-        }
+        when(firestore.collection("workmates")).thenReturn(workmateRef);
+        when(workmateRef.addSnapshotListener(any())).thenReturn(null);
+        t = new WorkmateRepository(firestore);
+        verify(workmateRef).addSnapshotListener(eventSnapshotListenerCaptor.capture());
+        assertNotNull(eventSnapshotListenerCaptor.getValue());
+        listDocumentSnapshot = new ArrayList<>();
+        when(querySnapshot.getDocuments()).thenReturn(listDocumentSnapshot);
+        eventSnapshotListenerCaptor.getValue().onEvent(querySnapshot, null);
     }
 
     @Test
     public void DbModification() {
         GetWorkmatesEmpty();
-        myApplication = new Application();
         listDocumentSnapshot = new ArrayList<>();
-        listDocumentSnapshot.add(document);
+        listDocumentSnapshot.add(document1);
         Workmate workmate1 = new Workmate("vjraymon@gmail.com", "Jean-Raymond Vieux", null, null);
-        Workmate workmate2 = new Workmate("vagnes@gmail.com", "Agnes Vieux", null, "Chez Tintin");
-        when(document.toObject(Workmate.class)).thenReturn(workmate1);
+        when(document1.toObject(Workmate.class)).thenReturn(workmate1);
         when(querySnapshot.getDocuments()).thenReturn(listDocumentSnapshot);
         eventSnapshotListenerCaptor.getValue().onEvent(querySnapshot, null);
         assertNotNull(workmates);
@@ -127,12 +109,14 @@ public class WorkmateRepositoryTest {
         when(task.addOnCompleteListener(any())).thenReturn(task);
         when(task.addOnFailureListener(any())).thenReturn(task);
         workmates = t.getWorkmates();
+
         verify(task).addOnCompleteListener(eventGetListenerCaptor.capture());
         verify(task).addOnFailureListener(eventGetFailureListenerCaptor.capture());
         assertNotNull(eventGetListenerCaptor.getValue());
         assertNotNull(eventGetFailureListenerCaptor.getValue());
         when(task.isSuccessful()).thenReturn(false);
         eventGetListenerCaptor.getValue().onComplete(task);
+
         assertNotNull(workmates);
         assertNotNull(workmates.getValue());
         assertTrue(workmates.getValue().isEmpty());
@@ -145,20 +129,16 @@ public class WorkmateRepositoryTest {
         when(task.addOnCompleteListener(any())).thenReturn(task);
         when(task.addOnFailureListener(any())).thenReturn(task);
         workmates = t.getWorkmates();
+
         verify(task).addOnCompleteListener(eventGetListenerCaptor.capture());
         verify(task).addOnFailureListener(eventGetFailureListenerCaptor.capture());
         assertNotNull(eventGetListenerCaptor.getValue());
         assertNotNull(eventGetFailureListenerCaptor.getValue());
         eventGetFailureListenerCaptor.getValue().onFailure(new Exception("Exception"));
+
         assertNotNull(workmates);
         assertNull(workmates.getValue());
     }
-
-    @Mock
-    Task<QuerySnapshot> task1, task2, task3, task4;
-
-    @Mock
-    DocumentSnapshot document, document2;
 
     @Test
     public void GetWorkmatesEmpty() {
@@ -167,6 +147,7 @@ public class WorkmateRepositoryTest {
         when(task.addOnCompleteListener(any())).thenReturn(task);
         when(task.addOnFailureListener(any())).thenReturn(task);
         workmates = t.getWorkmates();
+
         verify(task).addOnCompleteListener(eventGetListenerCaptor.capture());
         verify(task).addOnFailureListener(eventGetFailureListenerCaptor.capture());
         assertNotNull(eventGetListenerCaptor.getValue());
@@ -176,6 +157,7 @@ public class WorkmateRepositoryTest {
         listDocumentSnapshot = new ArrayList<>();
         when(querySnapshot.getDocuments()).thenReturn(listDocumentSnapshot);
         eventGetListenerCaptor.getValue().onComplete(task);
+
         assertNotNull(workmates);
         assertNotNull(workmates.getValue());
         assertTrue(workmates.getValue().isEmpty());
@@ -188,6 +170,7 @@ public class WorkmateRepositoryTest {
         when(task.addOnCompleteListener(any())).thenReturn(task);
         when(task.addOnFailureListener(any())).thenReturn(task);
         workmates = t.getWorkmates();
+
         verify(task).addOnCompleteListener(eventGetListenerCaptor.capture());
         verify(task).addOnFailureListener(eventGetFailureListenerCaptor.capture());
         assertNotNull(eventGetListenerCaptor.getValue());
@@ -195,11 +178,12 @@ public class WorkmateRepositoryTest {
         when(task.getResult()).thenReturn(querySnapshot);
         when(task.isSuccessful()).thenReturn(true);
         listDocumentSnapshot = new ArrayList<>();
-        listDocumentSnapshot.add(document);
+        listDocumentSnapshot.add(document1);
         when(querySnapshot.getDocuments()).thenReturn(listDocumentSnapshot);
         Workmate myself = new Workmate("vjraymon@gmail.com", "Jean-Raymond Vieux", null, null);
-        when(document.toObject(Workmate.class)).thenReturn(myself);
+        when(document1.toObject(Workmate.class)).thenReturn(myself);
         eventGetListenerCaptor.getValue().onComplete(task);
+
         assertNotNull(workmates);
         assertNotNull(workmates.getValue());
         assertEquals(1, workmates.getValue().size());
@@ -215,6 +199,7 @@ public class WorkmateRepositoryTest {
         when(task.addOnCompleteListener(any())).thenReturn(task);
         when(task.addOnFailureListener(any())).thenReturn(task);
         workmates = t.getWorkmates();
+
         verify(task).addOnCompleteListener(eventGetListenerCaptor.capture());
         verify(task).addOnFailureListener(eventGetFailureListenerCaptor.capture());
         assertNotNull(eventGetListenerCaptor.getValue());
@@ -222,14 +207,15 @@ public class WorkmateRepositoryTest {
         when(task.getResult()).thenReturn(querySnapshot);
         when(task.isSuccessful()).thenReturn(true);
         listDocumentSnapshot = new ArrayList<>();
-        listDocumentSnapshot.add(document);
+        listDocumentSnapshot.add(document1);
         listDocumentSnapshot.add(document2);
         when(querySnapshot.getDocuments()).thenReturn(listDocumentSnapshot);
         Workmate workmate1 = new Workmate("vjraymon@gmail.com", "Jean-Raymond Vieux", null, null);
         Workmate workmate2 = new Workmate("vagnes@gmail.com", "Agnes Vieux", null, "Chez Tintin");
-        when(document.toObject(Workmate.class)).thenReturn(workmate1);
+        when(document1.toObject(Workmate.class)).thenReturn(workmate1);
         when(document2.toObject(Workmate.class)).thenReturn(workmate2);
         eventGetListenerCaptor.getValue().onComplete(task);
+
         assertNotNull(workmates);
         assertNotNull(workmates.getValue());
         assertEquals(2, workmates.getValue().size());
@@ -242,10 +228,6 @@ public class WorkmateRepositoryTest {
     }
 
     @Captor
-    ArgumentCaptor<OnCompleteListener<QuerySnapshot>> eventGetListenerCaptor2;
-    @Captor
-    ArgumentCaptor<OnFailureListener> eventGetFailureListenerCaptor2;
-    @Captor
     ArgumentCaptor<Workmate> myselfCaptor;
     @Captor
     ArgumentCaptor<OnSuccessListener<Void>> eventSetListenerCaptor;
@@ -253,9 +235,6 @@ public class WorkmateRepositoryTest {
     ArgumentCaptor<OnFailureListener> eventSetFailureCaptor;
     @Mock
     Task<QuerySnapshot> taskAdd;
-    Task<Void> taskSet;
-    @Mock
-    DocumentReference documentReferenceSet;
 
     @Test
     public void AddWorkmateNotAlreadyRegistered() {
@@ -271,17 +250,17 @@ public class WorkmateRepositoryTest {
         when(taskAdd.getResult()).thenReturn(querySnapshot);
         listDocumentSnapshot = new ArrayList<>();
         when(querySnapshot.getDocuments()).thenReturn(listDocumentSnapshot);
-        verify(taskAdd).addOnCompleteListener(eventGetListenerCaptor2.capture());
-        verify(taskAdd).addOnFailureListener(eventGetFailureListenerCaptor2.capture());
-        assertNotNull(eventGetListenerCaptor2.getValue());
-        assertNotNull(eventGetFailureListenerCaptor2.getValue());
-        when(workmateRef.document("vjraymon@gmail.com")).thenReturn(documentReferenceSet);
-        when(documentReferenceSet.set(myself)).thenReturn(taskUpdate);
+        verify(taskAdd).addOnCompleteListener(eventGetListenerCaptor.capture());
+        verify(taskAdd).addOnFailureListener(eventGetFailureListenerCaptor.capture());
+        assertNotNull(eventGetListenerCaptor.getValue());
+        assertNotNull(eventGetFailureListenerCaptor.getValue());
+        when(workmateRef.document("vjraymon@gmail.com")).thenReturn(documentReference);
+        when(documentReference.set(myself)).thenReturn(taskUpdate);
         when(taskUpdate.addOnSuccessListener(any())).thenReturn(taskUpdate);
         when(taskUpdate.addOnFailureListener(any())).thenReturn(taskUpdate);
-        eventGetListenerCaptor2.getValue().onComplete(taskAdd);
+        eventGetListenerCaptor.getValue().onComplete(taskAdd);
 
-        verify(documentReferenceSet).set(myselfCaptor.capture());
+        verify(documentReference).set(myselfCaptor.capture());
         verify(taskUpdate).addOnSuccessListener(eventSetListenerCaptor.capture());
         verify(taskUpdate).addOnFailureListener(eventSetFailureCaptor.capture());
         assertNotNull(eventSetListenerCaptor.getValue());
@@ -312,17 +291,17 @@ public class WorkmateRepositoryTest {
         when(taskAdd.getResult()).thenReturn(querySnapshot);
         listDocumentSnapshot = new ArrayList<>();
         when(querySnapshot.getDocuments()).thenReturn(listDocumentSnapshot);
-        verify(taskAdd).addOnCompleteListener(eventGetListenerCaptor2.capture());
-        verify(taskAdd).addOnFailureListener(eventGetFailureListenerCaptor2.capture());
-        assertNotNull(eventGetListenerCaptor2.getValue());
-        assertNotNull(eventGetFailureListenerCaptor2.getValue());
-        when(workmateRef.document("vjraymon@gmail.com")).thenReturn(documentReferenceSet);
-        when(documentReferenceSet.set(myself)).thenReturn(taskUpdate);
+        verify(taskAdd).addOnCompleteListener(eventGetListenerCaptor.capture());
+        verify(taskAdd).addOnFailureListener(eventGetFailureListenerCaptor.capture());
+        assertNotNull(eventGetListenerCaptor.getValue());
+        assertNotNull(eventGetFailureListenerCaptor.getValue());
+        when(workmateRef.document("vjraymon@gmail.com")).thenReturn(documentReference);
+        when(documentReference.set(myself)).thenReturn(taskUpdate);
         when(taskUpdate.addOnSuccessListener(any())).thenReturn(taskUpdate);
         when(taskUpdate.addOnFailureListener(any())).thenReturn(taskUpdate);
-        eventGetListenerCaptor2.getValue().onComplete(taskAdd);
+        eventGetListenerCaptor.getValue().onComplete(taskAdd);
 
-        verify(documentReferenceSet).set(myselfCaptor.capture());
+        verify(documentReference).set(myselfCaptor.capture());
         verify(taskUpdate).addOnSuccessListener(eventSetListenerCaptor.capture());
         verify(taskUpdate).addOnFailureListener(eventSetFailureCaptor.capture());
         assertNotNull(eventSetListenerCaptor.getValue());
@@ -337,33 +316,31 @@ public class WorkmateRepositoryTest {
         assertEquals(0, workmates.getValue().size()); // unchanged
     }
 
-    @Mock
-    Task<QuerySnapshot> taskAdd2;
-
     @Test
     public void AddWorkmateAlreadyRegistered() {
         GetWorkmatesEmpty();
-        when(workmateRef.get()).thenReturn(taskAdd2);
-        when(taskAdd2.addOnCompleteListener(any())).thenReturn(taskAdd2);
-        when(taskAdd2.addOnFailureListener(any())).thenReturn(taskAdd2);
+        when(workmateRef.get()).thenReturn(taskAdd);
+        when(taskAdd.addOnCompleteListener(any())).thenReturn(taskAdd);
+        when(taskAdd.addOnFailureListener(any())).thenReturn(taskAdd);
         Workmate myself = new Workmate("vjraymon@gmail.com", "Jean-Raymond Vieux", null, null);
         t.addWorkmate(myself);
 
-        when(taskAdd2.isSuccessful()).thenReturn(true);
-        when(taskAdd2.getResult()).thenReturn(querySnapshot);
+        when(taskAdd.isSuccessful()).thenReturn(true);
+        when(taskAdd.getResult()).thenReturn(querySnapshot);
         listDocumentSnapshot = new ArrayList<>();
-        listDocumentSnapshot.add(document);
+        listDocumentSnapshot.add(document1);
         listDocumentSnapshot.add(document2);
         when(querySnapshot.getDocuments()).thenReturn(listDocumentSnapshot);
         Workmate workmate1 = new Workmate("vjraymon@gmail.com", "Jean-Raymond Vieux", null, null);
         Workmate workmate2 = new Workmate("vagnes@gmail.com", "Agnes Vieux", null, "Chez Tintin");
-        when(document.toObject(Workmate.class)).thenReturn(workmate1);
+        when(document1.toObject(Workmate.class)).thenReturn(workmate1);
         when(document2.toObject(Workmate.class)).thenReturn(workmate2);
-        verify(taskAdd2).addOnCompleteListener(eventGetListenerCaptor2.capture());
-        verify(taskAdd2).addOnFailureListener(eventGetFailureListenerCaptor2.capture());
-        assertNotNull(eventGetListenerCaptor2.getValue());
-        assertNotNull(eventGetFailureListenerCaptor2.getValue());
-        eventGetListenerCaptor2.getValue().onComplete(taskAdd2);
+        verify(task).addOnCompleteListener(eventGetListenerCaptor.capture());
+        verify(task).addOnFailureListener(eventGetFailureListenerCaptor.capture());
+        assertNotNull(eventGetListenerCaptor.getValue());
+        assertNotNull(eventGetFailureListenerCaptor.getValue());
+        eventGetListenerCaptor.getValue().onComplete(taskAdd);
+
         assertNotNull(workmates);
         assertNotNull(workmates.getValue());
         assertEquals(2, workmates.getValue().size());
@@ -378,53 +355,52 @@ public class WorkmateRepositoryTest {
     @Test
     public void AddWorkmateError() {
         GetWorkmatesEmpty();
-        when(workmateRef.get()).thenReturn(taskAdd2);
-        when(taskAdd2.addOnCompleteListener(any())).thenReturn(taskAdd2);
-        when(taskAdd2.addOnFailureListener(any())).thenReturn(taskAdd2);
+        when(workmateRef.get()).thenReturn(taskAdd);
+        when(taskAdd.addOnCompleteListener(any())).thenReturn(taskAdd);
+        when(taskAdd.addOnFailureListener(any())).thenReturn(taskAdd);
         Workmate myself = new Workmate("vjraymon@gmail.com", "Jean-Raymond Vieux", null, null);
         t.addWorkmate(myself);
 
-        when(taskAdd2.isSuccessful()).thenReturn(false);
-        verify(taskAdd2).addOnCompleteListener(eventGetListenerCaptor2.capture());
-        verify(taskAdd2).addOnFailureListener(eventGetFailureListenerCaptor2.capture());
-        assertNotNull(eventGetListenerCaptor2.getValue());
-        assertNotNull(eventGetFailureListenerCaptor2.getValue());
-        eventGetListenerCaptor.getValue().onComplete(taskAdd2);
+        when(taskAdd.isSuccessful()).thenReturn(false);
+        verify(taskAdd).addOnCompleteListener(eventGetListenerCaptor.capture());
+        verify(taskAdd).addOnFailureListener(eventGetFailureListenerCaptor.capture());
+        assertNotNull(eventGetListenerCaptor.getValue());
+        assertNotNull(eventGetFailureListenerCaptor.getValue());
+        eventGetListenerCaptor.getValue().onComplete(taskAdd);
+
         assertNotNull(workmates);
         assertNotNull(workmates.getValue());
         assertEquals(0, workmates.getValue().size()); // unchanged
     }
 
-    @Mock
-    Task<QuerySnapshot> taskAddException1;
-
     @Test
     public void AddWorkmateException1() {
         GetWorkmatesEmpty();
-        when(workmateRef.get()).thenReturn(taskAddException1);
-        when(taskAddException1.addOnCompleteListener(any())).thenReturn(taskAddException1);
-        when(taskAddException1.addOnFailureListener(any())).thenReturn(taskAddException1);
+        when(workmateRef.get()).thenReturn(taskAdd);
+        when(taskAdd.addOnCompleteListener(any())).thenReturn(taskAdd);
+        when(taskAdd.addOnFailureListener(any())).thenReturn(taskAdd);
         Workmate myself = new Workmate("vjraymon@gmail.com", "Jean-Raymond Vieux", null, null);
         t.addWorkmate(myself);
 
-        verify(taskAddException1).addOnCompleteListener(eventGetListenerCaptor2.capture());
-        verify(taskAddException1).addOnFailureListener(eventGetFailureListenerCaptor2.capture());
-        assertNotNull(eventGetListenerCaptor2.getValue());
-        assertNotNull(eventGetFailureListenerCaptor2.getValue());
-        eventGetFailureListenerCaptor2.getValue().onFailure(new Exception("Exception"));
+        verify(taskAdd).addOnCompleteListener(eventGetListenerCaptor.capture());
+        verify(taskAdd).addOnFailureListener(eventGetFailureListenerCaptor.capture());
+        assertNotNull(eventGetListenerCaptor.getValue());
+        assertNotNull(eventGetFailureListenerCaptor.getValue());
+        eventGetFailureListenerCaptor.getValue().onFailure(new Exception("Exception"));
+
         assertNotNull(workmates);
         assertNull(workmates.getValue()); // reset
     }
 
     @Mock
-    Task<QuerySnapshot> taskSetException;
+    Task<QuerySnapshot> taskSet;
 
     @Test
     public void SetRestaurantException() {
         GetWorkmatesEmpty();
-        when(workmateRef.get()).thenReturn(taskSetException);
-        when(taskSetException.addOnCompleteListener(any())).thenReturn(taskSetException);
-        when(taskSetException.addOnFailureListener(any())).thenReturn(taskSetException);
+        when(workmateRef.get()).thenReturn(taskSet);
+        when(taskSet.addOnCompleteListener(any())).thenReturn(taskSet);
+        when(taskSet.addOnFailureListener(any())).thenReturn(taskSet);
         Workmate myself = new Workmate("vjraymon@gmail.com", "Jean-Raymond Vieux", null, null);
         Restaurant restaurant = new Restaurant(
                 "IdGoogleMap",
@@ -437,24 +413,24 @@ public class WorkmateRepositoryTest {
                 "01 77 46 51 77"
         );
         t.setRestaurant(myself, restaurant);
-        verify(taskSetException).addOnCompleteListener(eventGetListenerCaptor.capture());
-        verify(taskSetException).addOnFailureListener(eventGetFailureListenerCaptor.capture());
+
+        verify(taskSet).addOnCompleteListener(eventGetListenerCaptor.capture());
+        verify(taskSet).addOnFailureListener(eventGetFailureListenerCaptor.capture());
         assertNotNull(eventGetListenerCaptor.getValue());
         assertNotNull(eventGetFailureListenerCaptor.getValue());
         eventGetFailureListenerCaptor.getValue().onFailure(new Exception("Exception"));
+
         assertNotNull(workmates);
         assertNotNull(workmates.getValue());
         assertEquals(0, workmates.getValue().size()); // unchanged
     }
 
-    @Mock
-    Task<QuerySnapshot> taskSetError;
     @Test
     public void SetRestaurantError() {
         GetWorkmatesEmpty();
-        when(workmateRef.get()).thenReturn(taskSetError);
-        when(taskSetError.addOnCompleteListener(any())).thenReturn(taskSetError);
-        when(taskSetError.addOnFailureListener(any())).thenReturn(taskSetError);
+        when(workmateRef.get()).thenReturn(taskSet);
+        when(taskSet.addOnCompleteListener(any())).thenReturn(taskSet);
+        when(taskSet.addOnFailureListener(any())).thenReturn(taskSet);
         Workmate myself = new Workmate("vjraymon@gmail.com", "Jean-Raymond Vieux", null, null);
         Restaurant restaurant = new Restaurant(
                 "IdGoogleMap",
@@ -467,26 +443,25 @@ public class WorkmateRepositoryTest {
                 "01 77 46 51 77"
         );
         t.setRestaurant(myself, restaurant);
-        verify(taskSetError).addOnCompleteListener(eventGetListenerCaptor.capture());
-        verify(taskSetError).addOnFailureListener(eventGetFailureListenerCaptor.capture());
-        when(taskSetError.isSuccessful()).thenReturn(false);
+
+        verify(taskSet).addOnCompleteListener(eventGetListenerCaptor.capture());
+        verify(taskSet).addOnFailureListener(eventGetFailureListenerCaptor.capture());
+        when(taskSet.isSuccessful()).thenReturn(false);
         assertNotNull(eventGetListenerCaptor.getValue());
         assertNotNull(eventGetFailureListenerCaptor.getValue());
-        eventGetListenerCaptor.getValue().onComplete(taskSetError);
+        eventGetListenerCaptor.getValue().onComplete(taskSet);
+
         assertNotNull(workmates);
         assertNotNull(workmates.getValue());
         assertEquals(0, workmates.getValue().size()); // unchanged
     }
-
-    @Mock
-    Task<QuerySnapshot> taskSetMyselfNotExisting;
 
     @Test
     public void SetRestaurantMyselfNotAlreadyExisting() {
         GetWorkmatesEmpty();
-        when(workmateRef.get()).thenReturn(taskSetMyselfNotExisting);
-        when(taskSetMyselfNotExisting.addOnCompleteListener(any())).thenReturn(taskSetMyselfNotExisting);
-        when(taskSetMyselfNotExisting.addOnFailureListener(any())).thenReturn(taskSetMyselfNotExisting);
+        when(workmateRef.get()).thenReturn(taskSet);
+        when(taskSet.addOnCompleteListener(any())).thenReturn(taskSet);
+        when(taskSet.addOnFailureListener(any())).thenReturn(taskSet);
         Workmate myself = new Workmate("vjraymon@gmail.com", "Jean-Raymond Vieux", null, null);
         Restaurant restaurant = new Restaurant(
                 "IdGoogleMap",
@@ -499,70 +474,20 @@ public class WorkmateRepositoryTest {
                 "01 77 46 51 77"
         );
         t.setRestaurant(myself, restaurant);
-        verify(taskSetMyselfNotExisting).addOnCompleteListener(eventGetListenerCaptor.capture());
-        verify(taskSetMyselfNotExisting).addOnFailureListener(eventGetFailureListenerCaptor.capture());
-        when(taskSetMyselfNotExisting.isSuccessful()).thenReturn(true);
-        when(taskSetMyselfNotExisting.getResult()).thenReturn(querySnapshot);
+
+        verify(taskSet).addOnCompleteListener(eventGetListenerCaptor.capture());
+        verify(taskSet).addOnFailureListener(eventGetFailureListenerCaptor.capture());
+        when(taskSet.isSuccessful()).thenReturn(true);
+        when(taskSet.getResult()).thenReturn(querySnapshot);
         listDocumentSnapshot = new ArrayList<>();
         when(querySnapshot.getDocuments()).thenReturn(listDocumentSnapshot);
         assertNotNull(eventGetListenerCaptor.getValue());
         assertNotNull(eventGetFailureListenerCaptor.getValue());
-        eventGetListenerCaptor.getValue().onComplete(taskSetMyselfNotExisting);
+        eventGetListenerCaptor.getValue().onComplete(taskSet);
+
         assertNotNull(workmates);
         assertNotNull(workmates.getValue());
         assertEquals(0, workmates.getValue().size()); // unchanged
-    }
-
-    @Mock
-    Task<QuerySnapshot> taskSetMyselfExisting;
-
-    @Test
-    public void SetRestaurantMyselfAlreadyExisting() {
-        GetWorkmates2Records();
-        when(workmateRef.get()).thenReturn(taskSetMyselfExisting);
-        when(taskSetMyselfExisting.addOnCompleteListener(any())).thenReturn(taskSetMyselfExisting);
-        when(taskSetMyselfExisting.addOnFailureListener(any())).thenReturn(taskSetMyselfExisting);
-        Workmate myself = new Workmate("vjraymon@gmail.com", "Jean-Raymond Vieux", null, null);
-        Restaurant restaurant = new Restaurant(
-                "IdGoogleMap",
-                "La Scala",
-                "9 rue du general Leclerc",
-                new LatLng(10,10),
-                "Until 2.00 AM",
-                "www.vjraymon.com",
-                null,
-                "01 77 46 51 77"
-        );
-        t.setRestaurant(myself, restaurant);
-
-        verify(taskSetMyselfExisting).addOnCompleteListener(eventGetListenerCaptor.capture());
-        verify(taskSetMyselfExisting).addOnFailureListener(eventGetFailureListenerCaptor.capture());
-        when(taskSetMyselfExisting.isSuccessful()).thenReturn(true);
-        when(taskSetMyselfExisting.getResult()).thenReturn(querySnapshot);
-        listDocumentSnapshot = new ArrayList<>();
-        listDocumentSnapshot.add(document);
-        listDocumentSnapshot.add(document2);
-        when(querySnapshot.getDocuments()).thenReturn(listDocumentSnapshot);
-        Workmate workmate1 = new Workmate("vjraymon@gmail.com", "Jean-Raymond Vieux", null, null);
-        Workmate workmate2 = new Workmate("vagnes@gmail.com", "Agnes Vieux", null, "Chez Tintin");
-        when(document.toObject(Workmate.class)).thenReturn(workmate1);
-        when(document2.toObject(Workmate.class)).thenReturn(workmate2);
-        assertNotNull(eventGetListenerCaptor.getValue());
-        assertNotNull(eventGetFailureListenerCaptor.getValue());
-        when(workmateRef.document("vjraymon@gmail.com")).thenReturn(documentReference);
-        when(documentReference.update("idRestaurant", "IdGoogleMap")).thenReturn(taskUpdate);
-        when(taskUpdate.addOnSuccessListener(any())).thenReturn(taskUpdate);
-        when(taskUpdate.addOnFailureListener(any())).thenReturn(taskUpdate);
-        eventGetListenerCaptor.getValue().onComplete(taskSetMyselfExisting);
-
-        verify(taskUpdate).addOnSuccessListener(eventupdateListenerCaptor.capture());
-        verify(taskUpdate).addOnFailureListener(eventGetFailureListenerCaptor.capture());
-        assertNotNull(eventupdateListenerCaptor.getValue());
-        assertNotNull(eventGetFailureListenerCaptor.getValue());
-        eventupdateListenerCaptor.getValue().onSuccess(null);
-        assertNotNull(workmates);
-        assertNotNull(workmates.getValue());
-        assertEquals(2, workmates.getValue().size()); // unchanged
     }
 
     @Mock
@@ -571,7 +496,58 @@ public class WorkmateRepositoryTest {
     @Mock
     Task<Void> taskUpdate;
     @Captor
-    ArgumentCaptor<OnSuccessListener<Void>> eventupdateListenerCaptor;
+    ArgumentCaptor<OnSuccessListener<Void>> eventUpdateListenerCaptor;
+
+    @Test
+    public void SetRestaurantMyselfAlreadyExisting() {
+        GetWorkmates2Records();
+        when(workmateRef.get()).thenReturn(taskSet);
+        when(taskSet.addOnCompleteListener(any())).thenReturn(taskSet);
+        when(taskSet.addOnFailureListener(any())).thenReturn(taskSet);
+        Workmate myself = new Workmate("vjraymon@gmail.com", "Jean-Raymond Vieux", null, null);
+        Restaurant restaurant = new Restaurant(
+                "IdGoogleMap",
+                "La Scala",
+                "9 rue du general Leclerc",
+                new LatLng(10,10),
+                "Until 2.00 AM",
+                "www.vjraymon.com",
+                null,
+                "01 77 46 51 77"
+        );
+        t.setRestaurant(myself, restaurant);
+
+        verify(taskSet).addOnCompleteListener(eventGetListenerCaptor.capture());
+        verify(taskSet).addOnFailureListener(eventGetFailureListenerCaptor.capture());
+        when(taskSet.isSuccessful()).thenReturn(true);
+        when(taskSet.getResult()).thenReturn(querySnapshot);
+        listDocumentSnapshot = new ArrayList<>();
+        listDocumentSnapshot.add(document1);
+        listDocumentSnapshot.add(document2);
+        when(querySnapshot.getDocuments()).thenReturn(listDocumentSnapshot);
+        Workmate workmate1 = new Workmate("vjraymon@gmail.com", "Jean-Raymond Vieux", null, null);
+        Workmate workmate2 = new Workmate("vagnes@gmail.com", "Agnes Vieux", null, "Chez Tintin");
+        when(document1.toObject(Workmate.class)).thenReturn(workmate1);
+        when(document2.toObject(Workmate.class)).thenReturn(workmate2);
+        assertNotNull(eventGetListenerCaptor.getValue());
+        assertNotNull(eventGetFailureListenerCaptor.getValue());
+        when(workmateRef.document("vjraymon@gmail.com")).thenReturn(documentReference);
+        when(documentReference.update("idRestaurant", "IdGoogleMap")).thenReturn(taskUpdate);
+        when(taskUpdate.addOnSuccessListener(any())).thenReturn(taskUpdate);
+        when(taskUpdate.addOnFailureListener(any())).thenReturn(taskUpdate);
+        eventGetListenerCaptor.getValue().onComplete(taskSet);
+
+        verify(taskUpdate).addOnSuccessListener(eventUpdateListenerCaptor.capture());
+        verify(taskUpdate).addOnFailureListener(eventGetFailureListenerCaptor.capture());
+        assertNotNull(eventUpdateListenerCaptor.getValue());
+        assertNotNull(eventGetFailureListenerCaptor.getValue());
+        eventUpdateListenerCaptor.getValue().onSuccess(null);
+
+        assertNotNull(workmates);
+        assertNotNull(workmates.getValue());
+        assertEquals(2, workmates.getValue().size()); // unchanged
+    }
+
     @Test
     public void UpdateIdRestaurant() {
         Initialization();
@@ -581,11 +557,12 @@ public class WorkmateRepositoryTest {
         when(taskUpdate.addOnFailureListener(any())).thenReturn(taskUpdate);
         Workmate myself = new Workmate("vjraymon@gmail.com", "Jean-Raymond Vieux", null, null);
         t.updateIdRestaurant(myself, "IdGoogleMap");
-        verify(taskUpdate).addOnSuccessListener(eventupdateListenerCaptor.capture());
+
+        verify(taskUpdate).addOnSuccessListener(eventUpdateListenerCaptor.capture());
         verify(taskUpdate).addOnFailureListener(eventGetFailureListenerCaptor.capture());
-        assertNotNull(eventupdateListenerCaptor.getValue());
+        assertNotNull(eventUpdateListenerCaptor.getValue());
         assertNotNull(eventGetFailureListenerCaptor.getValue());
-        eventupdateListenerCaptor.getValue().onSuccess(null);
+        eventUpdateListenerCaptor.getValue().onSuccess(null);
     }
 
     @Test
@@ -597,9 +574,10 @@ public class WorkmateRepositoryTest {
         when(taskUpdate.addOnFailureListener(any())).thenReturn(taskUpdate);
         Workmate myself = new Workmate("vjraymon@gmail.com", "Jean-Raymond Vieux", null, null);
         t.updateIdRestaurant(myself, "IdGoogleMap");
-        verify(taskUpdate).addOnSuccessListener(eventupdateListenerCaptor.capture());
+
+        verify(taskUpdate).addOnSuccessListener(eventUpdateListenerCaptor.capture());
         verify(taskUpdate).addOnFailureListener(eventGetFailureListenerCaptor.capture());
-        assertNotNull(eventupdateListenerCaptor.getValue());
+        assertNotNull(eventUpdateListenerCaptor.getValue());
         assertNotNull(eventGetFailureListenerCaptor.getValue());
         eventGetFailureListenerCaptor.getValue().onFailure(new Exception("Exception"));
     }
