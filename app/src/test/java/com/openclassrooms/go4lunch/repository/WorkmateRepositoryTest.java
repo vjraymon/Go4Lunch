@@ -1,5 +1,5 @@
 //TODO rename the package
-package com.openclassrooms.go4lunch.viewmodel;
+package com.openclassrooms.go4lunch.repository;
 
 
 import static org.junit.Assert.assertEquals;

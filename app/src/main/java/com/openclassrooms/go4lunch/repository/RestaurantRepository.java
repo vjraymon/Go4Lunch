@@ -3,12 +3,14 @@ package com.openclassrooms.go4lunch.repository;
 import static com.google.android.libraries.places.api.model.Place.Type.RESTAURANT;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -21,6 +23,7 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.model.PlaceLikelihood;
 import com.google.android.libraries.places.api.net.FetchPhotoRequest;
 import com.google.android.libraries.places.api.net.FetchPlaceRequest;
+import com.google.android.libraries.places.api.net.FetchPlaceResponse;
 import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest;
 import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
@@ -33,7 +36,7 @@ import java.util.Calendar;
 import java.util.List;
 
 public class RestaurantRepository {
-    private final String TAG_PLACE = "TestPlace";
+    private static final String TAG_PLACE = "TestPlace";
 
     private static RestaurantRepository service;
 
@@ -41,8 +44,16 @@ public class RestaurantRepository {
      * Get an instance on RestaurantRepository
      */
     public static RestaurantRepository getRestaurantRepository(Context context) {
+
+        boolean permission = (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED);
+
         if (service == null) {
-            service = new RestaurantRepository(context);
+            Log.i(TAG_PLACE, "RestaurantRepository.RestaurantRepository Places.initialize");
+            if (!Places.isInitialized()) Places.initialize(context, context.getString(R.string.google_maps_key));
+            Log.i(TAG_PLACE, "RestaurantRepository.RestaurantRepository Places.createClient");
+            PlacesClient placesClient = Places.createClient(context);
+
+            service = new RestaurantRepository(context, placesClient, permission);
         }
         return service;
     }
@@ -55,20 +66,21 @@ public class RestaurantRepository {
 
     public InitRestaurantStatus getInitRestaurantsStatus() { return initRestaurantsStatus; }
 
-    private final PlacesClient placesClient;
+    private PlacesClient placesClient;
     private static final int M_MAX_ENTRIES = 20;
 
-    public RestaurantRepository(@NonNull Context context) {
-        Log.i(TAG_PLACE, "RestaurantRepository.RestaurantRepository Places.initialize");
-        if (!Places.isInitialized()) Places.initialize(context, context.getString(R.string.google_maps_key));
-        Log.i(TAG_PLACE, "RestaurantRepository.RestaurantRepository Places.createClient");
-        placesClient = Places.createClient(context);
-        getRestaurantsFromGooglePlace(context);
+    public RestaurantRepository(@NonNull Context context, @NonNull PlacesClient placesClient, boolean permission) {
+        this.placesClient = placesClient;
+        initRestaurantsStatus = InitRestaurantStatus.INIT_TODO;
+        counterRetriesOnException = 0;
+        restaurants = new MutableLiveData<>();
+        restaurantList = null;
+        if (permission) getRestaurantsFromGooglePlace(context);
     }
 
-    private final MutableLiveData<List<Restaurant>> restaurants = new MutableLiveData<>();
+    private MutableLiveData<List<Restaurant>> restaurants;
 
-    public void select(List<Restaurant> item) { restaurants.setValue(item); }
+    public void select(@Nullable List<Restaurant> item) { this.restaurants.setValue(item); }
 
     public LiveData<List<Restaurant>> getRestaurants(Context context) {
         Log.i(TAG_PLACE, "RestaurantRepository.getRestaurants retry getRestaurantsFromGooglePlace");
@@ -77,7 +89,7 @@ public class RestaurantRepository {
         return this.restaurants;
     }
 
-    List<Restaurant> restaurantList = new ArrayList<>();
+    List<Restaurant> restaurantList;
 
     public void getRestaurantByIdFromGooglePlace(String placeId) {
         // Specify the fields to return.
@@ -103,7 +115,6 @@ public class RestaurantRepository {
             Log.i("TestDetailedPlace", "Place OPENING_HOURS found: " + place.getOpeningHours());
             Log.i("TestDetailedPlace", "Place PHONE_NUMBER found: " + place.getPhoneNumber());
             Log.i("TestDetailedPlace", "Place WEBSITE_URI found: " + place.getWebsiteUri());
-            Log.i("TestDetailedPlace", "Place PLUS_CODE found: " + place.getPlusCode());
 
             Calendar calendar = Calendar.getInstance();
             int day = calendar.get(Calendar.DAY_OF_WEEK);
@@ -175,11 +186,11 @@ public class RestaurantRepository {
                 }
             });
         }).addOnFailureListener((exception) -> {
-            if (exception instanceof ApiException) {
-                final ApiException apiException = (ApiException) exception;
+ //           if (exception instanceof ApiException) {
+ //               final ApiException apiException = (ApiException) exception;
                 Log.e(TAG_PLACE, "RestaurantRepository.getRestaurantByIdFromGooglePlace Place not found: " + exception.getMessage());
                 initRestaurantsStatus = InitRestaurantStatus.INIT_FAILED;
-            }
+ //           }
         });
     }
 
@@ -196,16 +207,12 @@ public class RestaurantRepository {
         restaurantList = new ArrayList<>();
 
         FindCurrentPlaceRequest request = FindCurrentPlaceRequest.newInstance(placeFields);
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Log.i(TAG_PLACE, "RestaurantRepository.getRestaurants location not permitted");
-            return;
-        }
         Log.i(TAG_PLACE, "RestaurantRepository.getRestaurantsFromGooglePlace: INIT_ONGOING");
         initRestaurantsStatus = InitRestaurantStatus.INIT_ONGOING;
-        final Task<FindCurrentPlaceResponse> placeResult = placesClient.findCurrentPlace(request);
+        @SuppressLint("MissingPermission") final Task<FindCurrentPlaceResponse> placeResult = placesClient.findCurrentPlace(request);
         placeResult.addOnCompleteListener(
                 (response) -> {
-                    if (response.isSuccessful() && response.getResult() != null) {
+                    if (response.isSuccessful() && (response.getResult() != null)) {
                         FindCurrentPlaceResponse likelyPlaces = response.getResult();
                         int count = Math.min(likelyPlaces.getPlaceLikelihoods().size(), M_MAX_ENTRIES);
                         int i=0;
@@ -231,10 +238,10 @@ public class RestaurantRepository {
                         initRestaurantsStatus = InitRestaurantStatus.INIT_FAILED;
                     }
                 }).addOnFailureListener((exception) -> {
-                    if (exception instanceof ApiException) {
-                        final ApiException apiException = (ApiException) exception;
+ //                   if (exception instanceof ApiException) {
+ //                       final ApiException apiException = (ApiException) exception;
                         Log.e(TAG_PLACE, "RestaurantRepository.getRestaurantsFromGooglePlace Error on FindCurrentPlaceResponse" + exception.getMessage());
-                        final int statusCode = apiException.getStatusCode();
+ //                       final int statusCode = apiException.getStatusCode();
                         initRestaurantsStatus = InitRestaurantStatus.INIT_FAILED;
                         counterRetriesOnException = counterRetriesOnException + 1;
                         if (counterRetriesOnException < MAX_COUNTER_RETRIES_ON_EXCEPTION) {
@@ -244,7 +251,7 @@ public class RestaurantRepository {
                             Log.e(TAG_PLACE, "RestaurantRepository.getRestaurantsFromGooglePlace retry from mapFragment");
                             select(null); // to trigger the handling of the exception
                         }
-                    }
+//                    }
                 });
     }
 }

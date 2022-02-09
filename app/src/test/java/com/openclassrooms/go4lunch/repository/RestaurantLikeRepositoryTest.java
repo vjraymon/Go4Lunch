@@ -1,5 +1,5 @@
 //TODO rename the package
-package com.openclassrooms.go4lunch.viewmodel;
+package com.openclassrooms.go4lunch.repository;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -39,7 +39,6 @@ import java.util.List;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RestaurantLikeRepositoryTest {
-//    Application myApplication;
     RestaurantLikeRepository t;
 
     @Rule // -> allows liveData to work on different thread besides main, must be public!
