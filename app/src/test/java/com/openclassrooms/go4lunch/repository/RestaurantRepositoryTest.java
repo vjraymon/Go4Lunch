@@ -86,9 +86,9 @@ public class RestaurantRepositoryTest {
     @Mock
     Place place1, place2;
     @Captor
-    ArgumentCaptor<OnCompleteListener> eventOnCompleteListener;
+    ArgumentCaptor<OnCompleteListener<FindCurrentPlaceResponse>> eventOnCompleteListener;
     @Captor
-    ArgumentCaptor<OnSuccessListener> eventOnSuccessListener, eventOnSuccessListener2;
+    ArgumentCaptor<OnSuccessListener<FetchPlaceResponse>> eventOnSuccessListener, eventOnSuccessListener2;
     @Captor
     ArgumentCaptor<OnFailureListener> eventOnFailureListener, eventOnFailureListener2;
 
@@ -102,7 +102,7 @@ public class RestaurantRepositoryTest {
 
         assertNotNull(t);
 
-        RestaurantRepository.InitRestaurantStatus status = t.getInitRestaurantsStatus();
+        RestaurantRepository.InitRestaurantStatus status;
             verify(placesClient).findCurrentPlace(request.capture());
             assertNotNull(request);
             assertNotNull(request.getValue());
@@ -174,7 +174,7 @@ public class RestaurantRepositoryTest {
 
         assertNotNull(restaurants);
 
-        RestaurantRepository.InitRestaurantStatus status = t.getInitRestaurantsStatus();
+        RestaurantRepository.InitRestaurantStatus status;
         verify(placesClient).findCurrentPlace(request.capture());
         assertNotNull(request);
         assertNotNull(request.getValue());
@@ -245,7 +245,7 @@ public class RestaurantRepositoryTest {
 
         assertNotNull(restaurants);
 
-        RestaurantRepository.InitRestaurantStatus status = t.getInitRestaurantsStatus();
+        RestaurantRepository.InitRestaurantStatus status;
         verify(placesClient).findCurrentPlace(request.capture());
         assertNotNull(request);
         assertNotNull(request.getValue());
@@ -278,7 +278,7 @@ public class RestaurantRepositoryTest {
 
         assertNotNull(restaurants);
 
-        RestaurantRepository.InitRestaurantStatus status = t.getInitRestaurantsStatus();
+        RestaurantRepository.InitRestaurantStatus status;
         verify(placesClient).findCurrentPlace(request.capture());
         assertNotNull(request);
         assertNotNull(request.getValue());
@@ -312,7 +312,7 @@ public class RestaurantRepositoryTest {
 
         assertNotNull(restaurants);
 
-        RestaurantRepository.InitRestaurantStatus status = t.getInitRestaurantsStatus();
+        RestaurantRepository.InitRestaurantStatus status;
         verify(placesClient).findCurrentPlace(request.capture());
         assertNotNull(request);
         assertNotNull(request.getValue());
