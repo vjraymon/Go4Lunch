@@ -55,7 +55,8 @@ public class MyViewModel extends AndroidViewModel {
                        FirebaseUser user,
                        RestaurantRepository restaurantRepository,
                        WorkmateRepository workmateRepository,
-                       RestaurantLikeRepository restaurantLikeRepository) {
+                       RestaurantLikeRepository restaurantLikeRepository,
+                       String eMail) {
         super(application);
         this.application = application;
         // trigger user load.
@@ -65,8 +66,8 @@ public class MyViewModel extends AndroidViewModel {
             myself = null;
         } else {
             Log.i("TestMySelf", "MyViewModel.init name = " + user.getDisplayName());
-            Log.i("TestMySelf", "MyViewModel.init email = " + user.getEmail());
-            myself = new Workmate(user.getEmail(),
+            Log.i("TestMySelf", "MyViewModel.init email = " + user.getEmail() + " or " + eMail);
+            myself = new Workmate(eMail,
                         user.getDisplayName(),
                         (user.getPhotoUrl() == null) ? null : user.getPhotoUrl().toString(),
                         null);

@@ -4,11 +4,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="250dp"
-    android:background="@color/red"
+    android:theme="@style/Theme.Go4Lunch2"
     android:gravity="bottom"
     android:orientation="horizontal"
     android:padding="16dp">
-<!--    android:theme="@style/Theme.Go4Lunch.NoActionBar"> -->
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -21,7 +20,6 @@
             android:layout_marginStart="16dp"
             android:text="@string/title_of_the_drawer"
             android:textAlignment="center"
-            android:textColor="@color/white"
             android:textSize="32sp"
             android:textStyle="bold"
             android:layout_margin="50dp"
@@ -65,7 +63,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:text="@string/name_of_the_user"
-                android:textColor="@color/white"
                 android:textSize="18sp" />
 
             <TextView
@@ -74,7 +71,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:text="@string/email_of_the_user"
-                android:textColor="@color/white"
                 />
 
         </LinearLayout>

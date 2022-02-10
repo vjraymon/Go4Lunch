@@ -60,7 +60,7 @@ public class MyViewModelTest {
     @Test
     public void AuthenticationNotGranted() {
         myApplication = new Application();
-        t = new MyViewModel(myApplication, null, restaurantRepository, workmateRepository, restaurantLikeRepository);
+        t = new MyViewModel(myApplication, null, restaurantRepository, workmateRepository, restaurantLikeRepository, "vjraymon@gmail.com");
         assertNotNull(t);
         assertNull(t.getMyself());
     }
@@ -74,7 +74,7 @@ public class MyViewModelTest {
         when(firebaseUser.getEmail()).thenReturn("vjraymon@gmail.com");
         when(firebaseUser.getDisplayName()).thenReturn("Jean-Raymond Vieux");
         when(firebaseUser.getPhotoUrl()).thenReturn(null);
-        t = new MyViewModel(myApplication, firebaseUser, restaurantRepository, workmateRepository, restaurantLikeRepository);
+        t = new MyViewModel(myApplication, firebaseUser, restaurantRepository, workmateRepository, restaurantLikeRepository, "vjraymon@gmail.com");
         assertNotNull(t);
         Workmate myself = t.getMyself();
         assertNotNull(myself);

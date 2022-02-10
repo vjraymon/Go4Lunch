@@ -23,7 +23,6 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.model.PlaceLikelihood;
 import com.google.android.libraries.places.api.net.FetchPhotoRequest;
 import com.google.android.libraries.places.api.net.FetchPlaceRequest;
-import com.google.android.libraries.places.api.net.FetchPlaceResponse;
 import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest;
 import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
@@ -66,7 +65,7 @@ public class RestaurantRepository {
 
     public InitRestaurantStatus getInitRestaurantsStatus() { return initRestaurantsStatus; }
 
-    private PlacesClient placesClient;
+    private final PlacesClient placesClient;
     private static final int M_MAX_ENTRIES = 20;
 
     public RestaurantRepository(@NonNull Context context, @NonNull PlacesClient placesClient, boolean permission) {
@@ -78,7 +77,7 @@ public class RestaurantRepository {
         if (permission) getRestaurantsFromGooglePlace(context);
     }
 
-    private MutableLiveData<List<Restaurant>> restaurants;
+    private final MutableLiveData<List<Restaurant>> restaurants;
 
     public void select(@Nullable List<Restaurant> item) { this.restaurants.setValue(item); }
 

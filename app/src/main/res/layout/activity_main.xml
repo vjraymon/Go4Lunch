@@ -18,11 +18,14 @@
             android:id="@+id/my_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/red"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            android:theme="@style/Theme.Go4Lunch2"
+            app:popupTheme="@style/Theme.Go4Lunch"
             android:elevation="4dp"/>
-
+<!--
+        android:background="@color/red"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+-->
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/blank_tabLayout"
             android:layout_width="match_parent"

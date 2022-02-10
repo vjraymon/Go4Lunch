@@ -2,27 +2,20 @@ package com.openclassrooms.go4lunch.repository;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import android.app.Activity;
 import android.app.Application;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.model.PlaceLikelihood;
 import com.google.android.libraries.places.api.net.FetchPlaceRequest;
@@ -43,7 +36,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Executor;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RestaurantRepositoryTest {
@@ -59,11 +51,7 @@ public class RestaurantRepositoryTest {
     PlacesClient placesClient;
 
     @Captor
-    ArgumentCaptor<FindCurrentPlaceRequest> request, request2;
-
-    @Test
-    public void getRestaurantRepository() {
-    }
+    ArgumentCaptor<FindCurrentPlaceRequest> request;
 
     @Test
     public void constructorAccessFineLocationNotGranted() {
@@ -157,10 +145,6 @@ public class RestaurantRepositoryTest {
         status = t.getInitRestaurantsStatus();
 
         assertEquals(RestaurantRepository.InitRestaurantStatus.INIT_FAILED, status);
-    }
-
-    @Test
-    public void select() {
     }
 
     @Test
@@ -344,7 +328,7 @@ public class RestaurantRepositoryTest {
     FetchPlaceResponse fetchResponse1, fetchResponse2;
 
     @Captor
-    ArgumentCaptor<FetchPlaceRequest> fetchRequest1, fetchRequest2;
+    ArgumentCaptor<FetchPlaceRequest> fetchRequest1;
 
     @Test
     public void getRestaurants1RecordWithExceptionOnFetch() {
@@ -488,8 +472,6 @@ public class RestaurantRepositoryTest {
         assertEquals("01 77 46 51 77", restaurants.getValue().get(0).getPhoneNumber());
     }
 
-    private boolean inc(boolean b) { b = !b; return b; }
-
     @Test
     public void getRestaurants2RecordsAndFetch() {
         constructorAccessFineLocationNotGranted();
@@ -530,7 +512,6 @@ public class RestaurantRepositoryTest {
         when(placeResult.getPlaceLikelihoods()).thenReturn(placesList);
 
         // getRestaurantByIdFromGooglePlace parts
-        boolean b = true;
         when(placesClient.fetchPlace(any(FetchPlaceRequest.class)))
                 .thenAnswer(i -> {
                     FetchPlaceRequest request = i.getArgument(0);

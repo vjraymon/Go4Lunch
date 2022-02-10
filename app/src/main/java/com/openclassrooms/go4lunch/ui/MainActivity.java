@@ -19,6 +19,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
+import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
@@ -159,6 +160,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     );
 
     private void startSignOutActivity() {
+        MyselfStorage.setEMail(null);
         AuthUI.getInstance()
                 .signOut(this)
                 .addOnCompleteListener(task -> {
@@ -170,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void startSignInActivity() {
         // Chooses authentication providers
         List<AuthUI.IdpConfig> providers = Arrays.asList(
-//                new AuthUI.IdpConfig.EmailBuilder().build(),
+                new AuthUI.IdpConfig.EmailBuilder().build(),
                 new AuthUI.IdpConfig.GoogleBuilder().build(),
                 new AuthUI.IdpConfig.FacebookBuilder().build()//*,
  //               new AuthUI.IdpConfig.TwitterBuilder().build()
@@ -188,36 +190,35 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void onSignInResult(FirebaseAuthUIAuthenticationResult result) {
-//      IdpResponse response = result.getIdpResponse();
+        IdpResponse response = result.getIdpResponse();
+        Log.i("TestMySelf", "MainActivity.onSignInResult " + response);
         if (result.getResultCode() == RESULT_OK) {
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            userName = findViewById(R.id.user_name);
+            userEmail = findViewById(R.id.user_email);
+            userPhoto = findViewById(R.id.user_photo);
+            if ((userName==null) || (userEmail==null) || (userPhoto==null) || (response==null)) {
+                Log.w("TestMySelf", "MainActivity.onSignInResult initialization not done!");
+                return;
+            }
             if (user == null) {
                 Log.i("TestMySelf", "MainActivity.onSignInResult user null");
-            } else {
-                Log.i("TestMySelf", "MainActivity.onSignInResult name = " + user.getDisplayName());
-                Log.i("TestMySelf", "MainActivity.onSignInResult email = " + user.getEmail());
-                if (user.getPhotoUrl() == null) {
-                    Log.i("TestMySelf", "MainActivity.onSignInResult myself.getPhotoUrl() null");
-                } else {
-                    Log.i("TestMySelf", "MainActivity.onSignInResult myself.getPhotoUrl()" + user.getPhotoUrl().toString());
-                    if (user.getPhotoUrl() != null) {
-                        userPhoto = findViewById(R.id.user_photo);
-                        Picasso.with(this).load(user.getPhotoUrl()).into(userPhoto);
-                    }
-                    userName = findViewById(R.id.user_name);
-                    userEmail = findViewById(R.id.user_email);
-                    if ((userName==null) || (userEmail==null)) {
-                        Log.w("TestMyself", "MainActivity.onSignInResult initialization not done!");
-                    } else {
-                        Log.w("TestMyself", "MainActivity.onSignInResult initialization not done!");
-                        userName.setText(user.getDisplayName());
-                        userEmail.setText(user.getEmail());
-                    }
-                }
+                return;
             }
-
+            Log.i("TestMySelf", "MainActivity.onSignInResult name = " + user.getDisplayName());
+            Log.i("TestMySelf", "MainActivity.onSignInResult email = " + user.getEmail());
+            if (user.getPhotoUrl() == null) {
+                Log.i("TestMySelf", "MainActivity.onSignInResult myself.getPhotoUrl() null");
+            } else {
+                Log.i("TestMySelf", "MainActivity.onSignInResult myself.getPhotoUrl()" + user.getPhotoUrl().toString());
+                Picasso.with(this).load(user.getPhotoUrl()).into(userPhoto);
+            }
+            Log.w("TestMySelf", "MainActivity.onSignInResult initialization done!");
+            userName.setText(user.getDisplayName());
+            userEmail.setText(response.getEmail());
             //3 - Configure ViewPager
             this.configureViewPager();
+            MyselfStorage.setEMail(response.getEmail());
             myViewModel = new ViewModelProvider(this, new MyViewModelFactory(this.getApplication())).get(MyViewModel.class);
             myViewModel.getWorkmates();
             myViewModel.getRestaurants();
