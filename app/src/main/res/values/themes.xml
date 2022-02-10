@@ -12,9 +12,8 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@android:color/transparent</item>
         <!-- Customize your theme here. -->
-<!--        <item name="android:colorPrimary">@color/red</item>
+        <item name="android:colorPrimary">@color/red</item>
         <item name="android:colorPrimaryDark">@color/red_dark</item>
--->
     </style>
     <!-- Base application theme. -->
     <style name="Theme.Go4Lunch2" parent="Theme.Go4Lunch">

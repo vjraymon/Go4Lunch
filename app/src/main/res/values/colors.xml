@@ -6,6 +6,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="red">@android:color/holo_red_light</color>
+    <color name="red_dark">@android:color/holo_red_dark</color>
     <color name="icon_enabled">@color/red</color>
     <color name="icon_disabled">@color/black</color>
 
