@@ -6,7 +6,7 @@ android {
     compileSdk 31
 
     defaultConfig {
-        applicationId "com.openclassrooms.go4lunch"
+        applicationId "com.openClassrooms.go4lunch"
         minSdk 21
         targetSdk 31
         versionCode 1
@@ -28,7 +28,11 @@ android {
     buildFeatures {
         viewBinding true
     }
-
+    allprojects {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+        }
+    }
     testOptions {
 //        unitTests.all {
 //            useJUnitPlatform()
@@ -71,8 +75,8 @@ dependencies {
     // EVENT BUS
     implementation 'org.greenrobot:eventbus:3.1.1'
     implementation 'com.squareup.picasso:picasso:2.5.2'
-    def mockitoversion = "4.3.1"
-    testImplementation "org.mockito:mockito-inline:$mockitoversion"
-    testImplementation "org.mockito:mockito-junit-jupiter:$mockitoversion"
+    def mockitoVersion = "4.3.1"
+    testImplementation "org.mockito:mockito-inline:$mockitoVersion"
+    testImplementation "org.mockito:mockito-junit-jupiter:$mockitoVersion"
     testImplementation "androidx.arch.core:core-testing:2.1.0"
 }

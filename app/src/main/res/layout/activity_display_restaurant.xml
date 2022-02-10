@@ -179,7 +179,7 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/listJoinWorkmate"
-            android:name="com.openclassrooms.go4lunch.ui.DisplayRestaurantActivity"
+            android:name="com.openClassrooms.go4lunch.ui.DisplayRestaurantActivity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"

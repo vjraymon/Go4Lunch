@@ -12,15 +12,6 @@
     <string name="user_s_photo">User\'s photo</string>
     <string name="restaurant_bitmap">Restaurant bitmap</string>
     <string name="workmate_photo">Workmate photo</string>
-
-<!-- From firebase messaging example -->
-
-    <!--
-        This is the name that users will see when interacting with this channel.
-        It should describe the category of notifications that will be sent through this channel
-     -->
-    <!-- [START fcm_default_icon_string] -->
-    <!-- [END fcm_default_icon_string] -->
     <string name="has_joined">%s is joining</string>
     <string name="your_lunch">your lunch</string>
     <string name="settings">settings</string>

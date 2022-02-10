@@ -7,9 +7,12 @@
         <entry key="..\:/Jean-Raymond/Documents/OpenClassrooms/Go4Lunch/app/src/main/res/layout/fragment_restaurant_list.xml" value="0.37771739130434784" />
         <entry key="..\:/Jean-Raymond/Documents/OpenClassrooms/Go4Lunch/app/src/main/res/layout/fragment_workmate.xml" value="0.37771739130434784" />
         <entry key="..\:/Jean-Raymond/Documents/OpenClassrooms/Go4Lunch/app/src/main/res/layout/fragment_workmate_list.xml" value="0.37771739130434784" />
+        <entry key="..\:/Users/vjray/AndroidStudioProjects/Go4Lunch/app/src/main/res/layout/activity_display_restaurant.xml" value="0.23641304347826086" />
         <entry key="..\:/Users/vjray/AndroidStudioProjects/Go4Lunch/app/src/main/res/layout/activity_main.xml" value="0.3211050724637681" />
         <entry key="..\:/Users/vjray/AndroidStudioProjects/Go4Lunch/app/src/main/res/layout/fragment_restaurant.xml" value="0.15982776089159068" />
+        <entry key="..\:/Users/vjray/AndroidStudioProjects/Go4Lunch/app/src/main/res/layout/fragment_restaurant_list.xml" value="0.23641304347826086" />
         <entry key="..\:/Users/vjray/AndroidStudioProjects/Go4Lunch/app/src/main/res/layout/fragment_workmate.xml" value="0.3211050724637681" />
+        <entry key="..\:/Users/vjray/AndroidStudioProjects/Go4Lunch/app/src/main/res/layout/fragment_workmate_list.xml" value="0.23641304347826086" />
         <entry key="..\:/Users/vjray/AndroidStudioProjects/Go4Lunch/app/src/main/res/layout/joined_workmate.xml" value="0.3211050724637681" />
         <entry key="..\:/Users/vjray/AndroidStudioProjects/Go4Lunch/app/src/main/res/layout/nav_header.xml" value="0.3211050724637681" />
         <entry key="..\:/Users/vjray/AndroidStudioProjects/Go4Lunch/app/src/main/res/menu/menu.xml" value="0.325" />
@@ -64,6 +67,11 @@
         <entry key="..\:/Users/vjray/StudioProjects/Go4Lunch/app/src/main/res/menu/menu_search.xml" value="0.23333333333333334" />
       </map>
     </option>
+  </component>
+  <component name="EntryPointsManager">
+    <list size="1">
+      <item index="0" class="java.lang.String" itemvalue="org.greenrobot.eventbus.Subscribe" />
+    </list>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
